@@ -9,8 +9,9 @@ def main():
         else:
             mean = sum(sorted_data) // (len(sorted_data))
             result = 0
-            j = 1
+            
             for i in sorted_data:
+                j = 1
                 for x in range(abs(mean - i)):
                     result += j
                     j += 1
