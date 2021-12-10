@@ -1,14 +1,16 @@
 def main():
     
     with open('Day_10/data10.txt', 'r') as myfile:
-        result = 0
-        values = {')': 3, ']': 57, '}': 1197, '>': 25137}
+        values = {'(': 1, '[': 2, '{': 3, '<': 4}
         opening = '([{<'
         closing = ')]}>'
+        scores = []
         for line in myfile:
 
             tmp = ''
             i = 0
+            score = 0
+            wrongline = False
             
             for char in line[:-1]:
                 if char in opening:
@@ -19,12 +21,22 @@ def main():
                     if len(tmp) > 0:
                         i = opening.find(tmp[-1])
                 else:
-                    result += values[char]
+                    wrongline = True
                     break                 
-                    
+            if not wrongline:
+                for i in range(len(tmp)):
+                    score *= 5
+                    score += values[tmp[- i - 1]]
+            
+            if score > 0:
+                scores.append(score)    
+            
+        scores = sorted(scores)
+                   
+        print(scores)          
         
                 
-        print(f'Result is {result}')    
+        print(f'Result is {scores[len(scores) // 2]}')    
             
 
 if __name__ == '__main__':
