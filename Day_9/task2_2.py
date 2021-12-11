@@ -1,44 +1,44 @@
-# data[x][y] = [value(0-9), number_of_basin_it_belongs_to]
+# data[x][y] = [value(0-9), True if it belongs to any basin, False otherwise]
+def basinsize(data, x, y):
+    result = 1
+    data[x][y][1] = True
+    if x > 0 and data[x - 1][y][0] < 9 and not data[x - 1][y][1]:
+        result += basinsize(data, x - 1, y)
+    if y > 0 and data[x][y-1][0] < 9 and not data[x][y-1][1]: 
+        result += basinsize(data, x, y - 1)
+    if x < len(data) - 1 and data[x + 1][y][0] < 9 and not data[x + 1][y][1]:
+        result += basinsize(data, x + 1, y)
+    if y < len(data[x]) - 1 and data[x][y+1][0] < 9 and not data[x][y+1][1]: 
+        result += basinsize(data, x, y + 1)
+    return result
 
 
 def main():
     with open('Day_9/data9.txt', 'r') as myfile:
-        lowpoints = []
         data = []
-        basinno = 0
+        top3 = [0, 0, 0]
         for line in myfile:
             tmp = []
             for i in range(len(line) - 1):
-                tmp.append([int(line[i]), basinno])
+                tmp.append([int(line[i]), False])
             data.append(tmp)
-        
-        basinno += 1
         
         for x in range(len(data)):
             for y in range(len(data[x])):
-                if data[x][y][0] < 9:
-                    if x > 0 and data[x-1][y][1] != 0:
-                        data[x][y][1] = data[x-1][y][1]
-                    elif y > 0 and data[x][y-1][1] != 0:
-                        data[x][y][1] = data[x][y-1][1]
-                    else:
-                        data[x][y][1] = basinno
-                        basinno += 1
+                if data[x][y][0] < 9 and not data[x][y][1]:
+                    basin = basinsize(data, x, y)
+                    if basin >= top3[0]:
+                        top3[2] = top3[1]
+                        top3[1] = top3[0]
+                        top3[0] = basin
+                    elif basin >= top3[1]:
+                        top3[2] = top3[1]
+                        top3[1] = basin
+                    elif basin > top3[2]:
+                        top3[2] = basin
         
-        basinno = set()
-        for i in range(len(data)):
-            for x in range(len(data)):
-                for y in range(len(data[x])): 
-                    if x < (len(data) - 1) and data[x+1][y][1] != 0:
-                        data[x][y][1] = min(data[x+1][y][1], data[x][y][1])
-                    elif y < (len(data[x]) - 1) and data[x][y+1][1] != 0:
-                        data[x][y][1] = min(data[x][y+1][1], data[x][y][1])
-        for x in range(len(data)):
-            for y in range(len(data[x])): 
-                basinno.add(data[x][y][1])
-                print(data[x][y][1], end=" ")
-            print('')
-        print(len(basinno))
+        print(top3)
+        print(f'Result is {top3[2] * top3[1] * top3[0]}')
 
 if __name__ == '__main__':
     main()
