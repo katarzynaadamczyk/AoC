@@ -28,7 +28,7 @@ def main():
                     if check:
                         lowpoints.append([x, y])
                         
-        print(lowpoints)
+        print(len(lowpoints))
         top = [0, 0, 0]
         
         for lowpoint in lowpoints:
