@@ -1,5 +1,5 @@
 # Katarzyna Adamczyk
-# Solution to day 12 task 1 of Advent of Code 2021
+# Solution to day 12 task 2 of Advent of Code 2021
 
 def addtograph(graph, key, value, lowers):
     if key != 'end':
@@ -11,7 +11,10 @@ def addtograph(graph, key, value, lowers):
             if value.islower() and value != 'end':
                 lowers.add(value)
         
-def findtrack(graph, act, lowersused):
+def alllowersused(lowersused):
+    return True if len(set(lowersused.values())) == 1 else False
+
+def finduniquetracks(graph, act, lowersused):
     if act == 'end':
         return 1
     if act in lowersused.keys():
@@ -20,16 +23,45 @@ def findtrack(graph, act, lowersused):
         lowersused[act] = True
     result = 0
     for node in graph[act]:
-        result += findtrack(graph, node, lowersused.copy())
+        result += finduniquetracks(graph, node, lowersused.copy())
     return result
+
+def findcave(cave, caveused):
+    result = 0
+    for c in caveused:
+        if c == cave:
+            result += 1
+    return result
+
+def findduplicatetracks(graph, act, cave, lowersused, cavesused):
+    if act == 'end':
+        if findcave(cave, cavesused) == 2:
+            return 1
+        return 0
+    if findcave(cave, cavesused) > 2:
+        return 0
+    if act in lowersused.keys():
+        if lowersused[act]:
+            return 0
+        lowersused[act] = True
+    result = 0
+    cavesused.append(act)
+    for node in graph[act]:
+        result += findduplicatetracks(graph, node, cave, lowersused.copy(), cavesused.copy()) 
+    return result
+   
         
 def findalltracks(graph, lowers):
     act = 'start'
     lowersused = {}
     for lower in lowers:
         lowersused[lower] = False
-    return findtrack(graph, act, lowersused)
-    
+    result = finduniquetracks(graph, act, lowersused.copy())
+    for x in lowers:
+        lowersusedx = lowersused.copy()
+        del lowersusedx[x]
+        result += findduplicatetracks(graph, act, x, lowersusedx, [])
+    return result 
 
 def solution(filename):
     with open(filename, 'r') as myfile:
