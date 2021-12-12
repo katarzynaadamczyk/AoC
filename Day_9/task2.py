@@ -1,3 +1,5 @@
+# first attempt, not working
+
 def main():
     with open('Day_9/data9.txt', 'r') as myfile:
         lowpoints = []

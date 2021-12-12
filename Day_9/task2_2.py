@@ -1,4 +1,5 @@
 # data[x][y] = [value(0-9), True if it belongs to any basin, False otherwise]
+# working solution
 def basinsize(data, x, y):
     result = 1
     data[x][y][1] = True
