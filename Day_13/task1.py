@@ -2,7 +2,6 @@
 # Solution to day 13 task 1 of Advent of Code 2021
 
 import numpy as np
-from numpy.typing import _128Bit
 
 def fold(points, foldline):
     if foldline[0] == 'x':
