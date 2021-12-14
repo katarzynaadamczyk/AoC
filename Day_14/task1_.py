@@ -1,7 +1,5 @@
 # Katarzyna Adamczyk
-# Solution to day 14 task 2 of Advent of Code 2021
-
-import numpy as np
+# Solution to day 14 task 1 of Advent of Code 2021
 
 def pairinsertion(polymer, data):
     tmp = polymer[0]
