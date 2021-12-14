@@ -1,5 +1,5 @@
 # Katarzyna Adamczyk
-# Solution to day 13 task 1 of Advent of Code 2021
+# Solution to day 13 task 2 of Advent of Code 2021
 
 import numpy as np
 
