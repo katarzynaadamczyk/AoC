@@ -1,6 +1,6 @@
 # Katarzyna Adamczyk
-# Solution to day 15 task 2 of Advent of Code 2021
-import numpy as np
+# Solution to day 15 task 1 of Advent of Code 2021
+
 
 def checkonx(data, result, x, y):
     if y < len(data) - 1:
@@ -57,39 +57,18 @@ def findpath(data): # searching for the path only down and right and omitting th
         result.append(tmp)
     return result[-1][-1]
 
-def preparemap(data, num):
-    newsegment = np.zeros((len(data) * 5), len(data[0]) * 5, dtype='int')
-    for i in range(num):
-        for y in range(len(data)):
-            for x in range(len(data[y])):
-                if i == 0:
-                    newsegment[y][x] = data[y][x]
-                else:
-                    newsegment[y + i * len(data)][x + i * len(data[0])] = (newsegment[y + (i - 1) * len(data)][x + (i  - 1) * len(data[y])] + (2 if newsegment[y][x] == 9 else 1)) % 10
-    print(data)
-    print(newsegment)
-    return newsegment
-'''  
-    for i in range(num - 1):
-        for y in range(len(newsegment)):
-            for x in range(len(newsegment[y])):
-                newsegment[y][x] = (newsegment[y][x] + (2 if newsegment[y][x] == 9 else 1)) % 10
-                data[y].append(newsegment[y][x])
-'''   
-            
-
 def solution(filename):
     with open(filename, 'r') as myfile:
         data = [] 
         for line in myfile:
             tmp = [int(x) for x in line.strip()]
             data.append(tmp)
-        preparemap(data, 5)
+            
         return findpath(data)
 
 def main():
     print(f'Result for test data for task 1 is {solution("Day_15/testdata.txt")}')
-   # print(f'Result for data 15 for task 1 is {solution("Day_15/data15.txt")}')
+    print(f'Result for data 15 for task 1 is {solution("Day_15/data15.txt")}')
 
 if __name__ == '__main__':
     main()
