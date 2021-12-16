@@ -54,7 +54,7 @@ def findpath(data): # searching for the path only down and right and omitting th
             else:
                 tmp.append(min(tmp[x-1], result[y-1][x]) + data[y][x])
         result.append(tmp)
-    return result
+    return result[-1][-1]
 
 def preparemap(data, num):
     # make data table [5 x len(data)][len(data[0])]
@@ -80,21 +80,8 @@ def solution(filename):
             tmp = [int(x) for x in line.strip()]
             data.append(tmp)
         data = preparemap(data, 5)
-        result1 = findpath(data)
-        data.reverse()
-        result2 = findpath(data)
-        result2.reverse()
-        data.reverse()
-        for i in range(len(data)):
-            data[i].reverse()
-        result3 = findpath(data)
-        result = []
-        for y in range(len(result1)):
-            tmp = []
-            for x in range(len(result2[y])):
-                tmp.append(min(result1[y][x], result2[y][x], result3[y][x]))
-            result.append(tmp)
-        return result[-1][-1]
+        
+        return findpath(data)
 
 def main():
     print(f'Result for test data for task 1 is {solution("Day_15/testdata.txt")}')
