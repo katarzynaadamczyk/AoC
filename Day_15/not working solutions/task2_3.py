@@ -8,12 +8,15 @@ def findpathontheright(startvalue, x, y, xrange, yfinal, data):
         for i in range(x+2, min(x+xrange, len(data[y]))):
             tmp.append(tmp[-1] + data[y][i])
         result.append(tmp)
-        for i in range(y+1, min(yfinal + 1, len(data))):
-            tmp = [result[-1][-1] + data[y+1][min(x+xrange, len(data[y+1]))-1]]
+        for i in range(min(y+1, len(data) - 1), min(yfinal + 1, len(data))):
+           # print(i+1, min(x+xrange, len(data[i]))-1)
+            tmp = [result[-1][-1] + data[i][min(x+xrange, len(data[i]))-1]]
             for j in range(min(x+xrange, len(data[y+1]))-2, x, -1):
                 tmp.insert(0, min(tmp[0], result[-1][j-x-1]) + data[i][j])
             result.append(tmp)
-        print(result)
+       # print(data)
+      #  print(x, y, xrange, yfinal)
+       # print(result)
         return result[-1][-1]
     return -1
 
@@ -28,72 +31,54 @@ def findpathdown(startvalue, x, y, xfinal, yrange, data):
             result[-1].append(result[-1][-1] + data[min(y+yrange, len(data))-1][i])
         z = len(result) - 2
         for i in range(min(y+yrange, len(data)) - 2, y, -1): 
-            print(z)
+       #     print(z)
             for j in range(x+1, min(xfinal + 1, len(data[i]))):
-                print(result[z][-1], result[z+1][j-x])
+        #        print(result[z][-1], result[z+1][j-x])
                 result[z].append(min(result[z][-1], result[z+1][j-x]) + data[i][j])
             z -= 1
-        print(data)
-        print(result)
+     #   print(data)
+     ##   print(result)
+      #  print(x, y, xfinal, yrange)
         return result[0][-1]
     return -1
             
-    
-
-'''
-
-def checkonx(data, result, x, y):
-    if y < len(data) - 1:
-        tmp = []
-        for i in range(max(0, x - 8), min(x, len(data[y]))):
-            act = result[i] + data[y+1][i]
-            for j in range(i + 1, min(x+1, len(data[y]))):
-                act += data[y+1][j]
-            tmp.append(act)
-        return (min(tmp)) if len(tmp) > 0 else -1 
-    else:
-        return -1    
-
-def checkony(data, result, x, y):
-    if x < len(data[y]) - 1:
-        tmp = []
-        for i in range(max(0, y - 8), y):
-            act = result[i][x] + data[i][x+1]
-            for j in range(i + 1, y+1):
-                act += data[j][x+1]
-            tmp.append(act)
-        return (min(tmp)) if len(tmp) > 0 else -1 
-    else:
-        return -1  
-'''
+def check(data, result, tmp, x, y):
+    tmp2 = []
+    for i in range(max(0, x - len(data[y]) // 2), max(x - 1, 0)):
+      #  print('down')
+        act = findpathdown(tmp[i], i, y, x, 8, data)
+        if act > 0:
+            tmp2.append(act)
+    for i in range(max(0, len(data) // 2), max(y-1, 0)):
+     #   print('right')
+        act = findpathontheright(result[i][x], x, i, 20, y, data)
+        if act > 0:
+            tmp2.append(act)
+    return min(tmp2) if len(tmp2) > 0 else -1
 
 def findpath(data): # searching for the path only down and right and omitting the large values to the right or to the left
     result = []
     tmp = [0]
     for x in range(1, len(data[0])):
-       # actx = min([findpathdown() for i in range(2, 8)]) # min z [findpath] for range (2, 8) findpathdown(startvalue, x, y, xfinal, yrange, data):
-       # if actx > 0:
-       #     tmp.append(min(tmp[x-1], actx) + data[0][x])
-       # else:
-        tmp.append(tmp[x-1] + data[0][x])
+        print(f'in first for x, {x} ')
+        act = check(data, result, tmp, x, 0)
+        if act > 0:
+            tmp.append(min(tmp[x-1], act) + data[0][x])
+        else:
+            tmp.append(tmp[x-1] + data[0][x])
     result.append(tmp)
     for y in range(1, len(data)):
-       # acty = checkony(data, result, 0, y) # min z [findpath] for range (2, 8)
-       # if acty > 0:
-       #     tmp = [min(result[y-1][0], acty) + data[y][0]]
-       # else:
-        tmp = [data[y][0] + result[y-1][0]]
+        print(f'y = {y} out of {len(data) - 1}')
+        act = check(data, result, tmp, 0, y)
+        if act > 0:
+            tmp = [min(result[y-1][0], act) + data[y][0]]
+        else:
+            tmp = [data[y][0] + result[y-1][0]]
         for x in range(1, len(data[y])):
-            # TODO
-            acty = min([findpathontheright() for i in range(2, 8)]) # min z [findpath] for range (2, 8) min z [findpath] for range (2, 8) findpathdown(startvalue, x, y, xfinal, yrange, data):
-            actx = min([findpathdown() for i in range(2, 8)]) # min z [findpath] for range (2, 8)
+            act = check(data, result, tmp, x, y)
             
-            if actx > 0 and acty > 0:
-                tmp.append(min(tmp[x-1], result[y-1][x], actx, acty) + data[y][x])
-            elif actx > 0:
-                tmp.append(min(tmp[x-1], result[y-1][x], actx) + data[y][x])
-            elif acty > 0:
-                tmp.append(min(tmp[x-1], result[y-1][x], acty) + data[y][x])
+            if act > 0 :
+                tmp.append(min(tmp[x-1], result[y-1][x], act) + data[y][x])
             else:
                 tmp.append(min(tmp[x-1], result[y-1][x]) + data[y][x])
         result.append(tmp)
@@ -122,14 +107,13 @@ def solution(filename):
         for line in myfile:
             tmp = [int(x) for x in line.strip()]
             data.append(tmp)
-        # data = preparemap(data, 5)
-        print(findpathontheright(10, 2, 3, 5, 7, data))
-        print(findpathdown(10, 2, 3, 5, 7, data))
+        data = preparemap(data, 5)
+        #data[0][0] = 0
         return findpath(data)
 
 def main():
     print(f'Result for test data for task 1 is {solution("Day_15/testdata.txt")}')
-   # print(f'Result for data 15 for task 1 is {solution("Day_15/data15.txt")}')
+    print(f'Result for data 15 for task 1 is {solution("Day_15/data15.txt")}')
 
 if __name__ == '__main__':
     main()

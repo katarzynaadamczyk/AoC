@@ -4,7 +4,7 @@
 def checkonx(data, result, x, y):
     if y < len(data) - 1:
         tmp = []
-        for i in range(max(0, x - 20), min(x, len(data[y]))):
+        for i in range(max(0, x - 100), min(x, len(data[y]))):
             act = result[i] + data[y+1][i]
             for j in range(i + 1, min(x+1, len(data[y]))):
                 act += data[y+1][j]
@@ -16,7 +16,7 @@ def checkonx(data, result, x, y):
 def checkony(data, result, x, y):
     if x < len(data[y]) - 1:
         tmp = []
-        for i in range(max(0, y - 20), y):
+        for i in range(max(0, y - 100), y):
             act = result[i][x] + data[i][x+1]
             for j in range(i + 1, y+1):
                 act += data[j][x+1]
@@ -54,7 +54,7 @@ def findpath(data): # searching for the path only down and right and omitting th
             else:
                 tmp.append(min(tmp[x-1], result[y-1][x]) + data[y][x])
         result.append(tmp)
-    return result
+    return result[-1][-1]
 
 def preparemap(data, num):
     # make data table [5 x len(data)][len(data[0])]
@@ -80,21 +80,7 @@ def solution(filename):
             tmp = [int(x) for x in line.strip()]
             data.append(tmp)
         data = preparemap(data, 5)
-        result1 = findpath(data)
-        data.reverse()
-        result2 = findpath(data)
-        result2.reverse()
-        data.reverse()
-        for i in range(len(data)):
-            data[i].reverse()
-        result3 = findpath(data)
-        result = []
-        for y in range(len(result1)):
-            tmp = []
-            for x in range(len(result2[y])):
-                tmp.append(min(result1[y][x], result2[y][x], result3[y][x]))
-            result.append(tmp)
-        return result[-1][-1]
+        return findpath(data)
 
 def main():
     print(f'Result for test data for task 1 is {solution("Day_15/testdata.txt")}')
