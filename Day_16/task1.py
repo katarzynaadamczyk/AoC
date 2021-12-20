@@ -1,5 +1,5 @@
 # Katarzyna Adamczyk
-# Solution to day 16 task 1 of Advent of Code 2021
+# Solution to day 16 task 1&2 of Advent of Code 2021
 
 
 hextobin = {'0': '0000',
@@ -40,6 +40,48 @@ class TreeNode:
         for node in self.next:
             versions += node.sumversions()
         return versions
+
+    def calculateexpression(self):
+        if self.type == 0:
+            # Packets with type ID 0 are sum packets - their value is the sum of the values of their sub-packets. 
+            # If they only have a single sub-packet, their value is the value of the sub-packet.
+            return sum([node.calculateexpression() for node in self.next])
+            
+        elif self.type == 1:
+            # Packets with type ID 1 are product packets - their value is the result of multiplying together the values of their sub-packets. 
+            # If they only have a single sub-packet, their value is the value of the sub-packet.
+            result = 1
+            for node in self.next:
+                result *= node.calculateexpression()
+            return result
+        
+        elif self.type == 2:
+            # Packets with type ID 2 are minimum packets - their value is the minimum of the values of their sub-packets.
+            return min([node.calculateexpression() for node in self.next])
+        
+        elif self.type == 3:
+            # Packets with type ID 3 are maximum packets - their value is the maximum of the values of their sub-packets.
+            return max([node.calculateexpression() for node in self.next])
+            
+        elif self.type == 4:
+            return self.value
+        
+        elif self.type == 5:
+            # Packets with type ID 5 are greater than packets - their value is 1 if the value of the first sub-packet is greater than the value of the second sub-packet; 
+            # otherwise, their value is 0. These packets always have exactly two sub-packets.
+            return 1 if self.next[0].calculateexpression() > self.next[1].calculateexpression() else 0
+        
+        elif self.type == 6:
+            # Packets with type ID 6 are less than packets - their value is 1 if the value of the first sub-packet is less than the value of the second sub-packet; 
+            # otherwise, their value is 0. These packets always have exactly two sub-packets.
+            return 1 if self.next[0].calculateexpression() < self.next[1].calculateexpression() else 0
+            
+        elif self.type == 7:
+            # Packets with type ID 7 are equal to packets - their value is 1 if the value of the first sub-packet is equal to the value of the second sub-packet; 
+            # otherwise, their value is 0. These packets always have exactly two sub-packets.
+            return 1 if self.next[0].calculateexpression() == self.next[1].calculateexpression() else 0
+            
+
 
 
 def preparepacket(bits):
@@ -105,20 +147,41 @@ def preparetreeview(bits):
 def sumversions(mainnodes):
     return sum([node.sumversions() for node in mainnodes])
 
-def solution(filename):
+def calculateexpressions(mainodes):
+    return [node.calculateexpression() for node in mainodes]
+
+def solution1(filename):
     with open(filename, 'r') as myfile:
         line = myfile.readline()
         line = line.strip()
         nodes = preparetreeview(line) 
         return sumversions(nodes)
+    
+def solution2(filename):
+    with open(filename, 'r') as myfile:
+        line = myfile.readline()
+        line = line.strip()
+        nodes = preparetreeview(line) 
+        return calculateexpressions(nodes)
 
 def main():
-    print(f'Result for test data for task 1 is {solution("Day_16/testdata1.txt")}')
-    print(f'Result for test data for task 1 is {solution("Day_16/testdata2.txt")}')
-    print(f'Result for test data for task 1 is {solution("Day_16/testdata3.txt")}')
-    print(f'Result for test data for task 1 is {solution("Day_16/testdata4.txt")}')
-    print(f'Result for test data for task 1 is {solution("Day_16/testdata5.txt")}')
-    print(f'Result for data 15 for task 1 is {solution("Day_16/data16.txt")}')
+    print(f'Result for test data for task 1 is {solution1("Day_16/testdata1.txt")}')
+    print(f'Result for test data for task 1 is {solution1("Day_16/testdata2.txt")}')
+    print(f'Result for test data for task 1 is {solution1("Day_16/testdata3.txt")}')
+    print(f'Result for test data for task 1 is {solution1("Day_16/testdata4.txt")}')
+    print(f'Result for test data for task 1 is {solution1("Day_16/testdata5.txt")}')
+    print(f'Result for data 15 for task 1 is {solution1("Day_16/data16.txt")}')
 
+
+    
+    print(f'Result for test data for task 1 is {solution2("Day_16/testdata2_1.txt")}')
+    print(f'Result for test data for task 1 is {solution2("Day_16/testdata2_2.txt")}')
+    print(f'Result for test data for task 1 is {solution2("Day_16/testdata2_3.txt")}')
+    print(f'Result for test data for task 1 is {solution2("Day_16/testdata2_4.txt")}')
+    print(f'Result for test data for task 1 is {solution2("Day_16/testdata2_5.txt")}')
+    print(f'Result for test data for task 1 is {solution2("Day_16/testdata2_6.txt")}')
+    print(f'Result for test data for task 1 is {solution2("Day_16/testdata2_7.txt")}')
+    print(f'Result for test data for task 1 is {solution2("Day_16/testdata2_8.txt")}')
+    print(f'Result for data 15 for task 1 is {solution2("Day_16/data16.txt")}')
 if __name__ == '__main__':
     main()
