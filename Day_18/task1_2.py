@@ -33,22 +33,21 @@ def explodeapair(num, pos):
     
     num = num[0:pos] + '0' + num[endpairpos+1::]
     
-    for i in range(pos-1, 0, -1):
-        if num[i].isdecimal():
-            for j in range(i - 1, 0, -1):
-                if not num[j].isdecimal():
-                    break
-            pos += i - j
-            num = num[0:j+1] + str(leftnum + int(num[j+1:i+1])) + num[i+1::]
-            break
-    
     for i in range(pos+1, len(num)):
         if num[i].isdecimal():
             for j in range(i + 1, len(num)):
                 if not num[j].isdecimal():
                     break
             num = num[0:i] + str(rightnum + int(num[i:j])) + num[j::]
-            break    
+            break
+    
+    for i in range(pos-1, 0, -1):
+        if num[i].isdecimal():
+            for j in range(i - 1, 0, -1):
+                if not num[j].isdecimal():
+                    break
+            num = num[0:j+1] + str(leftnum + int(num[j+1:i+1])) + num[i+1::]
+            break
     
     return num
 
@@ -74,7 +73,6 @@ def shorten(num):
     # shortening the num
     pos = checkposition(num)
     while pos < len(num) - 1:
-        #print(num)
         num = explodeorsplit(num, pos)
         pos = checkposition(num)
     return num
@@ -103,7 +101,7 @@ def solution1(filename):
             else:
                 sum = '[' + sum + ',' + line + ']'
                 sum = shorten(sum)
-    #        print(sum)
+        print(sum)
         return magnitude(sum)
     
 
@@ -113,19 +111,16 @@ def solution2(filename):
         for line in myfile:    
             lstofnumbers.append(shorten(line.strip()))
         
-        print(lstofnumbers)
         maxmagnitude = 0
         
         for i in range(len(lstofnumbers)):
             for j in range(len(lstofnumbers)):
-                if lstofnumbers[i] != lstofnumbers[j]:
+                if i != j:
+                
                     actualmagnitude = magnitude(shorten('[' + lstofnumbers[i] + ',' + lstofnumbers[j] + ']'))
                     
                     if actualmagnitude > maxmagnitude:
                         maxmagnitude = actualmagnitude
-                        print(lstofnumbers[i])
-                        print(lstofnumbers[j])
-                    
                         
         return maxmagnitude
 
