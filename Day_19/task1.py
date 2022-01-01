@@ -1,23 +1,39 @@
 # Katarzyna Adamczyk
-# Solution to day 18 task 1&2 of Advent of Code 2021
+# Solution to day 19 task 1 of Advent of Code 2021
 
 def transformation(point, num):
     if num == 0:
         return point
     if num == 1:
-        return [point[0], point[1], -1 * point[2]]
+        return [-1 * point[1], point[0], point[2]]
     if num == 2:
-        return [point[0], -1 * point[1], point[2]]
-    if num == 3:
-        return [point[0], -1 * point[1], -1 * point[2]]
-    if num == 4:
-        return [-1 * point[0], point[1], point[2]]
-    if num == 5:
-        return [-1 * point[0], point[1], -1 * point[2]]
-    if num == 6:
         return [-1 * point[0], -1 * point[1], point[2]]
-    if num == 7:
+    if num == 3:
+        return [point[1], -1 * point[0], point[2]]
+    if num == 4:
+        return [point[0], point[1], -1 * point[2]]
+    if num == 5:
+        return [-1 * point[1], point[0], -1 * point[2]]
+    if num == 6:
         return [-1 * point[0], -1 * point[1], -1 * point[2]]
+    if num == 7:
+        return [point[1], -1 * point[0], -1 * point[2]]
+    if num == 8:
+        return [point[2], point[1], point[0]]
+    if num == 9:
+        return [-1 * point[2], point[1], point[0]]
+    if num == 10:
+        return [-1 * point[0], point[1], -1 * point[2]]
+    if num == 11:
+        return [point[2], point[1], -1 * point[0]]
+    if num == 12:
+        return [point[0], point[2], -1 * point[1]]
+    if num == 13:
+        return [-1 * point[2], point[0], -1 * point[1]]
+    if num == 14:
+        return [-1 * point[0], -1 * point[2], -1 * point[1]]
+    if num == 15:
+        return [point[2], -1 * point[0], -1 * point[1]]
     
 
 def countuniquepoints(scannersdata):
@@ -25,10 +41,11 @@ def countuniquepoints(scannersdata):
     for point in scannersdata[0]:
         uniquepoints.add(tuple(point))
     del scannersdata[0]
-    while len(scannersdata) > 0:
+    counti = len(scannersdata)
+    while len(scannersdata) > 0 and counti > 0:
         scannerstodelete = dict() # noofscanner: [ifortransformation, [diffvector]]
         for scanner in range(len(scannersdata)):
-            for i in range(8):
+            for i in range(12):
                 howmanydiffer = dict()
                 for point in uniquepoints:
                     for scannerpoint in scannersdata[scanner]:
@@ -42,6 +59,7 @@ def countuniquepoints(scannersdata):
                             diffvector = key
                             break
                     scannerstodelete.setdefault(scanner, [i, diffvector])
+                    break
         for key in sorted(list(scannerstodelete.keys()), reverse=True):
             for point in scannersdata[key]:
                 # diffvector = scannerstodelete[key][1]
@@ -50,7 +68,7 @@ def countuniquepoints(scannersdata):
                 newpoint = [newpoint[x] + scannerstodelete[key][1][x] for x in range(3)]
                 uniquepoints.add(tuple(newpoint))
             del scannersdata[key]
-        break
+        counti -= 1
     print(len(scannersdata))
     return len(uniquepoints)
 
