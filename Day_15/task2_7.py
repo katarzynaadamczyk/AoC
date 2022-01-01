@@ -51,7 +51,7 @@ def findpath(data): # searching for the path only down and right and omitting th
             tmp.append(tmp[x-1] + data[0][x])
     result.append(tmp)
     for y in range(1, len(data)):
-        print(f'y = {y} out of {len(data)-1}')
+        #print(f'y = {y} out of {len(data)-1}')
         acty = checkony(data, result, 0, y)
         if acty > 0:
             tmp = [min(result[y-1][0], acty) + data[y][0]]
