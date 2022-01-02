@@ -1,5 +1,5 @@
 # Katarzyna Adamczyk
-# Solution to day 19 task 1 of Advent of Code 2021
+# Solution to day 19 task 1&2 of Advent of Code 2021
 
 transformation_table = [
                         [[0, 1, 2], [1, 1, 1]],
