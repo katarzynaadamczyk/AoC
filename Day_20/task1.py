@@ -1,5 +1,5 @@
 # Katarzyna Adamczyk
-# Solution to day 20 task 1 of Advent of Code 2021
+# Solution to day 20 task 1&2 of Advent of Code 2021
 
 
 def imageenhacement(image, decodedata):
