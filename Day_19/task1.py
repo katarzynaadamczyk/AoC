@@ -101,6 +101,53 @@ def countuniquepoints(scannersdata):
     print(len(scannersdata))
     return len(uniquepoints)
 
+def countmanhattandistance(scannersdata):
+    uniquepoints = set()
+    for point in scannersdata[0]:
+        uniquepoints.add(tuple(point))
+    del scannersdata[0]
+    scannerspositions = [[0, 0, 0]]
+    while len(scannersdata) > 0:
+        scannerstodelete = dict() # noofscanner: [ifortransformation, [diffvector]]
+        changesmade = 0
+        for scanner in range(len(scannersdata)):
+            for i in range(len(transformation_table)):
+                howmanydiffer = dict()
+                for point in uniquepoints:
+                    for scannerpoint in scannersdata[scanner]:
+                        newscannerpoint = transformation(scannerpoint, i)
+                        diffvector = [point[x] - newscannerpoint[x] for x in range(3)]
+                        howmanydiffer.setdefault(tuple(diffvector), 0)
+                        howmanydiffer[tuple(diffvector)] += 1
+                if max(list(howmanydiffer.values())) >= 12:
+                    for key, value in howmanydiffer.items():
+                        if value >= 12:
+                            diffvector = key
+                            break
+                    scannerstodelete.setdefault(scanner, [i, diffvector])
+                    scannerspositions.append(diffvector)
+                    changesmade += 1
+                    break
+        for key in sorted(list(scannerstodelete.keys()), reverse=True):
+            print(f'delete key = {key}')
+            print(f'num = {scannerstodelete[key][0]}')
+            for point in scannersdata[key]:
+                # diffvector = scannerstodelete[key][1]
+                # num = scannerstodelete[key][0]
+                newpoint = transformation(point, scannerstodelete[key][0])
+                newpoint = [newpoint[x] + scannerstodelete[key][1][x] for x in range(3)]
+                uniquepoints.add(tuple(newpoint))
+            del scannersdata[key]
+
+    maxmanhattandistance = 0
+    for i in range(len(scannerspositions) - 1):
+        for j in range(i, len(scannerspositions)):
+            actualdistance = sum([abs(scannerspositions[i][x] - scannerspositions[j][x]) for x in range(3)])
+            if actualdistance > maxmanhattandistance:
+                maxmanhattandistance = actualdistance
+    
+    return maxmanhattandistance
+
 def solution1(filename):
     with open(filename, 'r') as myfile:
         scannersdata = []
