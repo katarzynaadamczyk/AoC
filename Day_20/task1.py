@@ -86,10 +86,54 @@ def solution1(filename):
         return lightenedup
 
 
+def solution2(filename):
+    with open(filename, 'r') as myfile:
+        image = []
+        decodedata = myfile.readline()
+        
+        # create image
+        for line in myfile:    
+            if len(line) > 1:
+                line = line.strip()
+                tmp = []
+                for char in line:
+                    if char == '#':
+                        tmp.append('1')
+                    else:
+                        tmp.append('0')
+                image.append(tmp)
+        
+        # add additional columns at the beginning and end of each line
+        for i in range(len(image)):
+            for j in range(60):
+                image[i].insert(0, '0')
+                image[i].append('0')
+        
+        # add additional rows at beginning and at the end of image
+        tmp = []
+        for j in range(len(image[0])):
+            tmp.append('0')
+        for i in range(60):
+            image.insert(0, tmp.copy())
+            image.append(tmp.copy())
+        
+        for i in range(50):
+            image = imageenhacement(image, decodedata)   
+        
+        lightenedup = 0
+        for line in image:
+            for char in line:
+                if char == '1':
+                    lightenedup += 1
+        
+        return lightenedup
+
 def main():
     print(f'Result for test data for task 1 is {solution1("Day_20/testdata.txt")}')
     print(f'Result for data 20 for task 1 is {solution1("Day_20/data20.txt")}')
     
+    print(f'Result for test data for task 2 is {solution2("Day_20/testdata.txt")}')
+    print(f'Result for data 20 for task 2 is {solution2("Day_20/data20.txt")}')
     
 
 if __name__ == '__main__':
