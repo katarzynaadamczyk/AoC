@@ -2,6 +2,9 @@
 # Solution to day 23 task 1 of Advent of Code 2021
 
 
+from types import BuiltinFunctionType
+
+
 roomforamphipod = {2: 'A', 4: 'B', 6: 'C', 8: 'D'}
 energyforamphipod = {'A': 1, 'B': 10, 'C': 100, 'D': 1000}
 
@@ -105,7 +108,67 @@ def goleft(burrow, posx, moves=0):
             
     
 def goright(burrow, posx, posy, moves=0):
+    burrows = []
+    for x in range(posx + 1, len(burrow)):
+        if burrow[x][0] == '.':
+            if len(burrow[x]) == 1:
+                burrow[x][0] = burrow[x - 1][0]
+                burrow[x - 1][0]= '.'
+                moves += 1
+                burrows.append([burrow.copy(), moves * energyforamphipod[burrow[x][0]]])
+            else:
+                if roomforamphipod[x] == burrow[x - 1][0]:
+                    if isempty(burrow, x):
+                        moves += 3
+                        burrow[x][2] = burrow[x - 1][0]
+                        burrow[x - 1][0] = '.'
+                        return [burrow, moves * energyforamphipod[burrow[x][2]]]
+                    elif containsonerightamphipod(burrow, x, burrow[x - 1][0]):
+                        moves += 2
+                        burrow[x][1] = burrow[x - 1][0]
+                        burrow[x - 1][0] = '.'
+                        return [burrow, moves * energyforamphipod[burrow[x][1]]]
+                if ifmaygoright:
+                    burrow[x][0] = burrow[x - 1][0]
+                    burrow[x - 1][0] = '.'
+                    moves += 1
+                else: 
+                    return burrows
+                    
+        else:
+            return burrows
+
+
+def gofromcorridortoroom(burrow, posx):
+    room = 0
     moves = 0
+    for key, value in roomforamphipod:
+        if value == burrow[posx][0]:
+            room = key
+            
+    obstacles = False
+    if posx > room: # need to go left    
+        for x in range(room, posx):
+            if burrow[x][0] != '.':
+                obstacles = True
+    else: # posx < room, need to go right
+        for x in range(posx + 1, room + 1):
+            if burrow[x][0] != '.':
+                obstacles = True
+    if not obstacles:
+        moves = abs(room - posx)
+        if isempty(burrow, room):
+            moves += 3
+            burrow[room][2] = burrow[posx][0]
+            burrow[posx][0] = '.'
+            return [burrow, moves * energyforamphipod[burrow[room][2]]]
+        elif containsonerightamphipod(burrow, x, burrow[x - 1][0]):
+            moves += 2
+            burrow[room][1] = burrow[posx][0]
+            burrow[posx][0] = '.'
+            return [burrow, moves * energyforamphipod[burrow[room][1]]]
+    
+    return burrow, -1
 
 
 def moveamphipods(burrow):
