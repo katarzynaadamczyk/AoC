@@ -159,6 +159,9 @@ def gofromcorridortoroom(burrow, posx):
                 obstacles = True
     if not obstacles:
         moves = abs(room - posx)
+        print('gofromcorridortoroom')
+        print_burrow(burrow)
+        print(burrow)
         if isempty(burrow, room):
             moves += 3
             burrow[room][2] = burrow[posx][0]
@@ -186,7 +189,7 @@ def moveamphipods(burrow):
             # go from corridor to room
             for x in range(len(burrow[0])):
                 if burrow[0][x] != '.':
-                    newburrow, moves = gofromcorridortoroom(deepcopy(burrow), x)
+                    newburrow, moves = gofromcorridortoroom(deepcopy(burrow[0]), x)
                     if moves > 0:
                         newburrows.append([newburrow, moves + burrow[1]])
 
@@ -194,26 +197,19 @@ def moveamphipods(burrow):
             for room, amphipod in roomforamphipod.items():
                 if not containsrightamphipods(burrow[0], room) and not containsonerightamphipod(burrow[0], room) and not isempty(burrow[0], room):
                     y = 1 if burrow[0][1] != '.' else 2
-                    burrow[0], moves = goup(burrow[0], room, y)
+                    newburrow, moves = goup(deepcopy(burrow[0]), room, y)
                     if moves > 0:
                         if ifmaygoleft(burrow[0], room):
-                            print('may go left')
-                            print_burrow(burrow[0])
-                            burrowsleft = goleft(deepcopy(burrow), room, moves)
-                            for burrow in burrowsleft:
-                                print_burrow(burrow[0])
+                            burrowsleft = goleft(deepcopy(newburrow), room, moves)
                         if ifmaygoright(burrow[0], room):
-                            print('may go right')
-                            print_burrow(burrow[0])
-                            burrowsright = goright(deepcopy(burrow), room, moves)
-            
+                            burrowsright = goright(deepcopy(newburrow), room, moves)
+                            
         # shorten newburrows - check for no moves and check for finished ones
         # if no moves - delete from newburrows
         # if finished - add its result to results
         
         burrows = newburrows    
-      #  for burrow in burrows:
-      #      print_burrow(burrow[0])
+        
         if i > 10:
             break
     
@@ -240,7 +236,9 @@ def solution1(filename):
             for position in range(1, len(alllines[i]) - 2):
                 if alllines[i][position] in 'ABCD':
                     burrow[position - 1].append(alllines[i][position])
-        
+                    
+        print(burrow)
+        print(deepcopy(burrow))
         
         return organizeamphipods(burrow)
 
