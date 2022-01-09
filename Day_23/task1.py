@@ -2,8 +2,7 @@
 # Solution to day 23 task 1 of Advent of Code 2021
 
 
-from types import BuiltinFunctionType
-
+from copy import deepcopy
 
 roomforamphipod = {2: 'A', 4: 'B', 6: 'C', 8: 'D'}
 energyforamphipod = {'A': 1, 'B': 10, 'C': 100, 'D': 1000}
@@ -38,18 +37,18 @@ def isempty(burrow, posx):
         return True
     return False
 
-def containsonerightamphipod(burrow, posx, amphipod):
+def containsonerightamphipod(burrow, posx): 
     if len(burrow[posx]) > 1:
         for room in range(len(burrow[posx])):
             if burrow[posx][room] != '.':
-                if burrow[posx][room] == amphipod and room == 2:
+                if burrow[posx][room] == roomforamphipod[posx] and room == 2:
                     return True
                 return False
     return False
 
-def containsrightamphipods(burrow, posx, amphipod):
+def containsrightamphipods(burrow, posx):
     if len(burrow[posx]) > 1:
-        if burrow[posx][1] == burrow[posx][2] and burrow[posx][2] == amphipod:
+        if burrow[posx][1] == burrow[posx][2] and burrow[posx][2] == roomforamphipod[posx]:
             return True 
     return False
 
@@ -83,19 +82,19 @@ def goleft(burrow, posx, moves=0):
                 burrow[x][0] = burrow[x + 1][0]
                 burrow[x + 1][0] = '.'
                 moves += 1
-                burrows.append([burrow.copy(), moves * energyforamphipod[burrow[x][0]]])
+                burrows.append([deepcopy(burrow), moves * energyforamphipod[burrow[x][0]]])
             else:
                 if roomforamphipod[x] == burrow[x + 1][0]:
                     if isempty(burrow, x):
                         moves += 3
                         burrow[x][2] = burrow[x + 1][0]
                         burrow[x + 1][0] = '.'
-                        return [burrow, moves * energyforamphipod[burrow[x][2]]]
-                    elif containsonerightamphipod(burrow, x, burrow[x + 1][0]):
+                        return [deepcopy(burrow), moves * energyforamphipod[burrow[x][2]]]
+                    elif containsonerightamphipod(burrow, x):
                         moves += 2
                         burrow[x][1] = burrow[x + 1][0]
                         burrow[x + 1][0] = '.'
-                        return [burrow, moves * energyforamphipod[burrow[x][1]]]
+                        return [deepcopy(burrow), moves * energyforamphipod[burrow[x][1]]]
                 if ifmaygoleft:
                     burrow[x][0] = burrow[x + 1][0]
                     burrow[x + 1][0] = '.'
@@ -105,6 +104,8 @@ def goleft(burrow, posx, moves=0):
                     
         else:
             return burrows
+
+    return burrows
             
     
 def goright(burrow, posx, posy, moves=0):
@@ -115,19 +116,19 @@ def goright(burrow, posx, posy, moves=0):
                 burrow[x][0] = burrow[x - 1][0]
                 burrow[x - 1][0]= '.'
                 moves += 1
-                burrows.append([burrow.copy(), moves * energyforamphipod[burrow[x][0]]])
+                burrows.append([deepcopy(burrow), moves * energyforamphipod[burrow[x][0]]])
             else:
                 if roomforamphipod[x] == burrow[x - 1][0]:
                     if isempty(burrow, x):
                         moves += 3
                         burrow[x][2] = burrow[x - 1][0]
                         burrow[x - 1][0] = '.'
-                        return [burrow, moves * energyforamphipod[burrow[x][2]]]
-                    elif containsonerightamphipod(burrow, x, burrow[x - 1][0]):
+                        return [deepcopy(burrow), moves * energyforamphipod[burrow[x][2]]]
+                    elif containsonerightamphipod(burrow, x):
                         moves += 2
                         burrow[x][1] = burrow[x - 1][0]
                         burrow[x - 1][0] = '.'
-                        return [burrow, moves * energyforamphipod[burrow[x][1]]]
+                        return [deepcopy(burrow), moves * energyforamphipod[burrow[x][1]]]
                 if ifmaygoright:
                     burrow[x][0] = burrow[x - 1][0]
                     burrow[x - 1][0] = '.'
@@ -137,12 +138,13 @@ def goright(burrow, posx, posy, moves=0):
                     
         else:
             return burrows
+    return burrows
 
 
 def gofromcorridortoroom(burrow, posx):
     room = 0
     moves = 0
-    for key, value in roomforamphipod:
+    for key, value in roomforamphipod.items():
         if value == burrow[posx][0]:
             room = key
             
@@ -161,21 +163,62 @@ def gofromcorridortoroom(burrow, posx):
             moves += 3
             burrow[room][2] = burrow[posx][0]
             burrow[posx][0] = '.'
-            return [burrow, moves * energyforamphipod[burrow[room][2]]]
-        elif containsonerightamphipod(burrow, x, burrow[x - 1][0]):
+            return [deepcopy(burrow), moves * energyforamphipod[burrow[room][2]]]
+        elif containsonerightamphipod(burrow, room):
             moves += 2
             burrow[room][1] = burrow[posx][0]
             burrow[posx][0] = '.'
-            return [burrow, moves * energyforamphipod[burrow[room][1]]]
+            return [deepcopy(burrow), moves * energyforamphipod[burrow[room][1]]]
     
     return burrow, -1
 
 
 def moveamphipods(burrow):
+    burrows = [[burrow, 0]]
+    results = []
+    i = 0
+    while len(burrows) > 0:
+        i += 1
+        newburrows = []
+        burrowsleft = []
+        burrowsright = []
+        for burrow in burrows:
+            # go from corridor to room
+            for x in range(len(burrow[0])):
+                if burrow[0][x] != '.':
+                    newburrow, moves = gofromcorridortoroom(deepcopy(burrow), x)
+                    if moves > 0:
+                        newburrows.append([newburrow, moves + burrow[1]])
+
+            # go from room to corridor
+            for room, amphipod in roomforamphipod.items():
+                if not containsrightamphipods(burrow[0], room) and not containsonerightamphipod(burrow[0], room) and not isempty(burrow[0], room):
+                    y = 1 if burrow[0][1] != '.' else 2
+                    burrow[0], moves = goup(burrow[0], room, y)
+                    if moves > 0:
+                        if ifmaygoleft(burrow[0], room):
+                            print('may go left')
+                            print_burrow(burrow[0])
+                            burrowsleft = goleft(deepcopy(burrow), room, moves)
+                            for burrow in burrowsleft:
+                                print_burrow(burrow[0])
+                        if ifmaygoright(burrow[0], room):
+                            print('may go right')
+                            print_burrow(burrow[0])
+                            burrowsright = goright(deepcopy(burrow), room, moves)
+            
+        # shorten newburrows - check for no moves and check for finished ones
+        # if no moves - delete from newburrows
+        # if finished - add its result to results
+        
+        burrows = newburrows    
+      #  for burrow in burrows:
+      #      print_burrow(burrow[0])
+        if i > 10:
+            break
     
     
-    
-    pass
+    return results
 
 
 def organizeamphipods(burrow):
