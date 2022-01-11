@@ -110,14 +110,6 @@ def goleft(burrow, posx, startingmoves):
                 burrow[x + 1][0] = '.'
                 burrows.append([deepcopy(burrow), startingmoves + moves * energyforamphipod[burrow[x][0]]])
             else:
-                if x in roomforamphipod.keys() and roomforamphipod[x] == burrow[x + 1][0]:
-                    if isempty(burrow, x) or containsonerightamphipod(burrow, x):
-                        amphipod = roomforamphipod[x]
-                        newburrow, downmoves = godown(deepcopy(burrow), x + 1, x, 0) # change 0 to starting moves
-                        if downmoves > 0:
-                            return [[deepcopy(newburrow), startingmoves + moves * energyforamphipod[amphipod] + downmoves]]
-                        else:
-                            return [[deepcopy(newburrow), -1]]
                 if ifmaygoleft(burrow, x):
                     burrow[x][0] = burrow[x + 1][0]
                     burrow[x + 1][0] = '.'
@@ -140,14 +132,6 @@ def goright(burrow, posx, startingmoves):
                 burrow[x - 1][0]= '.'
                 burrows.append([deepcopy(burrow), startingmoves + moves * energyforamphipod[burrow[x][0]]])
             else:
-                if x in roomforamphipod.keys() and roomforamphipod[x] == burrow[x - 1][0]:
-                    if isempty(burrow, x) or containsonerightamphipod(burrow, x):
-                        amphipod = roomforamphipod[x]
-                        newburrow, downmoves = godown(deepcopy(burrow), x - 1, x, 0) # change 0 to starting moves
-                        if downmoves > 0:
-                            return [[deepcopy(newburrow), startingmoves + moves * energyforamphipod[amphipod] + downmoves]]
-                        else:
-                            return [[deepcopy(newburrow), -1]]
                 if ifmaygoright(burrow, x):
                     burrow[x][0] = burrow[x - 1][0]
                     burrow[x - 1][0] = '.'
@@ -194,7 +178,6 @@ def moveamphipods(burrow):
         burrowsright = []
         for burrow in burrows:
             # go from corridor to room
-            #print(burrow)
             changed = True
             noofchanges = 0
             while changed:
@@ -210,8 +193,6 @@ def moveamphipods(burrow):
             if noofchanges > 0:
                 newburrows.append([burrow[0], burrow[1]])
 
-            #print(burrow)
-            #print(newburrow)
             
             # go from room to corridor
             for room in roomforamphipod.keys():
@@ -238,13 +219,13 @@ def moveamphipods(burrow):
             if ifsolved(burrow[0]):
                 results.add(burrow[1])
             elif burrow[1] > 0:
-                if convertlisttotuple(burrow[0]) not in burrowsset:
-                    burrowsset.add(convertlisttotuple(burrow[0]))
+                burrowtuple = convertlisttotuple(burrow[0])
+                if burrowtuple not in burrowsset:
+                    burrowsset.add(burrowtuple)
                     burrows.append(burrow)
                 else:
-                    sortedburrow = sorted(burrow[0])
                     for i in range(len(burrows)):
-                        if sortedburrow == sorted(burrows[i][0]):
+                        if burrowtuple == convertlisttotuple(burrows[i][0]):
                             burrows[i][1] = min(burrows[i][1], burrow[1])
                             break
         print(f'len(burrows) = {len(burrows)}')
@@ -286,7 +267,7 @@ def solution2(filename):
 def main():
     print(f'Result for test data for task 1 is {solution1("Day_23/mytest.txt")}')
     print(f'Result for test data for task 1 is {solution1("Day_23/testdata.txt")}')
-    #print(f'Result for data 23 for task 1 is {solution1("Day_23/data23.txt")}')
+    print(f'Result for data 23 for task 1 is {solution1("Day_23/data23.txt")}')
     
 
 if __name__ == '__main__':
