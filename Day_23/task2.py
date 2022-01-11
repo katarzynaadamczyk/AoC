@@ -117,9 +117,7 @@ def goleft(burrow, posx, startingmoves):
                     return burrows   
         else:
             return burrows
-
-    return burrows
-            
+    return burrows   
     
 def goright(burrow, posx, startingmoves):
     burrows = []
@@ -140,8 +138,6 @@ def goright(burrow, posx, startingmoves):
         else:
             return burrows
     return burrows
-
-
 
 def gofromcorridortoroom(burrow, posx, startingmoves):
     room = 0
@@ -236,7 +232,7 @@ def organizeamphipods(burrow):
     return min(result)
     
 
-def solution1(filename):
+def solution2(filename):
     with open(filename, 'r') as myfile:
         
         burrow = []
@@ -245,7 +241,7 @@ def solution1(filename):
             if char == '.':
                 burrow.append([char])
         
-        for i in range(2, 4):
+        for i in range(2, 6):
             for position in range(1, len(alllines[i]) - 2):
                 if alllines[i][position] in 'ABCD':
                     burrow[position - 1].append(alllines[i][position])
@@ -255,9 +251,8 @@ def solution1(filename):
 
 
 def main():
-    print(f'Result for test data for task 1 is {solution1("Day_23/mytest.txt")}')
-    print(f'Result for test data for task 1 is {solution1("Day_23/testdata.txt")}')
-    print(f'Result for data 23 for task 1 is {solution1("Day_23/data23.txt")}')
+    print(f'Result for test data for task 1 is {solution2("Day_23/testdata2.txt")}')
+    print(f'Result for data 23 for task 1 is {solution2("Day_23/data23_2.txt")}')
     
 
 if __name__ == '__main__':
