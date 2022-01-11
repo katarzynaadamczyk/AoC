@@ -85,21 +85,21 @@ def goup(burrow, posx, posy):
                 moves += 1
             else:
                 return burrow, -1
-        return burrow, moves * energyforamphipod[burrow[posx][y]]
+        return deepcopy(burrow), moves * energyforamphipod[burrow[posx][y]]
     return burrow, -1
 
-def godown(burrow, posx, x, moves=0):
+def godown(burrow, posx, x, startingmoves):
     if isempty(burrow, x):
         burrow[x][2] = burrow[posx][0]
         burrow[posx][0] = '.'
-        return [deepcopy(burrow), moves + 2 * energyforamphipod[burrow[x][2]]] # było 3
+        return [deepcopy(burrow), startingmoves + 2 * energyforamphipod[burrow[x][2]]] # było 3
     elif containsonerightamphipod(burrow, x):
         burrow[x][1] = burrow[posx][0]
         burrow[posx][0] = '.'
-        return [deepcopy(burrow), moves + 1 * energyforamphipod[burrow[x][1]]] # było 2
+        return [deepcopy(burrow), startingmoves + 1 * energyforamphipod[burrow[x][1]]] # było 2
     return [burrow, -1]
     
-def goleft(burrow, posx, startingmoves=0):
+def goleft(burrow, posx, startingmoves):
     burrows = []
     moves = 0
     for x in range(posx - 1, -1, -1):
@@ -112,7 +112,7 @@ def goleft(burrow, posx, startingmoves=0):
             else:
                 if x in roomforamphipod.keys() and roomforamphipod[x] == burrow[x + 1][0]:
                     amphipod = roomforamphipod[x]
-                    newburrow, downmoves = godown(deepcopy(burrow), x + 1, x, 0)
+                    newburrow, downmoves = godown(deepcopy(burrow), x + 1, x, 0) # change 0 to starting moves
                     if downmoves > 0:
                         return [[newburrow, startingmoves + moves * energyforamphipod[amphipod] + downmoves]]
                 if ifmaygoleft:
@@ -126,7 +126,7 @@ def goleft(burrow, posx, startingmoves=0):
     return burrows
             
     
-def goright(burrow, posx, startingmoves=0):
+def goright(burrow, posx, startingmoves):
     burrows = []
     moves = 0
     for x in range(posx + 1, len(burrow)):
@@ -140,7 +140,7 @@ def goright(burrow, posx, startingmoves=0):
             else:
                 if x in roomforamphipod.keys() and roomforamphipod[x] == burrow[x - 1][0]:
                     amphipod = roomforamphipod[x]
-                    newburrow, downmoves = godown(deepcopy(burrow), x - 1, x, 0)
+                    newburrow, downmoves = godown(deepcopy(burrow), x - 1, x, 0) # change 0 to starting moves
                     if downmoves > 0:
                         return [[newburrow, startingmoves + moves * energyforamphipod[amphipod] + downmoves]]
                 if ifmaygoright:
@@ -174,7 +174,9 @@ def gofromcorridortoroom(burrow, posx, startingmoves):
       #  print('gofromcorridortoroom')
       #  print_burrow(burrow)
       #  print(burrow)
-        return godown(deepcopy(burrow), posx, room, startingmoves + abs(room - posx) * energyforamphipod[value])
+        newburrow, downmoves = godown(deepcopy(burrow), posx, room, startingmoves + abs(room - posx) * energyforamphipod[value])
+        if downmoves > 0:
+            return [newburrow, downmoves]
     
     return [burrow, -1]
 
@@ -190,15 +192,20 @@ def moveamphipods(burrow):
         burrowsright = []
         for burrow in burrows:
             # go from corridor to room
-            oldmoves = burrow[1]
-            for x in range(len(burrow[0])):
-                if burrow[0][x] != '.':
-                    newburrow, moves = gofromcorridortoroom(deepcopy(burrow[0]), x, burrow[1])
-                    if moves > 0:
-                        burrow[0] = newburrow
-                        burrow[1] = moves
-                        newburrows.append([burrow[0], burrow[1]])
-                
+            changed = True
+            noofchanges = 0
+            while changed:
+                changed = False
+                for x in range(len(burrow[0])):
+                    if burrow[0][x] != '.':
+                        newburrow, moves = gofromcorridortoroom(deepcopy(burrow[0]), x, burrow[1])
+                        if moves > 0:
+                            burrow[0] = newburrow
+                            burrow[1] = moves
+                            changed = True
+                            noofchanges += 1
+            if noofchanges > 0:
+                newburrows.append([burrow[0], burrow[1]])
 
             # go from room to corridor
             for room in roomforamphipod.keys():
