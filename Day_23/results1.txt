@@ -1,0 +1,31 @@
+len(burrows) = 14
+len(burrows) = 42
+len(burrows) = 0
+Result for test data for task 1 is 460
+len(burrows) = 28
+len(burrows) = 291
+len(burrows) = 1527
+len(burrows) = 3867
+len(burrows) = 5457
+len(burrows) = 4562
+len(burrows) = 2320
+len(burrows) = 889
+len(burrows) = 281
+len(burrows) = 4
+Result for test data for task 1 is 12521
+len(burrows) = 0
+len(burrows) = 28
+len(burrows) = 354
+len(burrows) = 2215
+len(burrows) = 7633
+len(burrows) = 15366
+len(burrows) = 19732
+len(burrows) = 18662
+len(burrows) = 13522
+len(burrows) = 7837
+len(burrows) = 3886
+len(burrows) = 1908
+len(burrows) = 107
+len(burrows) = 0
+Result for data 23 for task 1 is 16157
+
