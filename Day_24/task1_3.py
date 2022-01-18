@@ -1,7 +1,7 @@
 # Katarzyna Adamczyk
 # Solution to day 24 task 1 of Advent of Code 2021
 
-from copy import copy, deepcopy
+from itertools import product
 
 class Solution:
     equations = []
@@ -124,38 +124,101 @@ class Solution:
             elif instrucion[0] == 'eql':
                 self.eql(instrucion[1], instrucion[2])
     
-    
-    
     def returnequations(self):
         return Solution.equations
     
-    def checkiffound(self):
-        if self.level == 13 and self.dimensions['z'] == 0:
-            return True
-        return False  
     
-def countnumber(node):
-    result = 0
-    while node is not None:
-        print(node.value)
-        print(node.level)
-        result += (node.value * 10 ** (13 - node.level))
-        node = node.previous
+def preparez(z):
+    lessthan = 1
+    while z[-4] == '/':
+        lessthan *= int(z[-3:-1])
+        z = z[1:-4]    
+    
+    return [z, lessthan]
+
+def preparedict():
+    newdict = {}
+    for i in range(14):
+        newdict[i] = ''
+    return newdict
+
+def evaluate(equation, numbers, numdict):
+    result = 0 if not equation.isdecimal() else int(equation)
+    pos = 0
+    while not (equation[0].isdecimal() or equation[0] == '-'):
+        lastbracket = equation.find(')')
+        if lastbracket > 0:
+            firstbracket = equation.rfind('(', 0, lastbracket)
+            sign = ''
+            for i in range(firstbracket + 1, lastbracket):
+                if equation[i] in '+-*/%':
+                    sign = equation[i]
+                    break
+            nums = equation[firstbracket+1:lastbracket].split(sign)
+            for i in range(len(nums)):
+                if nums[i][0] == 'n' and nums[i][-1] == ']':
+                    if numdict[int(nums[i][nums[i].find('[')+1:-1])] == '':
+                        numdict[int(nums[i][nums[i].find('[')+1:-1])] = int(numbers[pos])
+                        pos += 1
+                    nums[0] = numdict[int(nums[i][nums[i].find('[')+1:-1])]
+                else: 
+                    nums[i] = int(nums[i])
+            if sign == '+':
+                result = nums[0] + nums[1]
+            elif sign == '-':
+                result = nums[0] - nums[1]
+            elif sign == '*':
+                result = nums[0] * nums[1]
+            elif sign == '/':
+                result = nums[0] // nums[1]
+            elif sign == '%':
+                result = nums[0] % nums[1]
+            equation = equation[0:firstbracket] + str(result) + equation[lastbracket+1::]
+        else:
+            result = numdict[int(equation[equation.find('[')+1:-1])] if '[' in equation else result
+            equation = str(result)
     return result
+
+def countnumber(equations):
+    countz = 1000
+    howmany = equations[0][0].count('num[')
+    
+
+    for nums in product('987654321', repeat=howmany):
+        mydict = preparedict()
+        countz = evaluate(equations[0][0], nums, mydict)
+        if countz >= equations[0][1]:
+            continue
+        for i in range(1, len(equations)):
+            evaluation = evaluate(equations[i][0], [], mydict)
+            if evaluation < 1 or evaluation > 9:
+                break
+            mydict[int(equations[i][1][equations[i][1].find('[')+1:-1])] = evaluation
+        print(countz)
+        print(mydict)
+        if evaluation < 1 or evaluation > 9:
+            continue
+        else:
+            break
+    
+    result = ''
+    for i in range(14):
+        result += str(mydict[i])
+    
+    return int(result)
+    
 
 def findmaxserialnumber(data):
     dimensions = {'w': '0', 'x': '0', 'y': '0', 'z': '0'}
-    equations = []
     newnode = None
     for i in range(14):
         newnode = Solution(dimensions, data, i, 'num[' + str(i) + ']', newnode)
         dimensions = newnode.dimensions
-        print(newnode.evaluateequation('((((((((((((num[0]+7)*26)+(num[1]+15))*26)+(num[2]+2))+(num[4]+14))+(num[6]+15))/26)/26)+(num[10]+12))*26)+(num[11]+2))', 4))
         
     equations = Solution.equations
-    equations.append([dimensions['z'], '0'])
+    equations.insert(0, preparez(dimensions['z']))
     print(equations)
-    return 0 #countnumber(result)
+    return countnumber(equations)
 
 def solution1(filename):
     with open(filename, 'r') as myfile:
