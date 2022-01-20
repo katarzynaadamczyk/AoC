@@ -5,6 +5,8 @@ from itertools import product
 
 class Solution:
     equations = []
+    commonparts = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [],
+                   8: [], 9: [], 10: [], 11: [], 12: [], 13: []}
     
     def __init__(self, dimensions, data, lvl, val, previous=None) -> None:
         self.level = lvl
@@ -55,15 +57,17 @@ class Solution:
         return [min(resultmax, resultmin), max(resultmax, resultmin)]
     
     def dotheyhavecommonpart(self, equation1, equation2):
+        print('dotheyhavecommonpart')
+        print(equation1)
         evaluation1 = self.evaluaterange(equation1)
+        print(evaluation1)
+        print(equation2)
         evaluation2 = self.evaluaterange(equation2)
-        if evaluation1[0] >= evaluation2[0] and evaluation1[0] <= evaluation2[1]:
-            return True
-        if evaluation1[1] >= evaluation2[0] and evaluation1[1] <= evaluation2[1]:
-            return True
-        if evaluation2[0] >= evaluation1[0] and evaluation2[0] <= evaluation1[1]:
-            return True
-        if evaluation2[1] >= evaluation1[0] and evaluation2[1] <= evaluation1[1]:
+        print(evaluation2)
+        if ((evaluation1[0] >= evaluation2[0] and evaluation1[0] <= evaluation2[1]) or (evaluation1[1] >= evaluation2[0] and evaluation1[1] <= evaluation2[1]) or
+           (evaluation2[0] >= evaluation1[0] and evaluation2[0] <= evaluation1[1]) or (evaluation2[1] >= evaluation1[0] and evaluation2[1] <= evaluation1[1])):
+            if '[' in equation2:
+                Solution.commonparts[int(equation2[equation2.find('[')+1:-1])] = [max(evaluation1[0], evaluation2[0]), min(evaluation1[1], evaluation2[1])]
             return True
         return False
         
@@ -200,7 +204,6 @@ def countnumber(equations):
             continue
         else:
             break
-        break
     
     result = ''
     for i in range(14):
@@ -215,11 +218,14 @@ def findmaxserialnumber(data):
     for i in range(14):
         newnode = Solution(dimensions, data, i, 'num[' + str(i) + ']', newnode)
         dimensions = newnode.dimensions
+        print(f'i = {i}')
+        print(dimensions)
         
     equations = Solution.equations
     equations.insert(0, preparez(dimensions['z']))
     print(equations)
-    return countnumber(equations)
+    print(Solution.commonparts)
+    return 0#countnumber(equations)
 
 def solution1(filename):
     with open(filename, 'r') as myfile:
