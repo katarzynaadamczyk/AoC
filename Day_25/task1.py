@@ -29,10 +29,10 @@ def movedown(data):
     for x in range(len(data[0])):
         for y in range(len(data) - 1):
             if data[y][x] == 'v' and data[y + 1][x] == '.':
-                newdata[y][x + 1], newdata[y][x] = data[y][x], data[y][x + 1]
+                newdata[y + 1][x], newdata[y][x] = data[y][x], data[y + 1][x]
                 moves += 1
-        if data[y][-1] == '>' and data[y][0] == '.':
-            newdata[y][0], newdata[y][-1] = data[y][-1], data[y][0]
+        if data[-1][x] == 'v' and data[0][x] == '.':
+            newdata[0][x], newdata[-1][x] = data[-1][x], data[0][x]
             moves += 1
     return newdata, moves
 
@@ -44,7 +44,6 @@ def findfirststepwithnomoves(data):
         data, newmoves = movedown(data)
         if moves + newmoves == 0:
             break
-        break
     print_data(data)
     return stepcount
 
@@ -65,7 +64,7 @@ def solution1(filename):
 
 def main():
     print(f'Result for test data for task 1 is {solution1("Day_25/testdata.txt")}')
-    #print(f'Result for data 25 for task 1 is {solution1("Day_25/data25.txt")}')
+    print(f'Result for data 25 for task 1 is {solution1("Day_25/data25.txt")}')
     
 
 if __name__ == '__main__':
