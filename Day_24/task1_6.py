@@ -2,7 +2,7 @@
 # Solution to day 24 task 1 of Advent of Code 2021
 
 
-surelywrongsn = {} # level: z
+surelywrongsn = set() # level: z
 digitsmaxtolow = [9, 8, 7, 6, 5, 4, 3, 2, 1]
 digitslowtomax = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -12,31 +12,38 @@ addy = [7,      15,     2,      15,     14,     2,      15,     1,      15,     
 
 
 def findserialnumber(level, modelnumber, z, digits):
-    if (level in surelywrongsn and surelywrongsn[level] == z) or level == 14:
+    
+    if (level, z) in surelywrongsn or level == 14:
         return None
     
     modelnumber *= 10
     originalz = z
     
     for digit in range(len(digits)):
+        if level == 0:
+            print(digits[digit])
+        w = digits[digit]
         z = originalz
-        x = z % 26 + addx[level]
+        x = z % 26 
         z //= divz[level]
-        x = 1 if x == digits[digit] else 0
+        x += addx[level]
+        x = 1 if x == w else 0
         x = 1 if x == 0 else 0
-        y = 25 * x + 1
+        y = 25 
+        y *= x
+        y += 1
         z *= y
-        y = digits[digit] + addy[level]
+        y = w + addy[level]
         y *= x
         z += y
     
         if z == 0 and level == 13:
-            return modelnumber + digits[digit];
-        newresult = findserialnumber(level + 1, modelnumber + digits[digit], z, digits);
+            return modelnumber + digits[digit]
+        newresult = findserialnumber(level + 1, modelnumber + digits[digit], z, digits)
         if newresult is not None:
-            return newresult;
+            return newresult
         
-    surelywrongsn[level] = originalz
+    surelywrongsn.add((level, originalz))
     return None
     
 
