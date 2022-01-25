@@ -1,5 +1,5 @@
 # Katarzyna Adamczyk
-# Solution to day 24 task 1 of Advent of Code 2021
+# Solution to day 24 task 1&2 of Advent of Code 2021
 
 
 surelywrongsn = set() # level: z
@@ -51,11 +51,15 @@ def solution1(filename):
     
     return findserialnumber(0, 0, 0, digitsmaxtolow)
 
+def solution2(filename):
+    
+    return findserialnumber(0, 0, 0, digitslowtomax)
 
 
 
 def main():
     print(f'Result for data24 for task 1 is {solution1("Day_24/data24.txt")}')
+    print(f'Result for data24 for task 2 is {solution2("Day_24/data24.txt")}')
     
 
 if __name__ == '__main__':
