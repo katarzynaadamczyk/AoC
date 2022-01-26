@@ -2,29 +2,29 @@
 # Solution to day 24 task 1 of Advent of Code 2021
 
 from itertools import product
+from select import select
 
 class Solution:
     # prepared
+    equations = []
+    
     def __init__(self, rrange=14) -> None:
-        self.mydata = []
         self.rrange = rrange
         self.preparedata()
+        
     
     def preparedata(self):
-        mydict = {}
+        self.dimensions = {}
         for i in range(self.rrange):
-            newset = set()
-            for j in range(1, 10):
-                newset.add(j)
-            mydict[i] = newset
+            lst = []
+            for j in range(9, 0, -1):
+                lst.append(j)
+            self.dimensions[i] = lst
         for i in 'xyzw':
-            mydict[i] = '0'
-        print(mydict)
-        self.mydata.append(mydict)
+            self.dimensions[i] = '0'
+        print(self.dimensions)
         
-
-    # copied from previous files
-    
+    # evaluates equation putting num in every possible num[] in the equation
     def evaluateequation(self, equation, num):
         result = 0 if not equation.isdecimal() else int(equation)
         while not (equation[0].isdecimal() or equation[0] == '-'):
@@ -64,17 +64,10 @@ class Solution:
         return [min(resultmax, resultmin), max(resultmax, resultmin)]
     
     def dotheyhavecommonpart(self, equation1, equation2):
-        print('dotheyhavecommonpart')
-        print(equation1)
         evaluation1 = self.evaluaterange(equation1)
-        print(evaluation1)
-        print(equation2)
         evaluation2 = self.evaluaterange(equation2)
-        print(evaluation2)
         if ((evaluation1[0] >= evaluation2[0] and evaluation1[0] <= evaluation2[1]) or (evaluation1[1] >= evaluation2[0] and evaluation1[1] <= evaluation2[1]) or
            (evaluation2[0] >= evaluation1[0] and evaluation2[0] <= evaluation1[1]) or (evaluation2[1] >= evaluation1[0] and evaluation2[1] <= evaluation1[1])):
-            if '[' in equation2:
-                Solution.commonparts[int(equation2[equation2.find('[')+1:-1])] = [max(evaluation1[0], evaluation2[0]), min(evaluation1[1], evaluation2[1])]
             return True
         return False
         
@@ -88,7 +81,7 @@ class Solution:
             self.dimensions[a] = str(int(self.dimensions[a]) + int(b))
         elif self.dimensions[a].isdecimal() and len(b) > 1 and b[0] == '-' and b[1::].isdecimal():
             self.dimensions[a] = str(int(self.dimensions[a]) + int(b))
-        elif (self.dimensions[b] if b.isalpha() else b) != '0':
+        elif (self.dimensions[b] if b.isalpha() else b) != '0' and b != '':
             if len(b) > 1 and b[0] == '-':
                 self.dimensions[a] = '(' + self.dimensions[a] + b + ')'
             else:
@@ -120,108 +113,77 @@ class Solution:
         if self.dimensions[a] == '1' and equation != '0':
             Solution.equations.append([equation, (self.dimensions[b] if b.isalpha() else b)])
     
-    def changedimensions(self):
-        for instrucion in self.data[self.level]:
-            if instrucion[0] == 'inp':
-                self.inp(instrucion[1], self.value)
-            elif instrucion[0] == 'add':
-                self.add(instrucion[1], instrucion[2])
-            elif instrucion[0] == 'mul':
-                self.mul(instrucion[1], instrucion[2])
-            elif instrucion[0] == 'div':
-                self.div(instrucion[1], instrucion[2])
-            elif instrucion[0] == 'mod':
-                self.mod(instrucion[1], instrucion[2])
-            elif instrucion[0] == 'eql':
-                self.eql(instrucion[1], instrucion[2])
-    
-    def returnequations(self):
-        return Solution.equations
-    
-    
-def preparez(z):
-    lessthan = 1
-    while z[-4] == '/':
-        lessthan *= int(z[-3:-1])
-        z = z[1:-4]    
-    
-    return [z, lessthan]
+    def changedimensions(self, data):
+        for i in range(len(data)):
+            for instrucion in data[i]:
+                if instrucion[0] == 'inp':
+                    self.inp(instrucion[1], 'num[' + str(i) + ']')
+                elif instrucion[0] == 'add':
+                    self.add(instrucion[1], instrucion[2])
+                elif instrucion[0] == 'mul':
+                    self.mul(instrucion[1], instrucion[2])
+                elif instrucion[0] == 'div':
+                    self.div(instrucion[1], instrucion[2])
+                elif instrucion[0] == 'mod':
+                    self.mod(instrucion[1], instrucion[2])
+                elif instrucion[0] == 'eql':
+                    self.eql(instrucion[1], instrucion[2])
 
-def preparedict():
-    newdict = {}
-    for i in range(14):
-        newdict[i] = ''
-    return newdict
-
-def evaluate(equation, numbers, numdict):
-    result = 0 if not equation.isdecimal() else int(equation)
-    pos = 0
-    while not (equation[0].isdecimal() or equation[0] == '-'):
-        lastbracket = equation.find(')')
-        if lastbracket > 0:
-            firstbracket = equation.rfind('(', 0, lastbracket)
-            sign = ''
-            for i in range(firstbracket + 1, lastbracket):
-                if equation[i] in '+-*/%':
-                    sign = equation[i]
-                    break
-            nums = equation[firstbracket+1:lastbracket].split(sign)
-            for i in range(len(nums)):
-                if nums[i][0] == 'n' and nums[i][-1] == ']':
-                    if numdict[int(nums[i][nums[i].find('[')+1:-1])] == '':
-                        numdict[int(nums[i][nums[i].find('[')+1:-1])] = int(numbers[pos])
-                        pos += 1
-                    nums[0] = numdict[int(nums[i][nums[i].find('[')+1:-1])]
-                else: 
-                    nums[i] = int(nums[i])
-            if sign == '+':
-                result = nums[0] + nums[1]
-            elif sign == '-':
-                result = nums[0] - nums[1]
-            elif sign == '*':
-                result = nums[0] * nums[1]
-            elif sign == '/':
-                result = nums[0] // nums[1]
-            elif sign == '%':
-                result = nums[0] % nums[1]
-            equation = equation[0:firstbracket] + str(result) + equation[lastbracket+1::]
-        else:
-            result = numdict[int(equation[equation.find('[')+1:-1])] if '[' in equation else result
-            equation = str(result)
-    return result
-
-def countnumber(equations):
-    countz = 1000
-    howmany = equations[0][0].count('num[')
     
+    def preparez(self, z):
+        lessthan = 1
+        while z[-4] == '/':
+            lessthan *= int(z[-3:-1])
+            z = z[1:-4]    
+    
+        return [z, lessthan]
 
-    for nums in product('987654321', repeat=howmany):
-        mydict = preparedict()
-        countz = evaluate(equations[0][0], nums, mydict)
-        if countz >= equations[0][1]:
-            continue
-        for i in range(1, len(equations)):
-            evaluation = evaluate(equations[i][0], [], mydict)
-            if evaluation < 1 or evaluation > 9:
-                break
-            mydict[int(equations[i][1][equations[i][1].find('[')+1:-1])] = evaluation
-        print(countz)
-        print(mydict)
-        if evaluation < 1 or evaluation > 9:
-            continue
-        else:
-            break
+    def evaluate(self, equation, numdict):
+        result = 0 if not equation.isdecimal() else int(equation)
+        while not (equation[0].isdecimal() or equation[0] == '-'):
+            lastbracket = equation.find(')')
+            if lastbracket > 0:
+                firstbracket = equation.rfind('(', 0, lastbracket)
+                sign = ''
+                for i in range(firstbracket + 1, lastbracket):
+                    if equation[i] in '+-*/%':
+                        sign = equation[i]
+                        break
+                nums = equation[firstbracket+1:lastbracket].split(sign)
+                for i in range(len(nums)):
+                    if nums[i][0] == 'n' and nums[i][-1] == ']':
+                        nums[0] = numdict[int(nums[i][nums[i].find('[')+1:-1])]
+                    else: 
+                        nums[i] = int(nums[i])
+                if sign == '+':
+                    result = nums[0] + nums[1]
+                elif sign == '-':
+                    result = nums[0] - nums[1]
+                elif sign == '*':
+                    result = nums[0] * nums[1]
+                elif sign == '/':
+                    result = nums[0] // nums[1]
+                elif sign == '%':
+                    result = nums[0] % nums[1]
+                equation = equation[0:firstbracket] + str(result) + equation[lastbracket+1::]
+            else:
+                result = numdict[int(equation[equation.find('[')+1:-1])] if '[' in equation else result
+                equation = str(result)
+        return result
+
     
-    result = ''
-    for i in range(14):
-        result += str(mydict[i])
-    
-    return int(result)
+    def solve(self, data):
+        self.changedimensions(data)
+        print(self.dimensions)
+        print(Solution.equations)
+        mydict = {0: 9, 1: 9, 2: 9}
+        print(self.evaluate(Solution.equations[0][0], mydict))
+        return 0
     
 
 def findmaxserialnumber(data):
     newsol = Solution()
-    return 0#countnumber(equations)
+    return newsol.solve(data)
 
 def solution1(filename):
     with open(filename, 'r') as myfile:
@@ -245,6 +207,11 @@ def solution1(filename):
 
 def main():
     print(f'Result for data24 for task 1 is {solution1("Day_24/data24.txt")}')
+    for xyz in product(['a', 'b', 'c'], ['d', 'e']):
+        mydict = {}
+        for i in range(len(xyz)):
+            mydict[i] = xyz[i]
+        print(mydict)
     
 
 if __name__ == '__main__':
