@@ -1,7 +1,5 @@
 # Katarzyna Adamczyk
-# Solution to day 22 task 1 of Advent of Code 2021
-
-from itertools import product
+# Solution to day 22 task 1&2 of Advent of Code 2021
 
 # not finished 
 # I want to check if the next cube is in the previous ones and in such a way add them to result
@@ -9,6 +7,13 @@ from itertools import product
 def checkifincube(data, cube):
     if ((data[0] >= cube[0] and data[1] <= cube[1]) and (data[2] >= cube[2] and data[3] <= cube[3]) and (data[4] >= cube[4] and data[5] <= cube[5])):
         return True
+    return False
+
+def checkifpartiallyincube(data, cube):
+    if ((data[0] >= cube[0] and data[0] <= cube[1]) or (data[1] >= cube[0] and data[1] <= cube[1])):
+        if ((data[2] >= cube[2] and data[2] <= cube[3]) or (data[3] >= cube[2] and data[3] <= cube[3])):
+            if ((data[4] >= cube[4] and data[4] <= cube[5]) or (data[5] >= cube[4] and data[5] <= cube[5])):
+                return True
     return False
 
 
@@ -70,11 +75,11 @@ def solution2(filename):
         
 
 def main():
-    print(f'Result for test data for task 1 is {solution1("Day_22/testdata.txt")}')
-    print(f'Result for data 22 for task 1 is {solution1("Day_22/data22.txt")}')
+    print(f'Result for test data for task 1 is {solution1("Day_22/testdata.txt")} (should be 590784)')
+    print(f'Result for data 22 for task 1 is {solution1("Day_22/data22.txt")} (should be 615869)')
     
     print(f'Result for test data for task 2 is {solution2("Day_22/testdata.txt")}')
-    print(f'Result for test data for task 2 is {solution2("Day_22/testdata2.txt")}')
+    print(f'Result for test data for task 2 is {solution2("Day_22/testdata2.txt")} (should be 2758514936282235)')
     print(f'Result for data 20 for task 2 is {solution2("Day_22/data22.txt")}')
 
 if __name__ == '__main__':
