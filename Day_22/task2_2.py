@@ -16,6 +16,18 @@ def checkifpartiallyincube(data, cube):
                 return True
     return False
 
+def dividecube(cubetodivide, cubeoriginal, returnexcluded=True):
+    listofcubestocheckanddivide = [cubetodivide]
+    lst = []
+    ret = []
+    while len(listofcubestocheckanddivide) > 0:
+        for cube in listofcubestocheckanddivide:
+            pass
+        
+        
+        listofcubestocheckanddivide = lst
+    return ret
+
 
 def countlightson(data, cubeson, cubesoff):
     cubes = ((data[1] + 1 - data[0]) * (data[3] + 1 - data[2]) * (data[5] + 1 - data[4]))
