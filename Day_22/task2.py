@@ -11,9 +11,9 @@ def checkifincube(data, cube):
 def darkenononeaxe(datamin, datamax, cubemin, cubemax):
     oneaxedata = []
     if datamin > cubemin:
-        oneaxedata.append([cubemin, datamin])
+        oneaxedata.append([cubemin, datamin - 1])
         if datamax < cubemax:
-            oneaxedata.append([datamin + 1, datamax])
+            oneaxedata.append([datamin, datamax])
             oneaxedata.append([datamax + 1, cubemax])
         else:
             oneaxedata.append([datamin + 1, cubemax])
@@ -65,12 +65,12 @@ def lightenoneaxe(datamin, datamax, cubemin, cubemax):
         if datamax < cubemin:
             oneaxedata.append([datamin, datamax])
         else:
-            oneaxedata.append([datamin, cubemin])
+            oneaxedata.append([datamin, cubemin - 1])
             if datamax > cubemax:
-                oneaxedata.append([cubemin + 1, cubemax])
+                oneaxedata.append([cubemin, cubemax])
                 oneaxedata.append([cubemax + 1, datamax])
             else:
-                oneaxedata.append([cubemin + 1, datamax])
+                oneaxedata.append([cubemin, datamax])
     elif datamin <= cubemax and datamax > cubemax:
         oneaxedata.append([datamin, cubemax])
         oneaxedata.append([cubemax + 1, datamax])
@@ -193,11 +193,11 @@ def solution2(filename):
         
 
 def main():
-    print(f'Result for test data for task 1 is {solution1("Day_22/testdata.txt")}')
-    print(f'Result for data 22 for task 1 is {solution1("Day_22/data22.txt")}')
+    print(f'Result for test data for task 1 is {solution1("Day_22/testdata.txt")} (should be 590784)')
+    print(f'Result for data 22 for task 1 is {solution1("Day_22/data22.txt")} (should be 615869)')
     
     print(f'Result for test data for task 2 is {solution2("Day_22/testdata.txt")}')
-    print(f'Result for test data for task 2 is {solution2("Day_22/testdata2.txt")}')
+    print(f'Result for test data for task 2 is {solution2("Day_22/testdata2.txt")} (should be 2758514936282235)')
     print(f'Result for data 20 for task 2 is {solution2("Day_22/data22.txt")}')
 
 if __name__ == '__main__':

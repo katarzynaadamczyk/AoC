@@ -39,7 +39,7 @@ def divideoneaxe(datamin, datamax, cubemin, cubemax):
     
     return oneaxedata
 
-def lighten(adddatax, adddatay, adddataz, cubeoriginal):
+def lightenordarken(adddatax, adddatay, adddataz, cubeoriginal):
     datatodivide = []
     datatoreturn = []
     for x in adddatax:
@@ -54,11 +54,8 @@ def lighten(adddatax, adddatay, adddataz, cubeoriginal):
     
     return datatodivide, datatoreturn
 
-def darken(adddatax, adddatay, adddataz, cubeoriginal):
-    # to do
-    return [], []
 
-def dividecube(cubetodivide, cubeoriginal, iftolighten=True):
+def dividecube(cubetodivide, cubeoriginal):
     listofcubestocheckanddivide = [cubetodivide]
     ret = []
     while len(listofcubestocheckanddivide) > 0:
@@ -67,10 +64,7 @@ def dividecube(cubetodivide, cubeoriginal, iftolighten=True):
             adddatax = divideoneaxe(cube[0], cube[1], cubeoriginal[0], cubeoriginal[1])
             adddatay = divideoneaxe(cube[2], cube[3], cubeoriginal[2], cubeoriginal[3])
             adddataz = divideoneaxe(cube[4], cube[5], cubeoriginal[4], cubeoriginal[5])
-            if iftolighten:
-                newlst, newret = lighten(adddatax, adddatay, adddataz, cubeoriginal)
-            else:
-                newlst, newret = darken(adddatax, adddatay, adddataz, cubeoriginal)
+            newlst, newret = lightenordarken(adddatax, adddatay, adddataz, cubeoriginal)
             ret += newret
             lst += newlst
         listofcubestocheckanddivide = lst
@@ -78,38 +72,34 @@ def dividecube(cubetodivide, cubeoriginal, iftolighten=True):
 
 
 def addlights(newcube, cubeson):
-    print(newcube)
-    print(cubeson)
     if len(cubeson) < 1:
         cubeson.append(newcube)
     else:
         listofcubestocheckanddivide = [newcube]
-        # TODO, cos z warunkiem
-       # while len(listofcubestocheckanddivide) > 0:
-        
         for cubeoriginal in cubeson:
             lst = []
             for cubetodivide in listofcubestocheckanddivide:
                 lst += dividecube(cubetodivide, cubeoriginal)
             listofcubestocheckanddivide = lst
-        print(len(listofcubestocheckanddivide))
-        print(listofcubestocheckanddivide)
         cubeson += listofcubestocheckanddivide
         
     return cubeson
 
 
 # to do - remove lights that any of the cubes on have in common with data
-def removelights(data, cubeson):
-    cubes = ((data[1] + 1 - data[0]) * (data[3] + 1 - data[2]) * (data[5] + 1 - data[4]))
-    cubeson.append(data)
-    return cubes
+def removelights(cubetodarken, cubeson):
+    if len(cubeson) > 1:
+        lst = []
+        for cubetodivide in cubeson:
+            lst += dividecube(cubetodivide, cubetodarken)
+        cubeson = lst
+        
+    return cubeson
 
 def countlights(cubeson):
     cubes = 0
     
     for cube in cubeson:
-      #  cubes += ((cube[1] - cube[0]) * (cube[3] - cube[2]) * (cube[5] - cube[4])) # don't know if there will be need to add 1
         cubes += ((cube[1] + 1 - cube[0]) * (cube[3] + 1 - cube[2]) * (cube[5] + 1 - cube[4]))
     
     return cubes
@@ -128,8 +118,8 @@ def solution1(filename):
             if data[0] >= -50 and data[0] <= 50:    
                 if type == 'on':
                     cubeson = addlights(data, cubeson)
-                #else:
-                #    cubeson = removelights(data, cubeson)
+                else:
+                    cubeson = removelights(data, cubeson)
             else:
                 break   
         
@@ -141,8 +131,7 @@ def solution2(filename):
     with open(filename, 'r') as myfile:
         
         cubeson = []
-        cubesoff = []
-        actresult = 0
+        i = 0
         for line in myfile:    
             type = line[0:line.find(' ')]
             line = line[line.find(' ')::].strip()
@@ -151,30 +140,23 @@ def solution2(filename):
                 data.append(int(somerange[somerange.find('=')+1:somerange.find('.')]))
                 data.append(int(somerange[somerange.rfind('.')+1::]))  
             if type == 'on':
-                actresult += countlightson(data, cubeson, cubesoff)
+                cubeson = addlights(data, cubeson)
             else:
-                actresult -= countlightsoff(data, cubeson, cubesoff) 
+                cubeson = removelights(data, cubeson)
+            i += 1
+            print(i)
         
-        return actresult
+        return countlights(cubeson)
         
 
-def main():
-    print('some tests')
-    cube1 = [-30, 18, -5, 44, -26, 27]
-    cube2 = [-39, 11, -42, 11, -21, 24]
-    print(cube1)
-    print(cube2)
-    print(divideoneaxe(cube1[0], cube1[1], cube2[0], cube2[1]))
-    print(divideoneaxe(cube2[0], cube2[1], cube1[0], cube1[1]))
-  #  print(lighten(cube1, cube2))
-    
+def main():  
     
     print(f'Result for test data for task 1 is {solution1("Day_22/testdata.txt")} (should be 590784)')
-    #print(f'Result for data 22 for task 1 is {solution1("Day_22/data22.txt")} (should be 615869)')
+    print(f'Result for data 22 for task 1 is {solution1("Day_22/data22.txt")} (should be 615869)')
     
-    #print(f'Result for test data for task 2 is {solution2("Day_22/testdata.txt")}')
-    #print(f'Result for test data for task 2 is {solution2("Day_22/testdata2.txt")} (should be 2758514936282235)')
-    #print(f'Result for data 20 for task 2 is {solution2("Day_22/data22.txt")}')
+    print(f'Result for test data for task 2 is {solution2("Day_22/testdata.txt")}')
+    print(f'Result for test data for task 2 is {solution2("Day_22/testdata2.txt")} (should be 2758514936282235)')
+    print(f'Result for data 20 for task 2 is {solution2("Day_22/data22.txt")}')
 
 if __name__ == '__main__':
     main()
