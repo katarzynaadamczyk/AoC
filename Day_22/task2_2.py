@@ -78,19 +78,24 @@ def dividecube(cubetodivide, cubeoriginal, iftolighten=True):
 
 
 def addlights(newcube, cubeson):
+    print(newcube)
+    print(cubeson)
     if len(cubeson) < 1:
         cubeson.append(newcube)
     else:
         listofcubestocheckanddivide = [newcube]
         # TODO, cos z warunkiem
-        while len(listofcubestocheckanddivide) > 0:
+       # while len(listofcubestocheckanddivide) > 0:
+        
+        for cubeoriginal in cubeson:
             lst = []
             for cubetodivide in listofcubestocheckanddivide:
-                for cubeoriginal in cubeson:
-                    lst += dividecube(cubetodivide, cubeoriginal)
+                lst += dividecube(cubetodivide, cubeoriginal)
             listofcubestocheckanddivide = lst
-            print(len(listofcubestocheckanddivide))
-            print(listofcubestocheckanddivide)
+        print(len(listofcubestocheckanddivide))
+        print(listofcubestocheckanddivide)
+        cubeson += listofcubestocheckanddivide
+        
     return cubeson
 
 
@@ -123,8 +128,8 @@ def solution1(filename):
             if data[0] >= -50 and data[0] <= 50:    
                 if type == 'on':
                     cubeson = addlights(data, cubeson)
-                else:
-                    cubeson = removelights(data, cubeson)
+                #else:
+                #    cubeson = removelights(data, cubeson)
             else:
                 break   
         
