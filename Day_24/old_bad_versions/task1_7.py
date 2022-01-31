@@ -3,7 +3,7 @@
 
 
 
-from copy import deepcopy
+from copy import copy
 
 
 surelywrongsn = set() # level: z
@@ -57,12 +57,12 @@ def findserialnumber(level, modelnumber, dimensions, digits, data):
         return None
     
     modelnumber *= 10
-    originaldimensions = deepcopy(dimensions)
+    originaldimensions = copy(dimensions)
     
     for digit in range(len(digits)):
         if level == 0:
             print(digits[digit])
-        dimensions = deepcopy(originaldimensions)
+        dimensions = copy(originaldimensions)
         dimensions = changedimensions(dimensions, data, level, digits[digit])
         
     
@@ -72,7 +72,7 @@ def findserialnumber(level, modelnumber, dimensions, digits, data):
         if newresult is not None:
             return newresult
         
-    surelywrongsn.add((level, dimensions['z']))
+    surelywrongsn.add((level, originaldimensions['z']))
     return None
     
 
