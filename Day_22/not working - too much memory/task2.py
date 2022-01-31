@@ -134,21 +134,21 @@ def countcubes(cubeson):
 
 def returnresult(cubeson): # working here, need to check intersections for each set
     cubesonset = set()
-    print(len(cubeson))
+    #print(len(cubeson))
     for cube in cubeson:
         cubesonset.add(tuple(cube))  
-    print(len(cubesonset))
+    #print(len(cubesonset))
     cubesonset = list(cubesonset)
     tuplestoremove = set()
     for i in range(len(cubesonset) - 1):
         for j in range(i + 1, len(cubesonset)):
             if checkifincube(cubesonset[i], cubesonset[j]):
                 tuplestoremove.add(cubesonset[i])
-    print(len(tuplestoremove))
+   # print(len(tuplestoremove))
     for t in tuplestoremove:
         cubesonset.remove(t)
-    print(len(cubesonset))
-    print(cubesonset)
+    #print(len(cubesonset))
+    #print(cubesonset)
     return countcubes(cubesonset)
 
 def solution1(filename):
