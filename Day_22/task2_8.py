@@ -66,13 +66,7 @@ def dividecube(cubetodivide, cubeoriginal, iftolighten=True):
     
     while len(listofcubestocheckanddivide) > 0:
         lst = []
-       # ret2 = []
         for cube in listofcubestocheckanddivide:
-            #if not checkifpartiallyincube(cube, cubeoriginal) and not checkifincube(cube, cubeoriginal):
-            #    ret.append(cube)
-          #  elif checkifpartiallyincube(cube, cubeoriginal) and not checkifincube(cube, cubeoriginal):
-            #else:
-          #  if not checkifincube(cube, cubeoriginal):
             if checkifpartiallyincube(cube, cubeoriginal):
                 adddatax = divideoneaxe(cube[0], cube[1], cubeoriginal[0], cubeoriginal[1])
                 adddatay = divideoneaxe(cube[2], cube[3], cubeoriginal[2], cubeoriginal[3])
@@ -85,9 +79,6 @@ def dividecube(cubetodivide, cubeoriginal, iftolighten=True):
             
             
         listofcubestocheckanddivide = lst
-    # TODO
-    # zamiast po prostu je dodac to sprawdzac sobie po kolei i dopiero dodac, bo to tutaj moim zdaniem tworza nam sie duplikaty
-   # ret += ret2
     return ret
 
 
@@ -100,10 +91,7 @@ def addlights(newcube, cubeson):
             lst = []
             for cubetodivide in listofcubestocheckanddivide:
                 if not checkifincube(cubetodivide, cubeoriginal):
-                   # if checkifpartiallyincube(cubetodivide, cubeoriginal):
-                        lst += dividecube(cubetodivide, cubeoriginal)
-                    #else:
-                     #   lst.append(cubetodivide)
+                    lst += dividecube(cubetodivide, cubeoriginal)
             listofcubestocheckanddivide = lst
         cubeson += listofcubestocheckanddivide
         
@@ -139,7 +127,6 @@ def solution1(filename):
             for somerange in line.split(','):
                 data.append(int(somerange[somerange.find('=')+1:somerange.find('.')]))
                 data.append(int(somerange[somerange.rfind('.')+1::]))
-            #print(type)
             if data[0] >= -50 and data[0] <= 50:    
                 if type == 'on':
                     cubeson = addlights(data, cubeson)
@@ -147,13 +134,6 @@ def solution1(filename):
                     cubeson = removelights(data, cubeson)
             else:
                 break 
-           # print(countlights(cubeson))
-          #  counti = 0
-          #  for i in range(len(cubeson) - 1):
-           #     for j in range(i + 1, len(cubeson)):
-           #         if checkifpartiallyincube(cubeson[j], cubeson[i]):
-           #             counti += 1  
-           # print(f'overlapping: {counti} out of {len(cubeson)}')  
         
             
         return countlights(cubeson)
