@@ -16,20 +16,20 @@ def findpath(cavemap):
     camefrom = {start: None}
     risksofar = {start: 0}
     offsets = ((1, 0), (0, 1), (-1, 0), (0, -1))
-    pos = None
+    actpos = None
     while not queueofpositions.empty():
-        pos = queueofpositions.get()[1]
-        if pos == destination:
+        actpos = queueofpositions.get()[1]
+        if actpos == destination:
             break
         for offset in offsets:
-            newpos = (pos[0] + offset[0], pos[1] + offset[1])
+            newpos = (actpos[0] + offset[0], actpos[1] + offset[1])
             if 0 <= newpos[0] < len(cavemap[0]) and 0 <= newpos[1] < len(cavemap):
-                newrisk = risksofar[pos] + cavemap[newpos[1]][newpos[0]]
+                newrisk = risksofar[actpos] + cavemap[newpos[1]][newpos[0]]
                 if newpos not in camefrom.keys() or newrisk < risksofar[newpos]:
                     risksofar[newpos] = newrisk
                     priority = newrisk
                     queueofpositions.put((priority, newpos))
-                    camefrom[newpos] = pos
+                    camefrom[newpos] = actpos
     return risksofar[destination]
 
 
