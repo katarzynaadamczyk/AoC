@@ -1,27 +1,11 @@
 # Katarzyna Adamczyk
-# Solution to day 15 task 1 of Advent of Code 2021
+# Solution to day 15 task 2 of Advent of Code 2021
 
-
-def checkonx(data, result, x, y):
-    if y < len(data) - 1:
-        tmp = []
-        for i in range(max(0, x - 20), min(x, len(data[y]))):
-            act = result[i] + data[y+1][i]
-            for j in range(i + 1, min(x+1, len(data[y]))):
-                act += data[y+1][j]
-            tmp.append(act)
-        if y < len(data) - 2:
-            for i in range(max(0, x - 20), min(x, len(data[y]))):
-                act = result[i] + data[y+2][i] + data[y+1][i]
-                for j in range(i + 1, min(x+1, len(data[y]))):
-                    act += data[y+2][j]
-                act += data[y+1][min(x, len(data[y])-1)]
-                tmp.append(act)
-        return (min(tmp)) if len(tmp) > 0 else -1 
-    else:
-        return -1    
-
-def checkony(data, result, x, y):
+# check on L - offset down, offset left, offset right, offset up
+def checkonl(data, result, x, y):
+    # moze w ogole zrobic na numpy
+    # i robic tutaj wycinek 20x20, ktory powiekszac o kolejne linie
+    # naucze sie w ten sposob numpy i moze zrobie zadanie
     if x < len(data[y]) - 1:
         tmp = []
         for i in range(max(0, y - 20), y):
@@ -44,7 +28,7 @@ def findpath(data): # searching for the path only down and right and omitting th
     result = []
     tmp = [0]
     for x in range(1, len(data[0])):
-        actx = checkonx(data, tmp, x, 0)
+        actx = checkonl(data, tmp, x, 0)
         if actx > 0:
             tmp.append(min(tmp[x-1], actx) + data[0][x])
         else:
@@ -52,20 +36,15 @@ def findpath(data): # searching for the path only down and right and omitting th
     result.append(tmp)
     for y in range(1, len(data)):
         #print(f'y = {y} out of {len(data)-1}')
-        acty = checkony(data, result, 0, y)
+        acty = checkonl(data, result, 0, y)
         if acty > 0:
             tmp = [min(result[y-1][0], acty) + data[y][0]]
         else:
             tmp = [data[y][0] + result[y-1][0]]
         for x in range(1, len(data[y])):
-            acty = checkony(data, result, x, y)
-            actx = checkonx(data, tmp, x, y)
+            acty = checkonl(data, result, x, y)
             
-            if actx > 0 and acty > 0:
-                tmp.append(min(tmp[x-1], result[y-1][x], actx, acty) + data[y][x])
-            elif actx > 0:
-                tmp.append(min(tmp[x-1], result[y-1][x], actx) + data[y][x])
-            elif acty > 0:
+            if acty > 0:
                 tmp.append(min(tmp[x-1], result[y-1][x], acty) + data[y][x])
             else:
                 tmp.append(min(tmp[x-1], result[y-1][x]) + data[y][x])
@@ -108,10 +87,10 @@ def solution2(filename):
         return findpath(data)
 
 def main():
-    print(f'Result for test data for task 1 is {solution1("Day_15/testdata.txt")}')
-    print(f'Result for data 15 for task 1 is {solution1("Day_15/data15.txt")}')
-    print(f'Result for test data for task 2 is {solution2("Day_15/testdata.txt")}')
-    print(f'Result for data 15 for task 2 is {solution2("Day_15/data15.txt")}')
+    print(f'Result for test data for task 1 is {solution1("Day_15/testdata.txt")} (should be 40)')
+    print(f'Result for data 15 for task 1 is {solution1("Day_15/data15.txt")} (should be 487)')
+    print(f'Result for test data for task 2 is {solution2("Day_15/testdata.txt")} (should be 315)')
+    print(f'Result for data 15 for task 2 is {solution2("Day_15/data15.txt")} (should be 2821)')
     
 if __name__ == '__main__':
     main()
