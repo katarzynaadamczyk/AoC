@@ -25,7 +25,7 @@ def findpath(cavemap):
             newpos = (pos[0] + offset[0], pos[1] + offset[1])
             if 0 <= newpos[0] < len(cavemap[0]) and 0 <= newpos[1] < len(cavemap):
                 newrisk = risksofar[pos] + cavemap[newpos[1]][newpos[0]]
-                if newpos not in camefrom or newrisk < risksofar[newpos]:
+                if newpos not in camefrom.keys() or newrisk < risksofar[newpos]:
                     risksofar[newpos] = newrisk
                     priority = newrisk
                     queueofpositions.put((priority, newpos))
