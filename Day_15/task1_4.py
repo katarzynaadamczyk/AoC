@@ -55,7 +55,7 @@ def findpath(data): # searching for the path only down and right and omitting th
             else:
                 tmp.append(min(tmp[x-1], result[y-1][x]) + data[y][x])
         result.append(tmp)
-    print(result)
+  #  print(result)
     return result[-1][-1]
 
 def solution(filename):
@@ -69,7 +69,7 @@ def solution(filename):
 
 def main():
     print(f'Result for test data for task 1 is {solution("Day_15/testdata.txt")}')
-   # print(f'Result for data 15 for task 1 is {solution("Day_15/data15.txt")}')
+    print(f'Result for data 15 for task 1 is {solution("Day_15/data15.txt")}')
 
 if __name__ == '__main__':
     main()

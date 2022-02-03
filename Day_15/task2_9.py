@@ -15,9 +15,9 @@ def findpath(data): # searching for the path only down and right for now looking
             for j in range(1, len(data)):
                 tmpxright.append(min(tmpxright[-1], result[i-1][j]) + data[i][j])
                 tmpydown.append(min(tmpydown[-1], result[j][i-1]) + data[j][i])
-            print(i)
-            print(tmpxright)
-            print(tmpydown)
+           # print(i)
+           ## print(tmpxright)
+           # print(tmpydown)
             result[i].insert(1, min(tmpxright[-2], result[i-1][j]) + data[i][j])
             result[-1].append(min(tmpydown[-2], result[-1][i-1]) + data[j][i])
             
@@ -37,7 +37,7 @@ def findpath(data): # searching for the path only down and right for now looking
                         result[j][k] = min(result[j+1][k], result[j-1][k], result[j][k+1], result[j][k-1]) + data[j][k]
             else:
                 pass
-            print(result)
+           # print(result)
         return result[-1][-1]
     return -1
 
@@ -63,7 +63,7 @@ def solution1(filename):
         for line in myfile:
             tmp = [int(x) for x in line.strip()]
             data.append(tmp)
-        print(data)
+      #  print(data)
         return findpath(data)
 
 def solution2(filename):
@@ -76,10 +76,10 @@ def solution2(filename):
         return findpath(data)
 
 def main():
-    print(f'Result for test data for task 1 is {solution1("Day_15/testdata.txt")}')
-   # print(f'Result for data 15 for task 1 is {solution1("Day_15/data15.txt")}')
-   # print(f'Result for test data for task 2 is {solution2("Day_15/testdata.txt")}')
-   # print(f'Result for data 15 for task 2 is {solution2("Day_15/data15.txt")}')
+    print(f'Result for test data for task 1 is {solution1("Day_15/testdata.txt")} (should be 40)')
+    print(f'Result for data 15 for task 1 is {solution1("Day_15/data15.txt")} (should be 487)')
+    print(f'Result for test data for task 2 is {solution2("Day_15/testdata.txt")} (should be 315)')
+    print(f'Result for data 15 for task 2 is {solution2("Day_15/data15.txt")}')
 
 if __name__ == '__main__':
     main()
