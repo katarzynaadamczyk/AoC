@@ -1,8 +1,8 @@
 # Katarzyna Adamczyk
 # Solution to day 25 task 1&2 of Advent of Code 2015
 
-from math import floor
-from unittest import result
+from math import prod
+from re import X
 
 
 def getdata(filename):
@@ -22,6 +22,9 @@ def countpaper(data):
         result += 2 * sum(tmp) + min(tmp)
     return result
 
+def countribbon(data):
+    return sum([2 * (sum(x) - max(x)) + prod(x) for x in data])
+
 def solution1(filename):
     data = getdata(filename)
         
@@ -30,15 +33,15 @@ def solution1(filename):
 def solution2(filename):
     data = getdata(filename)
         
-    return 0
+    return countribbon(data)
     
 def main():
     print(f'Result for test data for task 1 is {solution1("2015/Day_2/testdata.txt")}')
     print(f'Result for data 25 for task 1 is {solution1("2015/Day_2/data2.txt")}')
     
     
-  #  print(f'Result for test data for task 1 is {solution2("2015/Day_1/testdata.txt")}')
-  # print(f'Result for data 25 for task 1 is {solution2("2015/Day_1/data1.txt")}')
+    print(f'Result for test data for task 1 is {solution2("2015/Day_2/testdata.txt")}')
+    print(f'Result for data 25 for task 1 is {solution2("2015/Day_2/data2.txt")}')
     
 
 if __name__ == '__main__':
