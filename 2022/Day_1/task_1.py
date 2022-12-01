@@ -3,6 +3,9 @@ Advent of Code
 2022 day 1
 my solution to task 1 
 
+solution 1 - make a list of sum of calories for each elf. Find its maximum.
+solution 2 - make a list of sum of calories for each elf. Sort the list in descending order and get the sum of first three elements.
+
 '''
 
 def solution_1(filename):
