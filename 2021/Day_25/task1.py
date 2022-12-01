@@ -63,8 +63,8 @@ def solution1(filename):
 
 
 def main():
-    print(f'Result for test data for task 1 is {solution1("Day_25/testdata.txt")}')
-    print(f'Result for data 25 for task 1 is {solution1("Day_25/data25.txt")}')
+    print(f'Result for test data for task 1 is {solution1("2021/Day_25/testdata.txt")}')
+    print(f'Result for data 25 for task 1 is {solution1("2021/Day_25/data25.txt")}')
     
 
 if __name__ == '__main__':
