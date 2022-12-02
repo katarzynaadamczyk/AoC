@@ -1,10 +1,10 @@
 '''
 Advent of Code 
-2022 day 1
-my solution to task 1 
+2022 day 2
+my solution to tasks from day 2
 
-solution 1 - make a list of sum of calories for each elf. Find its maximum.
-solution 2 - make a list of sum of calories for each elf. Sort the list in descending order and get the sum of first three elements.
+solution 1 - Score is sum of (for each line add appriopriate - win, lose or dram and chosen hand - scissors, paper, rock). Options is a dict: {hand: score}
+solution 2 - As above, options is a dict {result: [points, dict {hand_of_opponent: my_hand}}
 
 '''
 
@@ -16,7 +16,7 @@ def solution_1(filename):
         for line in myfile:
             line = line.strip().split()
             data.append(tuple(line))
-    act_sum = sum([options[x[1]] + (6 if x in winning_tuples else 3 if options[x[0]] == options[x[1]] else 0) for x in data]) # TODO
+    act_sum = sum([options[x[1]] + (6 if x in winning_tuples else 3 if options[x[0]] == options[x[1]] else 0) for x in data])
     return act_sum
 
 def solution_2(filename):
