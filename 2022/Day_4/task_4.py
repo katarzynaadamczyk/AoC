@@ -3,8 +3,8 @@ Advent of Code
 2022 day 4
 my solution to tasks from day 4
 
-solution 1 - 
-solution 2 - 
+solution 1 - parse each line in two elves beginnings and endings. Then check if one is entirely in the other.
+solution 2 - parse each line in two elves beginnings and endings. Then check if one is overlapping the other.
 
 '''
 
