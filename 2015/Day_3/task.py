@@ -3,8 +3,8 @@ Advent of Code
 2015 day 3
 my solution to tasks from day 3
 
-solution 1 - 
-solution 2 - 
+solution 1 - points is set of points visited by santa. add is a function that converts actual point and move to a new actual point. New point is added to points.
+solution 2 - as above with one enhacement - a bool variable to check if actual move is made by santa or by robot.
 
 '''
 
