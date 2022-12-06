@@ -3,7 +3,7 @@ Advent of Code
 2022 day 6
 my solution to tasks from day 6
 
-solution 1 & 2 -
+solution 1 & 2 - get chunks of given size (4 or 14), transform its characters into a set and check whether this set is of given size length. If so, then the ending is the answer.
 
 '''
 
