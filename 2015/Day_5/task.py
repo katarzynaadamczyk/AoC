@@ -3,8 +3,9 @@ Advent of Code
 2015 day 3
 my solution to tasks from day 3
 
-solution 1 - 
-solution 2 - 
+solution 1 - check each word for rules named in task (if count of vowels is >= 3, if none of ['ab', 'cd', 'pq', 'xy'] is in word and if word contains any doubled letter). 
+If so, add to actual count of nice words.
+solution 2 - check each word for rules named in task (functions check_rule_1 and check_rule_2). If they say True that increase counter of nice words by 1.
 
 '''
 
