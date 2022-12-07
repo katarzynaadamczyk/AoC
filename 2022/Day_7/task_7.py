@@ -3,8 +3,10 @@ Advent of Code
 2022 day 7
 my solution to tasks from day 7
 
-solution 1 -
-solution 2 - 
+For each solution I need TreeNode to make tree for all the directories. Each TreeNode contains following features: name, list_of_directories, previous_directory, list_of_files in the directory.
+First is to correctly parse the input data into TreeNode and put on the list all TreeNodes.
+solution 1 - return sum of sums for each node where sum for node is less or equal given number.
+solution 2 - calculate space taken by each node. Calculate space to gain to achieve minimum free space to make the system update. Then find minimum node space value that is above calculated space needed.
 
 '''
 
@@ -34,8 +36,8 @@ class TreeNode:
         return self.name + " has files:" + str(self.lst_of_files) + ' and dirs:' + str([node.name for node in self.lst_of_dirs]) 
 
 
-def solution_1(filename, max_size):
-    root = TreeNode(name='/')
+def make_tree(filename):
+    root = TreeNode(name='/', previous=None, lst_of_dirs=[], lst_of_files={})
     lst_of_dirs = [root]
     with open(filename, 'r') as myfile:
         act_node = root
@@ -57,16 +59,26 @@ def solution_1(filename, max_size):
                     lst_of_dirs.append(new_dir)
                 else:
                     act_node.add_file(line[1], int(line[0]))
-            print(act_node)
-    for node in lst_of_dirs:
-        print(node)
+    return lst_of_dirs
+
+def solution_1(lst_of_dirs, max_size):
     return sum([x if x <= max_size else 0 for x in [node.get_size_of_node() for node in lst_of_dirs]])
+
+def solution_2(lst_of_dirs, max_space, min_free_space):
+    lst_of_space_for_each_dir = [node.get_size_of_node() for node in lst_of_dirs]
+    act_free_space = max_space - max(lst_of_space_for_each_dir)
+    space_to_make = min_free_space - act_free_space
+    return min([x if x >= space_to_make else max_space for x in lst_of_space_for_each_dir])
 
     
 def main():
-    print('test 1:', solution_1('2022/Day_7/test.txt', 100000))
-    print('Solution 1:', solution_1('2022/Day_7/task.txt', 100000))
+    test_lst_of_dirs = make_tree('2022/Day_7/test.txt')
+    print('test 1:', solution_1(test_lst_of_dirs, 100000))
+    task_lst_of_dirs = make_tree('2022/Day_7/task.txt')
+    print('Solution 1:', solution_1(task_lst_of_dirs , 100000))
     
+    print('test 2:', solution_2(test_lst_of_dirs, 70000000, 30000000))
+    print('Solution 2:', solution_2(task_lst_of_dirs, 70000000, 30000000))
     
 
 if __name__ == '__main__':
