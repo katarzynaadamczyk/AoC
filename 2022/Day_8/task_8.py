@@ -3,8 +3,10 @@ Advent of Code
 2022 day 8
 my solution to tasks from day 8
 
-solution 1 - 
-solution 2 - 
+First I need to get a map from txt file. In that purpose I need to run get_map function.
+solution 1 - for each direction find maximum tree value (from given tree up to the edge of grid). Then find the minimum value for each direction. If it is < tree height then the tree is visible from the outside -> increase visible tree counter.
+I do not take into consideration edges as I add them in the beginning to the counter. 
+solution 2 - go from each tree in each direction and count the trees visible. Stop when you reach tree higher or edge. Multiply counted values. 
 
 '''
 
