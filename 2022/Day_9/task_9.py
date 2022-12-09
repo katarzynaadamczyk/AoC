@@ -1,10 +1,15 @@
 '''
 Advent of Code 
-2022 day 8
-my solution to tasks from day 8
+2022 day 9
+my solution to tasks from day 9
 
-solution 1 - 
-solution 2 - 
+First I needed to parse directions and it is done in get_directions function. Each line is converted to a tuple (direction, no_of_steps).
+solution 1 - keep in mind position of head and of tail. Get direction by direction, once taken one direction do as many steps as needed. In each step move head accordingly (get_new_head_pos) 
+and then if needed move tail (get_new_tail_pos). Add each tail position to a set of tail position. Return length of given set.
+solution 2 - As above, but instead of keeping just head, keep in mind a list of 10 positions. First is head, last is tail. For first one in each step move head (get_new_head_pos), 
+and then one by one move each other part (for every one of them use function get_new_tail_pos). Add each tail position (tail - last item of a list) to a set of tail position. 
+Return length of given set.
+While writing solution 2 I added to get_new_tail_pos: if set(distance) in [set([2, 0]), set([2, 2])]: (earlier it was: if set(distance) == set([2, 0]):)
 
 '''
 
