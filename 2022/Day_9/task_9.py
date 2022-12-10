@@ -32,12 +32,8 @@ get_distance = lambda pos_head, pos_tail: (abs(pos_head[0] - pos_tail[0]), abs(p
 
 def get_new_tail_pos(head_pos, tail_pos):
     distance = get_distance(head_pos, tail_pos)
-    if set(distance) in [set([2, 0]), set([2, 2])]:
-        tail_pos = ((head_pos[0] + tail_pos[0]) // 2, (head_pos[1] + tail_pos[1]) // 2)
-    elif distance == (2, 1):
-        tail_pos = ((head_pos[0] + tail_pos[0]) // 2, head_pos[1])
-    elif distance == (1, 2):
-        tail_pos = (head_pos[0], (head_pos[1] + tail_pos[1]) // 2)
+    if 2 in distance:
+        tail_pos = tuple([head if dist == 1 else (head + tail) // 2 for dist, head, tail in zip(distance, head_pos, tail_pos)])
     return tail_pos
 
 def solution_1(my_dirs):
