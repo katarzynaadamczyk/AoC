@@ -3,8 +3,11 @@ Advent of Code
 2022 day 10
 my solution to tasks from day 10
 
-solution 1 - 
-solution 2 - 
+First, I need to create a list called program in which I store X value for the whole program. I do it in get_program(filename) function. program[0] is set as 1. 
+All the rest values are stored as follows: program[no_of_cycle]
+solution 1 - solution gets two arguments: program (as described above) and a list of indexes to count signal strengths. Then count the list of strengths and get their sum.
+solution 2 - solution gets 4 arguments: program, number of lines on the screen, length of line and length of CRT. Then for each cycle I check if X value is in CRT pos if so add '#' to the line if not add '.'
+Check whether cycle number is a multiplicative of 40. And add line to result and clear it.
 
 '''
 from functools import reduce
@@ -26,8 +29,7 @@ def get_program(filename):
 
 
 def solution_1(program, lst_of_no_of_cycles):
-    result = reduce(lambda x, y: x + y, [program[i] * i for i in lst_of_no_of_cycles])
-    return result
+    return reduce(lambda x, y: x + y, [program[i] * i for i in lst_of_no_of_cycles])
 
 
 def check_if_crt_is_in_pos(cycle_no, x_val, len_of_crt):
