@@ -50,22 +50,32 @@ def solution_1(my_map, starting_point, ending_point):
     while not queue_of_positions.empty():
         act_priority, act_pos = queue_of_positions.get()
         if act_pos == ending_point:
-            break
+            return act_priority
         for point in get_new_points(my_map, act_pos):
             if point not in visited_points:
                 visited_points.add(point)
                 queue_of_positions.put((act_priority + 1, point))
-    return act_priority
+    return len(my_map) ** 2
+
+def get_all_starting_points(my_map):
+    for y, row in enumerate(my_map):
+        for x, char in enumerate(row):
+            if char == 'a':
+                yield (y, x)
 
 
+def solution_2(my_map, ending_point):
+    steps = [solution_1(my_map, point, ending_point) for point in get_all_starting_points(my_map)]
+    #print(sorted(steps, key=lambda x: x[0]))
+    return min(steps)
 
 def main():
     test_map, test_start, test_stop = get_map('2022/Day_12/test.txt')
     print('test 1:', solution_1(test_map, test_start, test_stop))
     task_map, task_start, task_stop = get_map('2022/Day_12/task.txt')
     print('Solution 1:', solution_1(task_map, task_start, task_stop))
-    # print('test 2:', solution_2(test_monkeys, 10000))
-    # print('Solution 2:', solution_2(test_monkeys, 10000))
+    print('test 2:', solution_2(test_map, test_stop))
+    print('Solution 2:', solution_2(task_map, task_stop))
 
 if __name__ == '__main__':
     main()
