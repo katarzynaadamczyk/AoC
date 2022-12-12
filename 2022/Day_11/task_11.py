@@ -3,8 +3,12 @@ Advent of Code
 2022 day 11
 my solution to tasks from day 11
 
-solution 1 - 
-solution 2 - 
+First I needed to parse well the input data. Function get_monkeys_info creates a list of monkeys dictionaries with all needed info.
+solution 1 - For each monkey add field check_count. Then do required number of times throws from monkey 0 to len(monkeys). In each throw count new worry value (by operation and then division by 3), 
+do a test  and append new worry value to chosen by test monkey. After finishing throws by one monkey add to its check_count length of items thrown. Then change the list to 
+an empty list. After all the iterations get a list of all monkeys check_count, sort it in reverse order and return the result of multiplication of first two values.
+solution 2 - Same as above, but count of the new worry value is done only by operation. The value added to chosen monkey is the result of new worry value modulo scm of each of test values.
+scm - smallest common multiplication result (I took all the test values and multiplied them together)
 
 '''
 
@@ -15,7 +19,6 @@ operation = 'operation'
 test = 'test'
 items = 'items'
 check_count = 'check_count'
-check_count_2 = 'check_count_2'
 operation_val = 'operation_val'
 test_val = 'test_val'
 
@@ -26,7 +29,6 @@ def get_monkeys_info(filename):
             line = line.replace('old * old', 'old ** 2')
             i += 1
             line = [x.strip(':,') for x in line.strip().split()]
-            #print(line)
             if i == 1:
                 act_monkey = {}
             elif i == 2:
