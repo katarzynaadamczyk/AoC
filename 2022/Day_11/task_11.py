@@ -69,23 +69,15 @@ def solution_2(monkeys, no_of_turns):
     set_of_tests = set([monkey[test_val] for monkey in monkeys])
     scm = reduce(lambda x, y: x * y, list(set_of_tests))
     for i in range(len(monkeys)):
-        monkeys[i].setdefault(check_count_2, 0)
+        monkeys[i].setdefault(check_count, 0)
     for i in range(no_of_turns):
         for index, monkey in enumerate(monkeys):
             for val in monkey[items]:
                 new_val = monkey[operation](val, monkey[operation_val])
-                new_val_2 = new_val
-                while new_val_2 % scm == 0:
-                    new_val_2 //= scm
-                monkeys[monkey[monkey[test](new_val, monkey[test_val])]][items].append(new_val_2)
-            monkeys[index][check_count_2] += len(monkey[items])
+                monkeys[monkey[monkey[test](new_val, monkey[test_val])]][items].append(new_val % scm)
+            monkeys[index][check_count] += len(monkey[items])
             monkeys[index][items] = []
-        if i % 1000 == 0:
-            print(i)
-       # print([monkey[items] for monkey in monkeys])
-       # print([monkey[check_count_2] for monkey in monkeys])
-    lst_of_no_of_checks = sorted([monkey[check_count_2] for monkey in monkeys], reverse=True)
-  #  print(lst_of_no_of_checks)
+    lst_of_no_of_checks = sorted([monkey[check_count] for monkey in monkeys], reverse=True)
     return lst_of_no_of_checks[0] * lst_of_no_of_checks[1]
 
 
@@ -97,7 +89,7 @@ def main():
     test_monkeys = get_monkeys_info('2022/Day_11/test.txt')
     print('test 2:', solution_2(test_monkeys, 10000))
     task_monkeys = get_monkeys_info('2022/Day_11/task.txt')
-    print('Solution 2:', solution_2(test_monkeys, 10000))
+    print('Solution 2:', solution_2(task_monkeys, 10000))
 
 if __name__ == '__main__':
     main()

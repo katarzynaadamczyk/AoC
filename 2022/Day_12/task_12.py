@@ -8,7 +8,7 @@ solution 2 -
 
 '''
 
-from queue import Queue
+from queue import PriorityQueue
 from copy import deepcopy
 
 def get_map(filename):
@@ -43,9 +43,20 @@ def get_new_points(my_map, act_point):
     
 
 def solution_1(my_map, starting_point, ending_point):
-    stack, visited_points = Queue(), set()
-    
-    return 0
+    queue_of_positions, visited_points = PriorityQueue(), set()
+    visited_points.add(starting_point)
+    queue_of_positions.put((0, starting_point))
+    act_pos = None
+    while not queue_of_positions.empty():
+        act_priority, act_pos = queue_of_positions.get()
+        if act_pos == ending_point:
+            break
+        for point in get_new_points(my_map, act_pos):
+            if point not in visited_points:
+                visited_points.add(point)
+                queue_of_positions.put((act_priority + 1, point))
+    return act_priority
+
 
 
 def main():
