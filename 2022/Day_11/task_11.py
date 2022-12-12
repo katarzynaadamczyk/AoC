@@ -1,7 +1,7 @@
 '''
 Advent of Code 
 2022 day 11
-my solution to tasks from day 1
+my solution to tasks from day 11
 
 solution 1 - 
 solution 2 - 
