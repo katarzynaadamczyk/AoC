@@ -3,13 +3,15 @@ Advent of Code
 2022 day 12
 my solution to tasks from day 12
 
-solution 1 - 
-solution 2 - 
+First, I introduced get_map function that returns prepared map (changed: S -> a, E -> z), starting point and ending point.
+solution 1 - implemented A* algorithm. Put start point to a priority queue with priority 0. Add starting point to visited points. Then while queue is not empty get first element 
+from queue. If it is ending point -> return its priority. Otherwise get all compatible points that are not visited and add them to queue with priority + 1. When the loop ends without
+getting to the ending point return len(map) ** 2. 
+solution 2 - get all possible starting points (points marked as a on the map). Then for each point count solution_1 and return minimum of all counted values.
 
 '''
 
 from queue import PriorityQueue
-from copy import deepcopy
 
 def get_map(filename):
     my_map, starting_point, ending_point, y = [], (0, 0), (0, 0), 0
@@ -66,7 +68,6 @@ def get_all_starting_points(my_map):
 
 def solution_2(my_map, ending_point):
     steps = [solution_1(my_map, point, ending_point) for point in get_all_starting_points(my_map)]
-    #print(sorted(steps, key=lambda x: x[0]))
     return min(steps)
 
 def main():
