@@ -110,13 +110,9 @@ def solution_1(packets):
 
 def solution_2(packets):
     node_2, node_6 = Node('[[2]]'), Node('[[6]]')
-    less_than_2_left = [Packet(packet.left, node_2).compare() for packet in packets]
-    less_than_2_right = [Packet(packet.right, node_2).compare() for packet in packets]
-    less_than_6_left = [Packet(packet.left, node_6).compare() for packet in packets]
-    less_than_6_right = [Packet(packet.right, node_6).compare() for packet in packets]
-    add_2 = sum(less_than_2_left + less_than_2_right) + 1
-    add_6 = sum(less_than_6_left + less_than_6_right) + 2
-    return add_2 * add_6
+    less_than_2 = [Packet(packet.left, node_2).compare() + Packet(packet.right, node_2).compare() for packet in packets]
+    less_than_6 = [Packet(packet.left, node_6).compare() + Packet(packet.right, node_6).compare() for packet in packets]
+    return (sum(less_than_2) + 1) * (sum(less_than_6) + 2)
     
         
 
