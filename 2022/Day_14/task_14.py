@@ -3,9 +3,10 @@ Advent of Code
 2022 day 14
 my solution to tasks from day 14
 
-
-solution 1 - 
-solution 2 - 
+Map of walls is stored as set of all map coordinates (x, y).
+solution 1 - keep adding new pieces of sand to sands set until new sand piece has y == maximum y value (lowest wall). Return len of this set.
+solution 2 - Make a deepcopy of walls set. Keep adding to this new set all possible coordinates reccurrently starting from sand_start, then get all possible sand pieces around it and so on.
+I tried an algorithm similar to solution 1. It works properly on test set but it is too slow for task set.
 
 
 '''
