@@ -3,10 +3,12 @@ Advent of Code
 2022 day 13
 my solution to tasks from day 13
 
-
-solution 1 - 
-
-solution 2 - 
+I created two classes: 
+Node which contains a list of integers mixed with Nodes (one line from input)
+Packet which contains two Nodes - left and right and can compare them. Method Packet.compare() returns 1 if left one is smaller than right one, 0 if right one is smaller, None if they are equal.
+solution 1 - return sum of (comparisons multiplied by their index) for each Packet.
+solution 2 - count how many Nodes are less than [[2]] and how many are less than [[6]]. To first count add 1 and to second add 2 (1 because indexes are counted from 1, 2 as before + there will be [[2]] added.)
+Return result of multiplication for these two numbers.
 
 '''
 
