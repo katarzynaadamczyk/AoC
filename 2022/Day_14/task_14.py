@@ -23,24 +23,89 @@ def get_walls(filename):
     return walls, (500, 0)
 
 
+def may_go_down(walls_and_sands, sand_pos):
+    if (sand_pos[0], sand_pos[1] + 1) not in walls_and_sands:
+        return True
+    return False
+
+def may_go_right(walls_and_sands, sand_pos):
+    if (sand_pos[0] - 1, sand_pos[1] + 1) not in walls_and_sands:
+        return True
+    return False
+
+def may_go_left(walls_and_sands, sand_pos):
+    if (sand_pos[0] + 1, sand_pos[1] + 1) not in walls_and_sands:
+        return True
+    return False
+
+def get_new_sand_pos(walls_and_sands, sand_pos):
+    if may_go_down(walls_and_sands, sand_pos):
+        return (sand_pos[0], sand_pos[1] + 1)
+    if may_go_right(walls_and_sands, sand_pos):
+        return (sand_pos[0] - 1, sand_pos[1] + 1)
+    if may_go_left(walls_and_sands, sand_pos):
+        return (sand_pos[0] + 1, sand_pos[1] + 1)
+    return sand_pos
+
 
 def solution_1(walls, sand_start):
-    sands, act_sand_pos = set(), sand_start
+    sands, act_sand_pos, new_sand_pos = set(), sand_start, sand_start
     y_max = max(walls, key=lambda coord: (coord[1], coord[0]))[1]
+    while new_sand_pos[1] < y_max:
+        act_sand_pos = sand_start
+        new_sand_pos = get_new_sand_pos(walls.union(sands), act_sand_pos)
+        while new_sand_pos != act_sand_pos and new_sand_pos[1] < y_max:
+            act_sand_pos = new_sand_pos
+            new_sand_pos = get_new_sand_pos(walls.union(sands), act_sand_pos)
+        if new_sand_pos[1] < y_max:
+            sands.add(new_sand_pos)
+    return len(sands)
+
+def solution_1(walls, sand_start):
+    sands, act_sand_pos, new_sand_pos = set(), sand_start, sand_start
+    y_max = max(walls, key=lambda coord: (coord[1], coord[0]))[1]
+    while new_sand_pos[1] < y_max:
+        act_sand_pos = sand_start
+        new_sand_pos = get_new_sand_pos(walls.union(sands), act_sand_pos)
+        while new_sand_pos != act_sand_pos and new_sand_pos[1] < y_max:
+            act_sand_pos = new_sand_pos
+            new_sand_pos = get_new_sand_pos(walls.union(sands), act_sand_pos)
+        if new_sand_pos[1] < y_max:
+            sands.add(new_sand_pos)
+    return len(sands)
+
+def get_new_sand_pos_2(walls_and_sands, sand_pos, y_max):
+    if sand_pos[1] + 1 < y_max:
+        if may_go_down(walls_and_sands, sand_pos):
+            return (sand_pos[0], sand_pos[1] + 1)
+        if may_go_right(walls_and_sands, sand_pos):
+            return (sand_pos[0] - 1, sand_pos[1] + 1)
+        if may_go_left(walls_and_sands, sand_pos):
+            return (sand_pos[0] + 1, sand_pos[1] + 1)
+    return sand_pos
+
+def solution_2(walls, sand_start):
+    sands, act_sand_pos, new_sand_pos = set(), sand_start, sand_start
+    y_max = max(walls, key=lambda coord: (coord[1], coord[0]))[1] + 2
     print(y_max)
-    return 0
-
-   
-
+    while act_sand_pos not in sands:
+        new_sand_pos = get_new_sand_pos_2(walls.union(sands), act_sand_pos, y_max)
+        while new_sand_pos != act_sand_pos:
+            act_sand_pos = new_sand_pos
+            new_sand_pos = get_new_sand_pos_2(walls.union(sands), act_sand_pos, y_max)
+        sands.add(new_sand_pos)
+        print(new_sand_pos)
+        act_sand_pos = sand_start
+    return len(sands)
         
 
 def main():
     test_walls, sand_test_start = get_walls('2022/Day_14/test.txt')
-    print('test 1:', solution_1(test_walls, sand_test_start))
+ #   print('test 1:', solution_1(test_walls, sand_test_start))
     task_walls, sand_task_start = get_walls('2022/Day_14/task.txt')
-    print('Solution 1:', solution_1(task_walls, sand_task_start))
-  #  print('test 2:', solution_2(test_packets))
-   # print('Solution 2:', solution_2(task_packets))
+   # print('Solution 1:', solution_1(task_walls, sand_task_start))
+ #   print('test 2:', solution_2(test_walls, sand_test_start))
+    print('Solution 2:', solution_2(task_walls, sand_task_start))
 
 if __name__ == '__main__':
     main()
