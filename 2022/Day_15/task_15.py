@@ -5,7 +5,7 @@ my solution to tasks from day 15
 
 
 solution 1 - 
-solution 2 - 
+solution 2 - it takes a while to count, about `5 m1inutes
 
 '''
 
