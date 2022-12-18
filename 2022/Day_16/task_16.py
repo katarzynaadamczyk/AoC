@@ -9,7 +9,7 @@ solution 2 -
 
 '''
 
-from copy import deepcopy, copy
+from copy import copy
 from queue import PriorityQueue, Queue
 
 class Valve:
@@ -72,77 +72,64 @@ def get_dict_of_min_paths(valves, start_valve):
 
 def solution_1(valves, start_valve, minutes):
     valves_with_pressure_dict = get_dict_of_min_paths(valves, start_valve)
-    queue_of_states, opened_valves, results = Queue(), set(), set()
+    queue_of_states, opened_valves, been_in_states = Queue(), set(), set()
     max_opened_valves = len(valves_with_pressure_dict)
     opened_valves.add(start_valve)
+    been_in_states.add((0, minutes, start_valve))
     queue_of_states.put((start_valve, 0, minutes, opened_valves))
     while not queue_of_states.empty():
         act_valve, act_pressure, minutes_left, opened_valves = queue_of_states.get()
         if len(opened_valves) == max_opened_valves:
-            results.add(act_pressure)
             continue
-        for valve in valves_with_pressure_dict[act_valve].keys():
-            if valve not in opened_valves:
-                if valves_with_pressure_dict[act_valve][valve] <= minutes_left:
-                    new_opened_valves = deepcopy(opened_valves)
-                    new_opened_valves.add(valve)
-                    new_minutes_left = minutes_left - valves_with_pressure_dict[act_valve][valve]
-                    new_act_pressure = act_pressure + new_minutes_left * valves[valve].get_pressure()
+        for valve in (set(valves_with_pressure_dict.keys()) - opened_valves):
+            if valves_with_pressure_dict[act_valve][valve] <= minutes_left:
+                new_opened_valves = copy(opened_valves)
+                new_opened_valves.add(valve)
+                new_minutes_left = minutes_left - valves_with_pressure_dict[act_valve][valve]
+                new_act_pressure = act_pressure + new_minutes_left * valves[valve].get_pressure()
+                if (new_act_pressure, minutes_left, valve) not in been_in_states:
                     queue_of_states.put((valve, new_act_pressure, new_minutes_left, new_opened_valves))
-                else:
-                    results.add(act_pressure)
-            else:
-                results.add(act_pressure)
-    return max(results)
+                    been_in_states.add((new_act_pressure, minutes_left, valve))
+    return max(been_in_states)
 
             
 def solution_2(valves, start_valve, minutes):
     valves_with_pressure_dict = get_dict_of_min_paths(valves, start_valve)
-    print(valves_with_pressure_dict)
     max_opened_valves = len(valves_with_pressure_dict)
-    queue_of_states, opened_valves, been_in_states = Queue(), set(), {}
+    queue_of_states, opened_valves, been_in_states = Queue(), set(), set()
     opened_valves.add(start_valve)
-    been_in_states[tuple(sorted(opened_valves))] = (0, minutes * 2, minutes, minutes)
+    been_in_states.add((0, minutes * 2, start_valve))
     queue_of_states.put((0, start_valve, start_valve, minutes, minutes, opened_valves))
     while not queue_of_states.empty():
         act_pressure, my_act_valve, elephant_act_valve, my_minutes_left, elephant_minutes_left, opened_valves = queue_of_states.get()
-        tuple_sorted_opened_valves = tuple(sorted(opened_valves))
         if len(opened_valves) == max_opened_valves:
-            if tuple_sorted_opened_valves in been_in_states.keys():
-                print(act_pressure, my_act_valve, elephant_act_valve, my_minutes_left, elephant_minutes_left)
             continue
-        tuple_sorted_opened_valves = tuple(sorted(opened_valves))
-        if tuple_sorted_opened_valves in been_in_states.keys():
-            if (act_pressure, my_minutes_left + elephant_minutes_left, my_minutes_left, elephant_minutes_left) < been_in_states[tuple_sorted_opened_valves]:
-                continue
-        for valve in valves_with_pressure_dict.keys():
-            if valve not in opened_valves:
-                new_opened_valves = copy(opened_valves)
-                new_opened_valves.add(valve)
-                tuple_sorted_opened_valves = tuple(sorted(new_opened_valves))
-                if valves_with_pressure_dict[my_act_valve][valve] <= my_minutes_left:
-                    my_new_minutes_left = my_minutes_left - valves_with_pressure_dict[my_act_valve][valve]
-                    new_act_pressure = act_pressure + my_new_minutes_left * valves[valve].get_pressure()
-                    if tuple_sorted_opened_valves not in been_in_states.keys() or \
-                        been_in_states[tuple_sorted_opened_valves] <= (new_act_pressure, my_new_minutes_left + elephant_minutes_left, my_new_minutes_left, elephant_minutes_left): # \
-                        queue_of_states.put((new_act_pressure, valve, elephant_act_valve, my_new_minutes_left, elephant_minutes_left, new_opened_valves))
-                        been_in_states[tuple_sorted_opened_valves] = (new_act_pressure, my_new_minutes_left + elephant_minutes_left, my_new_minutes_left, elephant_minutes_left)
-                if valves_with_pressure_dict[elephant_act_valve][valve] <= elephant_minutes_left:
-                    elephant_new_minutes_left = elephant_minutes_left - valves_with_pressure_dict[elephant_act_valve][valve]
-                    new_act_pressure = act_pressure + elephant_new_minutes_left * valves[valve].get_pressure()
-                    if tuple_sorted_opened_valves not in been_in_states.keys() or \
-                        been_in_states[tuple_sorted_opened_valves] <= (new_act_pressure, my_minutes_left + elephant_new_minutes_left, my_minutes_left, elephant_new_minutes_left): # \
-                        queue_of_states.put((new_act_pressure, my_act_valve, valve, my_minutes_left, elephant_new_minutes_left, new_opened_valves))
-                        been_in_states[tuple_sorted_opened_valves] = (new_act_pressure, my_minutes_left + elephant_new_minutes_left, my_minutes_left, elephant_new_minutes_left)
-    return max(been_in_states.values())
+        for valve in (set(valves_with_pressure_dict.keys()) - opened_valves):
+            new_opened_valves = copy(opened_valves)
+            new_opened_valves.add(valve)
+            if valves_with_pressure_dict[my_act_valve][valve] <= my_minutes_left:
+                my_new_minutes_left = my_minutes_left - valves_with_pressure_dict[my_act_valve][valve]
+                new_act_pressure = act_pressure + my_new_minutes_left * valves[valve].get_pressure()
+                if (new_act_pressure, my_new_minutes_left + elephant_minutes_left, elephant_act_valve, valve) not in been_in_states and \
+                    (new_act_pressure, my_new_minutes_left + elephant_minutes_left, valve, elephant_act_valve) not in been_in_states: # \
+                    queue_of_states.put((new_act_pressure, valve, elephant_act_valve, my_new_minutes_left, elephant_minutes_left, new_opened_valves))
+                    been_in_states.add((new_act_pressure, my_new_minutes_left + elephant_minutes_left, elephant_act_valve, valve))
+            if valves_with_pressure_dict[elephant_act_valve][valve] <= elephant_minutes_left:
+                elephant_new_minutes_left = elephant_minutes_left - valves_with_pressure_dict[elephant_act_valve][valve]
+                new_act_pressure = act_pressure + elephant_new_minutes_left * valves[valve].get_pressure()
+                if (new_act_pressure, my_minutes_left + elephant_new_minutes_left, my_act_valve, valve) not in been_in_states and \
+                    (new_act_pressure, my_minutes_left + elephant_new_minutes_left, valve, my_act_valve) not in been_in_states:
+                    queue_of_states.put((new_act_pressure, my_act_valve, valve, my_minutes_left, elephant_new_minutes_left, new_opened_valves))
+                    been_in_states.add((new_act_pressure, my_minutes_left + elephant_new_minutes_left, my_act_valve, valve))
+    return max(been_in_states)
         
 
 def main():
     test_valves, test_start_valve = get_valves('2022/Day_16/test.txt')
- #   print('test 1:', solution_1(test_valves, test_start_valve, 30))
+    print('test 1:', solution_1(test_valves, test_start_valve, 30)) # should be 1651
     task_valves, task_start_valve = get_valves('2022/Day_16/task.txt')
- #   print('Solution 1:', solution_1(task_valves, task_start_valve, 30))
-    print('test 2:', solution_2(test_valves, test_start_valve, 26))
+    print('Solution 1:', solution_1(task_valves, task_start_valve, 30)) # should be 2359
+    print('test 2:', solution_2(test_valves, test_start_valve, 26)) # should be 1707
     print('Solution 2:', solution_2(task_valves, task_start_valve, 26)) # should be 2999
     
     
