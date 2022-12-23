@@ -19,6 +19,14 @@ class MonkeyShout:
               '-': lambda x, y: x - y,
               '*': lambda x, y: x * y,
               '/': lambda x, y: x // y,
+              'r+': lambda x, y: x - y,
+              'r-': lambda x, y: y - x,
+              'r*': lambda x, y: x // y,
+              'r/': lambda x, y: y // x,
+              'l+': lambda x, y: x - y,
+              'l-': lambda x, y: x + y,
+              'l*': lambda x, y: x // y,
+              'l/': lambda x, y: x * y,
               '=': lambda x, y: x == y
               }
     
@@ -46,7 +54,25 @@ class MonkeyShout:
         else:
             return False
         
-    
+    def get_new_value_root(self, name_2):
+        if self.left.has_name_below(name_2):
+            return self.left.get_new_value(name_2, self.right.get_value())
+        else:
+            return self.right.get_new_value(name_2, self.left.get_value())
+            
+        
+    def get_new_value(self, name_2, value):
+        if hasattr(self, 'left'):
+            if self.left.has_name_below(name_2):
+                print('l' + self.operation)
+                return self.left.get_new_value(name_2, MonkeyShout.operations['l' + self.operation](value, self.right.get_value()))
+            else:
+                print('r' + self.operation)
+                return self.right.get_new_value(name_2, MonkeyShout.operations['r' + self.operation](value, self.left.get_value()))
+        else:
+            return value
+
+        
     def __repr__(self):
         return self.name + ', left: ' + self.left.name + ', right: ' + self.right.name
 
@@ -72,37 +98,23 @@ def get_monkey_shouts(filename):
     return results, monkey_operations #, monkey_dependance
 
 
-
-
-
-
 def solution_1(results, monkey_operations, name):
     root = MonkeyShout(results, monkey_operations, name)
     return root.get_value()
 
+
 def solution_2(results, monkey_operations, name_1, name_2):
     monkey_operations[name_1][operation_sign] = '='
-    results[name_2] = 512580000000
     root = MonkeyShout(results, monkey_operations, name_1)
-    print(root.get_value())
-    print(root.left.has_name_below(name_2))
-    print(root.right.has_name_below(name_2))
-    print(MonkeyShout(results, monkey_operations, name_2).get_value())
-    
-    print(root.get_value())
-    print(root.left.get_value())
-    print(root.right.get_value())
-   # while MonkeyShout(results, monkey_operations, name_1).get_value() != 1:
-   #     results[name_2] += 1
-    return results[name_2]
+    return root.get_new_value_root(name_2)
 
   
 def main():
-   # test_results, test_monkey_operations = get_monkey_shouts('2022/Day_21/test.txt') # , test_monkey_dependance
-   # print('test 1:', solution_1(test_results, test_monkey_operations, 'root'))
+    test_results, test_monkey_operations = get_monkey_shouts('2022/Day_21/test.txt') # , test_monkey_dependance
+    print('test 1:', solution_1(test_results, test_monkey_operations, 'root'))
     task_results, task_monkey_operations = get_monkey_shouts('2022/Day_21/task.txt') # , task_monkey_dependance
     print('Solution 1:', solution_1(task_results, task_monkey_operations, 'root'))
-  #  print('test 2:', solution_2(task_results, task_monkey_operations, 'root', 'humn'))
+    print('test 2:', solution_2(test_results, test_monkey_operations, 'root', 'humn'))
     print('Solution 2:', solution_2(task_results, task_monkey_operations, 'root', 'humn'))
     
     
