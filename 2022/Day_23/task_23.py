@@ -16,17 +16,22 @@ class Elf:
     
     def __init__(self, position) -> None:
         self.position = position
-        self.directions = copy(Elf.directions)
-            
+           
     def get_position(self):
         return self.position
         
-    def get_directions(self):
-        return self.directions
+    def get_directions():
+        return Elf.directions
     
+    def setdefault_directions():
+        Elf.directions = ['N', 'S', 'W', 'E']
+            
+    def change_directions():
+        Elf.directions = Elf.directions[1:] + Elf.directions[:1]
+        
     def move(self, point):
         self.position = point
-        self.directions = self.directions[1:] + self.directions[:1]
+       # self.change_directions()
         
     def __repr__(self):
         return 'Elf on pos: ' + str(self.position)
@@ -38,22 +43,23 @@ class Board:
     
     positions_to_check = {'N': lambda point: set([(point[0] + i, point[1] - 1) for i in range(-1, 2)]),
                           'S': lambda point: set([(point[0] + i, point[1] + 1) for i in range(-1, 2)]),
-                          'W': lambda point: set([(point[0] + 1, point[1] + i) for i in range(-1, 2)]),
-                          'E': lambda point: set([(point[0] - 1, point[1] + i) for i in range(-1, 2)])}
+                          'W': lambda point: set([(point[0] - 1, point[1] + i) for i in range(-1, 2)]),
+                          'E': lambda point: set([(point[0] + 1, point[1] + i) for i in range(-1, 2)])}
     
     new_positions = {'N': lambda point: (point[0], point[1] - 1),
                      'S': lambda point: (point[0], point[1] + 1),
-                     'W': lambda point: (point[0] + 1, point[1]),
-                     'E': lambda point: (point[0] - 1, point[1])}
+                     'W': lambda point: (point[0] - 1, point[1]),
+                     'E': lambda point: (point[0] + 1, point[1])}
     
     new_x_y = {'N': lambda y: y - 1,
                'S': lambda y: y + 1, 
-               'W': lambda x: x + 1,
-               'E': lambda x: x - 1}
+               'W': lambda x: x - 1,
+               'E': lambda x: x + 1}
 
     def __init__(self, elves_positions) -> None:
         self.Elves = [Elf(position) for position in elves_positions]
         self.actual_positions = elves_positions
+        Elf.setdefault_directions()
     
     def get_max_x(self):
         return max(self.actual_positions, key=lambda point: point[0])[0]
@@ -72,14 +78,13 @@ class Board:
         for x in range(self.get_min_x(), self.get_max_x() + 1):
             dict_of_sets.setdefault('x' + str(x), set(filter(lambda point: point[0] == x, self.actual_positions)))
         for y in range(self.get_min_y(), self.get_max_y() + 1):
-            dict_of_sets.setdefault('y' + str(y), set(filter(lambda point: point[0] == x, self.actual_positions)))
+            dict_of_sets.setdefault('y' + str(y), set(filter(lambda point: point[1] == y, self.actual_positions)))
         return dict_of_sets
     
     def elf_may_stay(self, elf):
-        return [self.elf_may_move(elf, direction) for direction in elf.get_directions()]
+        return [self.elf_may_move(elf, direction) for direction in Elf.get_directions()]
     
     def elf_may_move(self, elf, direction):
-        # TODO
         if direction in ['S', 'N']:
             new_y = Board.new_x_y[direction](elf.get_position()[1])
             if not 'y' + str(new_y) in self.dict_of_positions.keys() or \
@@ -87,33 +92,43 @@ class Board:
                     return True
         else:
             new_x = Board.new_x_y[direction](elf.get_position()[0])
-            if not 'x' + str(new_x) in self.dict_of_positions.keys() or \
+            if 'x' + str(new_x) not in self.dict_of_positions.keys() or \
                 len(self.dict_of_positions['x' + str(new_x)].intersection(Board.positions_to_check[direction](elf.get_position()))) == 0:
                     return True
         return False
     
     def get_new_position(self, elf, move_table):
-        #print(elf.get_directions()) # bug in there
-        return Board.new_positions[elf.get_directions().index(move_table.index(True))](elf.get_position())    
+        return Board.new_positions[Elf.get_directions()[move_table.index(True)]](elf.get_position())    
     
     def elves_go(self):
+      #  print(Elf.get_directions())
         # part 1
         # prepare a dict of sets for each line and column
         self.dict_of_positions = self.get_set_for_row_and_columns()
         self.new_elves_positions = {}
         for elf in self.Elves:
             move_table = self.elf_may_stay(elf)
-            if sum(move_table) < 4:
+            if 0 < sum(move_table) < 4:
                 new_position = self.get_new_position(elf, move_table)
                 self.new_elves_positions.setdefault(new_position, set())
                 self.new_elves_positions[new_position].add(elf)
         
         # part 2
-        for position, elves in self.new_elves_positions:
+        for position, elves in self.new_elves_positions.items():
             if len(elves) == 1:
                 for elf in elves:
                     elf.move(position)
+        Elf.change_directions()
         self.actual_positions = set([elf.get_position() for elf in self.Elves])
+        
+    def when_noone_moves(self):
+        iter = 0
+        while True:
+            iter += 1
+            self.elves_go()
+            if len(self.new_elves_positions) == 0:
+                return iter
+            print(iter, len(self.new_elves_positions))
                         
     
 
@@ -134,17 +149,19 @@ def solution_1(elves_positions, no_of_iterations):
     board = Board(elves_positions)
     for _ in range(no_of_iterations):
         board.elves_go()
-    return (board.get_max_x() - board.get_min_x() + 1) * (board.get_max_y() - board.get_min_y() + 1)
+    return (board.get_max_x() - board.get_min_x() + 1) * (board.get_max_y() - board.get_min_y() + 1) - len(elves_positions)
 
-
+def solution_2(elves_positions):
+    board = Board(elves_positions)
+    return board.when_noone_moves()
   
 def main():
     test_positions = get_elves_positions('2022/Day_23/test.txt')
     print('test 1:', solution_1(test_positions, 10))
     task_positions = get_elves_positions('2022/Day_23/task.txt')
     print('Solution 1:', solution_1(task_positions, 10))
- #   print('test 2:', solution_2(test_results, test_monkey_operations, 'root', 'humn'))
- #   print('Solution 2:', solution_2(task_results, task_monkey_operations, 'root', 'humn'))
+    print('test 2:', solution_2(test_positions))
+    print('Solution 2:', solution_2(task_positions))
     
     
 if __name__ == '__main__':
