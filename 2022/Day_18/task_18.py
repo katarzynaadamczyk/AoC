@@ -37,9 +37,6 @@ def main():
     print('test 1:', solution_1(test_cubes))
     task_cubes = get_cubes('2022/Day_18/task.txt')
     print('Solution 1:', solution_1(task_cubes))
-    print(sorted(task_cubes))
-  #  print('test 2:', solution_2(test_valves, test_start_valve, 26))
-   # print('Solution 2:', solution_2(task_valves, task_start_valve, 26))
     
     
 if __name__ == '__main__':
