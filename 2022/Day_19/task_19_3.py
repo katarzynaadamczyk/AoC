@@ -54,10 +54,10 @@ def check_if_data_has_required_rocks(data, blueprint, max_no_of_robots):
                 break
     return set(blueprint.keys()).difference(robots_that_cannot_be_built)
 
-def add_to_queue(act_dict, minute, queue_of_states, been_in_states):
-    if tuple(act_dict.values()) not in been_in_states:
-        been_in_states.add(act_dict.values())
-        queue_of_states.put((copy(act_dict), minute + 1))
+def add_to_queue(act_dict, minute, queue_of_states): #, been_in_states):
+   # if tuple(act_dict.values()) not in been_in_states:
+   #     been_in_states.add(act_dict.values())
+    queue_of_states.put((minute + 1, copy(act_dict)))
         
 def get_max_no_of_robots(blueprint, minutes):
     tmp, ret_dict = {}, {}
@@ -75,57 +75,56 @@ def get_max_no_of_robots(blueprint, minutes):
 def add_materials(state):
     for robot, material in types_of_robots.items():
         state[material] += state[robot]
-    print('state', state)
+ #   print('state', state)
 
+def build_robot(state, robot, blueprint):
+    act_dict = copy(state)
+    act_dict[robot] += 1
+    for rock, quantity in blueprint[robot].items():
+        act_dict[rock] -= quantity
+    return act_dict
 
 # A* algorithm
 def get_max_number_of_geodes(blueprint, minutes):
-    queue_of_states, been_in_states, max_no_of_robots, max_geode = Queue(), set(), get_max_no_of_robots(blueprint, minutes), 0
+  #  queue_of_states, been_in_states, max_no_of_robots = Queue(), set(), get_max_no_of_robots(blueprint, minutes)
+    queue_of_states, max_no_of_robots = Queue(), get_max_no_of_robots(blueprint, minutes)
+    max_geode, max_obsidian_robot = [0 for _ in range(minutes + 1)], [0 for _ in range(minutes + 1)]
+  #  queue_of_states, max_no_of_robots, max_geode = Queue(), get_max_no_of_robots(blueprint, minutes), 0
     first_dict = {}
     for robot, rock in types_of_robots.items():
         first_dict.setdefault(robot, 0)
         first_dict.setdefault(rock, 0)
     first_dict[ore_robot] += 1
-    queue_of_states.put((first_dict, 0))
-    been_in_states.add(tuple(first_dict.values()))
+    queue_of_states.put((0, first_dict))
+   # been_in_states.add(tuple(first_dict.values()))
     while not queue_of_states.empty():
-        act_dict, act_minute = queue_of_states.get()
-        print(act_minute, act_dict, max_geode)
-        if act_minute >= 24:
-            max_geode = max(act_dict[geode], max_geode)
+        act_minute, act_dict = queue_of_states.get()
+        max_geode[act_minute] = max(max_geode[act_minute], act_dict[geode])
+        max_obsidian_robot[act_minute] = max(max_obsidian_robot[act_minute], act_dict[obsidian_robot])
+        if act_minute >= minutes or act_dict[geode] < max_geode[act_minute] or act_dict[obsidian_robot] < max_obsidian_robot[act_minute]:
             continue
+        
         # check which robots can be built
         robots_can_be_built = check_if_data_has_required_rocks(act_dict, blueprint, max_no_of_robots)
-        print(robots_can_be_built)
-        if len(robots_can_be_built) == 0:
-            add_materials(act_dict)
-            add_to_queue(act_dict, act_minute, queue_of_states, been_in_states)
+        add_materials(act_dict)
+       # if len(robots_can_be_built) == 0:
+        add_to_queue(act_dict, act_minute, queue_of_states) #, been_in_states)
+        if geode_robot in robots_can_be_built:
+            act_dict = build_robot(act_dict, geode_robot, blueprint)
+           # del queue_of_states
+           # queue_of_states = Queue()
+            add_to_queue(act_dict, act_minute, queue_of_states) #, been_in_states)
+        elif obsidian_robot in robots_can_be_built:
+            act_dict = build_robot(act_dict, obsidian_robot, blueprint)
+            add_to_queue(act_dict, act_minute, queue_of_states) #, been_in_states)
         else:
             for robot in robots_can_be_built:
                 # build robot
+                act_dict = build_robot(act_dict, robot, blueprint)
                 # add to queue
-                
-                pass
-       # return 0
-    '''
-        for robot, rock in reversed(types_of_robots.items()):
-            # check if new robot can be built
-            determine_if_new_robot_can_be_built = check_if_data_has_required_rocks(act_dict, blueprint[robot])
-            # add new resources
-            for robot_name, rock_name in types_of_robots.items():
-                if robot_name in act_dict.keys() and rock_name in act_dict.keys():
-                    act_dict[rock_name] += act_dict[robot_name]
-                else:
-                    break
-            add_to_queue(act_dict, act_minute, queue_of_states, been_in_states)
-            # add new robots
-            if determine_if_new_robot_can_be_built:
-                act_dict[robot] += 1
-                for rock, quantity in blueprint[robot].items():
-                    act_dict[rock] -= quantity
-                add_to_queue(act_dict, act_minute, queue_of_states, been_in_states)
-                break'''
-    return max_geode
+                add_to_queue(act_dict, act_minute, queue_of_states) #, been_in_states)
+    print(max_geode[minutes])
+    return max_geode[minutes]
     return max([been_in[-1] for been_in in been_in_states]) # need to change for geode
 
 
