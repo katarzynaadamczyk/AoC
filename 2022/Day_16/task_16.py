@@ -3,9 +3,11 @@ Advent of Code
 2022 day 16
 my solution to tasks from day 16
 
-
-solution 1 - 
-solution 2 - 
+First was to eliminate the valves with 0 pressure and get min paths between non-zero-pressure valves, so for that is function get_dict_of_min_paths.
+solution 1 - With a help of a queue check all possible options to open valves in given minutes. 
+act_pressure is max pressure that can be reached when opening the valves in the given minutes.
+been_in_states eliminates duplication of coming back to same valve and thanks to it the result is given right away.
+solution 2 - Similar to solution 1 although there is more counting as there is more possible options as the elephant is helping out.
 
 '''
 
@@ -64,7 +66,7 @@ def get_dict_of_min_paths(valves, start_valve):
     valves_with_pressure_dict = {valve: {} for valve in valves_with_pressure}
     for index, valve_1 in enumerate(valves_with_pressure):
         for valve_2 in valves_with_pressure[index + 1:]:
-            act_path = find_min_path(valves, valve_1, valve_2) + 1
+            act_path = find_min_path(valves, valve_1, valve_2) + 1 # + 1 as opening the valve costs also 1 minute
             valves_with_pressure_dict[valve_1][valve_2] = act_path
             valves_with_pressure_dict[valve_2][valve_1] = act_path
     return valves_with_pressure_dict
