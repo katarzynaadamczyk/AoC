@@ -4,8 +4,10 @@ Advent of Code
 my solution to tasks from day 18
 
 
-solution 1 - 
 solution 2 - idea from https://www.reddit.com/r/adventofcode/comments/zufpxd/day_18_python_cant_find_the_bug_in_my_code_got/
+My explanation: create an empty numpy array in shape of cuboid that can contain obsidian (data which can contain array is EmptyCube). 
+Fill it with cubes that are in the obsidian (class Cube).
+Then start Steam at (0,0,0) and propagate it (as steam moves). For each steam cube count touching walls of cube.
 
 '''
 

@@ -4,8 +4,8 @@ Advent of Code
 my solution to tasks from day 18
 
 
-solution 1 - 
-solution 2 - 
+solution 1 - Count how many cube pairs touch. Then multiply the number of cubes by 6 (each cube has 6 walls) and 
+substract the number of cubes touching multiplied by 2 (as for each pair two walls cannot be seen). 
 
 '''
 
