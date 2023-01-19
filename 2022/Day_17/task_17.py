@@ -3,9 +3,12 @@ Advent of Code
 2022 day 17
 my solution to tasks from day 17
 
-
-solution 1 - 
-solution 2 - 
+This exercise looks like simplified Tetris.
+solution 1 - The idea is just to simulate the falling rocks and then return the height of the created tower. I made it on sets -> each falling rock is a set of points and 
+the tower is also a set of points. After each rock falls simulator recalculates the height of the tower. 
+solution 2 - Second idea is to get a long schema of differences between tower heights (a serie of 100 following differences must be same). To do this first is done a simulation like in part 1.
+Then it is counted: no_of_repetitions * height_difference + height_of_first_found_series + height_of_what_rocks_were_left - 1 (line 93)
+I worked on strings as it was faster to write back then.
 
 '''
 
@@ -63,6 +66,7 @@ class Simulation:
         self.no_of_wind_blows = 0
         self.tower_height = 0
         self.heights, self.differences = [], []
+        # 2001 is there after tests, it is a good choice as with it long schema of repeated differences can be found
         for i in range(2001):
             new_rock = self.rock_generator(i)
             # first wind blow, then it will be done in reverse order
@@ -147,9 +151,9 @@ def solution_2(wind_blows, no_of_rocks):
   
 def main():
     test_wind_blows = get_wind_blows('2022/Day_17/test.txt')
-  #  print('test 1:', solution_1(test_wind_blows, 2022))
+    print('test 1:', solution_1(test_wind_blows, 2022))
     task_wind_blows = get_wind_blows('2022/Day_17/task.txt')
-   # print('Solution 1:', solution_1(task_wind_blows, 2022))
+    print('Solution 1:', solution_1(task_wind_blows, 2022))
     print('test 2:', solution_2(test_wind_blows, 1000000000000))
     print('Solution 2:', solution_2(task_wind_blows, 1000000000000))
     
