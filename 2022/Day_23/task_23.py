@@ -3,9 +3,10 @@ Advent of Code
 2022 day 23
 my solution to tasks from day 23
 
-
-solution 1 - 
-solution 2 - 
+class Elf -> contains general (class) directions for each Elf where to check new position. Each Elf contains only its position.
+class Board -> class where all the magic is encrypted. Contains list of Elves and list of their positions at the beginning. 
+solution 1 - Given number of iterations move the Elves on Board (done in the Board.elves_go() function). Then counts the max rectangle area and substracts the number of elves.
+solution 2 - Until there is no move on the Board do the Board.elves_go() function in Board.when_noone_moves() function. It takes a while ( < 2 minutes).
 
 '''
 from copy import copy
@@ -31,7 +32,6 @@ class Elf:
         
     def move(self, point):
         self.position = point
-       # self.change_directions()
         
     def __repr__(self):
         return 'Elf on pos: ' + str(self.position)
@@ -41,16 +41,19 @@ class Elf:
     
 class Board:
     
+    # returns set of positions to be checked if empty when trying to move to this position
     positions_to_check = {'N': lambda point: set([(point[0] + i, point[1] - 1) for i in range(-1, 2)]),
                           'S': lambda point: set([(point[0] + i, point[1] + 1) for i in range(-1, 2)]),
                           'W': lambda point: set([(point[0] - 1, point[1] + i) for i in range(-1, 2)]),
                           'E': lambda point: set([(point[0] + 1, point[1] + i) for i in range(-1, 2)])}
     
+    # return new position of Elf knowing its move direction
     new_positions = {'N': lambda point: (point[0], point[1] - 1),
                      'S': lambda point: (point[0], point[1] + 1),
                      'W': lambda point: (point[0] - 1, point[1]),
                      'E': lambda point: (point[0] + 1, point[1])}
     
+    # counts new x or y given direction
     new_x_y = {'N': lambda y: y - 1,
                'S': lambda y: y + 1, 
                'W': lambda x: x - 1,
@@ -101,7 +104,6 @@ class Board:
         return Board.new_positions[Elf.get_directions()[move_table.index(True)]](elf.get_position())    
     
     def elves_go(self):
-      #  print(Elf.get_directions())
         # part 1
         # prepare a dict of sets for each line and column
         self.dict_of_positions = self.get_set_for_row_and_columns()
