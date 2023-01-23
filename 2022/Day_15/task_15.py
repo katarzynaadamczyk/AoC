@@ -4,9 +4,11 @@ Advent of Code
 my solution to tasks from day 15
 
 
-solution 1 - 
-solution 2 - it takes a while to count, about `5 m1inutes
-
+solution 1 - For each sensor check and put into the set the ranges which sensor detects for given line. Then shorten the set so that there are no duplicates and then count the
+number of points that are within sensors reach. Remove the count of sensors and beacons from it. 
+solution 2 - it takes a while to count, about `5 minutes. For each sensor "draw" an circumference that has radius plus 1 and center point is actual sensor. 
+For each point of the cicumference that is inside fiven range check how many sensors are off range in this point. If all sensors are, return tuning frequency of this point. 
+solution 2_2 was to count sensors out of range for each point in given range, but it was too slow.
 '''
 
 
