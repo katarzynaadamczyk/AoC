@@ -64,19 +64,6 @@ def solution_1(walls, sand_start):
             sands.add(new_sand_pos)
     return len(sands)
 
-def solution_1(walls, sand_start):
-    sands, act_sand_pos, new_sand_pos = set(), sand_start, sand_start
-    y_max = max(walls, key=lambda coord: (coord[1], coord[0]))[1]
-    while new_sand_pos[1] < y_max:
-        act_sand_pos = sand_start
-        new_sand_pos = get_new_sand_pos(walls.union(sands), act_sand_pos)
-        while new_sand_pos != act_sand_pos and new_sand_pos[1] < y_max:
-            act_sand_pos = new_sand_pos
-            new_sand_pos = get_new_sand_pos(walls.union(sands), act_sand_pos)
-        if new_sand_pos[1] < y_max:
-            sands.add(new_sand_pos)
-    return len(sands)
-
 
 def get_new_sand_pos_2(walls_and_sands, sand_pos, y_max):
     if sand_pos[1] + 1 < y_max:
