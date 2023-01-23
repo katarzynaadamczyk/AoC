@@ -2,11 +2,14 @@
 Advent of Code 
 2022 day 19
 my solution to tasks from day 19
-*** new version as my seems to fail - wrong results for tests
+*** new version as my seems to fail -> wrong results for tests
 *** reimplemented solution from reddit: https://pastebin.com/KDTmtHCk
 
-solution 1 - 
-solution 2 - 
+class Blueprint -> contains data from each Blueprint. id -> id number from Blueprint, cost -> cost of each robot, useful -> how many robots is reasonable to buy
+class State -> presents actual state. Robots -> actual number of robots, resources -> actual quantity of resources, ignored -> robots ignored in previous minutes
+solution 1 - for each blueprint count the maximum number of geodes that can be opened. For each blueprint reccurently look for best option -> it is better described in the code.
+Then return the sum of multiplication of index by found number of geodes for each blueprint.
+solution 2 - Same algorithm as above, just shortened the length of blueprint array to 3.
 
 '''
 
