@@ -3,9 +3,9 @@ Advent of Code
 2022 day 20
 my solution to tasks from day 20
 
-
-solution 1 - 
-solution 2 - 
+To start, a file got is a list of lists of size two containing [number, initial_index]
+solution 1 - Sorting by second number (initial index), move circularly the numbers. Then find indexes of 1000-th, 2000-th and 3000-th number after 0. Return their sum. 
+solution 2 - Same idea as in solution 1, just added multiplication of values by decryption_key and working on this new file.
 
 '''
 from copy import copy
