@@ -6,7 +6,7 @@ my solution to tasks from day 23
 class Elf -> contains general (class) directions for each Elf where to check new position. Each Elf contains only its position.
 class Board -> class where all the magic is encrypted. Contains list of Elves and list of their positions at the beginning. 
 solution 1 - Given number of iterations move the Elves on Board (done in the Board.elves_go() function). Then counts the max rectangle area and substracts the number of elves.
-solution 2 - Until there is no move on the Board do the Board.elves_go() function in Board.when_noone_moves() function. It takes a while ( < 2 minutes).
+solution 2 - Until there is no move on the Board do the Board.elves_go() function in Board.when_noone_moves() function. It takes a while ( < 5 minutes).
 
 '''
 from copy import copy
