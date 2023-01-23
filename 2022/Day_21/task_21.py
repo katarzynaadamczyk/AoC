@@ -3,9 +3,11 @@ Advent of Code
 2022 day 21
 my solution to tasks from day 21
 
-
-solution 1 - 
-solution 2 - 
+class MonkeyShout -> leaf of 'monkey tree' containing its value or type of operation, left and right nodes
+In each of solution first I needed to create a MonkeyShout tree with root as actual root. 
+solution 1 - Recurently count the value of root output knowing all the monkey shouts.
+solution 2 - Count the result knowing that root operation is '=='. In there I added more types of operations 'l+', 'l-', 'r+', 'r-', etc as reversed operations 
+so that the result will be calculated correctly.
 
 '''
 
@@ -48,7 +50,7 @@ class MonkeyShout:
     
     def has_name_below(self, name):
         if self.name == name:
-                return True
+            return True
         if hasattr(self, 'left'):
             return self.left.has_name_below(name) or self.right.has_name_below(name)
         else:
@@ -64,10 +66,10 @@ class MonkeyShout:
     def get_new_value(self, name_2, value):
         if hasattr(self, 'left'):
             if self.left.has_name_below(name_2):
-                print('l' + self.operation)
+               # print('l' + self.operation)
                 return self.left.get_new_value(name_2, MonkeyShout.operations['l' + self.operation](value, self.right.get_value()))
             else:
-                print('r' + self.operation)
+               # print('r' + self.operation)
                 return self.right.get_new_value(name_2, MonkeyShout.operations['r' + self.operation](value, self.left.get_value()))
         else:
             return value
@@ -80,7 +82,7 @@ class MonkeyShout:
         return self.name + ', val: ' + str(self.get_value())
 
 def get_monkey_shouts(filename):
-    results, monkey_operations, monkey_dependance = {}, {}, {}
+    results, monkey_operations = {}, {}
     with open(filename, 'r') as myfile:
         for line in myfile:
             monkey, operation = line.strip().split(': ')
@@ -91,11 +93,7 @@ def get_monkey_shouts(filename):
                 monkey_dict = {values: (operation[0], operation[2]),
                                operation_sign: operation[1]}
                 monkey_operations.setdefault(monkey, monkey_dict)
-                monkey_dependance.setdefault(operation[0], set())
-                monkey_dependance.setdefault(operation[2], set())
-                monkey_dependance[operation[0]].add(monkey)
-                monkey_dependance[operation[2]].add(monkey)
-    return results, monkey_operations #, monkey_dependance
+    return results, monkey_operations 
 
 
 def solution_1(results, monkey_operations, name):
@@ -110,9 +108,9 @@ def solution_2(results, monkey_operations, name_1, name_2):
 
   
 def main():
-    test_results, test_monkey_operations = get_monkey_shouts('2022/Day_21/test.txt') # , test_monkey_dependance
+    test_results, test_monkey_operations = get_monkey_shouts('2022/Day_21/test.txt') 
     print('test 1:', solution_1(test_results, test_monkey_operations, 'root'))
-    task_results, task_monkey_operations = get_monkey_shouts('2022/Day_21/task.txt') # , task_monkey_dependance
+    task_results, task_monkey_operations = get_monkey_shouts('2022/Day_21/task.txt')
     print('Solution 1:', solution_1(task_results, task_monkey_operations, 'root'))
     print('test 2:', solution_2(test_results, test_monkey_operations, 'root', 'humn'))
     print('Solution 2:', solution_2(task_results, task_monkey_operations, 'root', 'humn'))
