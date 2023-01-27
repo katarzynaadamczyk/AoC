@@ -12,6 +12,13 @@ from queue import PriorityQueue
 from copy import deepcopy
 
 class Solution:
+    
+    new_positions = {'>': lambda x, y, max_x: ((x + 1) % max_x, y),
+                     '<': lambda x, y, max_x: ((x - 1) % max_x, y),
+                     'v': lambda x, y, max_x: (x, y + 1),
+                     '^': lambda x, y, max_x: (x, y - 1),
+                     }
+    
     def __init__(self, new_map) -> None:
         self.x = 0
         self.y = 0
@@ -44,8 +51,7 @@ class Solution:
             # adding any other option to the queue
             for x, y in self.check_where_to_go(act_minute, act_x, act_y):
                 stack_of_moments.put((act_minute, x, y))
-            
-            break
+
         return -1
     
     def check_where_to_go(self, minute, x, y):
@@ -62,13 +68,24 @@ class Solution:
     def move_blizzards(self, minute):
         # TODO
         # prepare an empty new map with all places filled with ''
-        new_map = []
+        new_map = [self.map[minute-1][0]]
+        for y in range(1, len(self.map[minute-1]) - 1):
+            tmp = ['' for _ in range(len(self.map[minute-1][y]))]
+            new_map.append(tmp)
+        new_map.append(self.map[minute-1][-1]) 
         # for each blizzard in previous map add corresponding blizzard to a new one
-        for row in self.map[minute-1]: # previous map
-            tmp = []
-            # TODO
+        for y, row in enumerate(self.map[minute-1]): # previous map
+            for x, data in enumerate(row):
+                if data not in ['#', '']:
+                    for blizzard in data:
+                        new_x, new_y = Solution.new_positions[blizzard](x, y, len(row))
+                        if new_y == 0:
+                            new_y = len(new_map) - 2
+                        elif new_y == len(new_map) - 1:
+                            new_y = 1
+                        new_map[new_y][new_x] += blizzard
         # append new map to self.map
-        self.map.append(self.map[-1])
+        self.map.append(new_map)
         
 
 def get_map(filename):
