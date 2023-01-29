@@ -4,7 +4,8 @@ Advent of Code
 my solution to tasks from day 24
 
 
-solution 1 - 
+solution 1 - podzielic na dwie mapy -> down/up i left/right. zrobic tyle map ile jest powtarzajacych sie a pozniej zrobic sciezke i zwrocic w ilu iteracjach udalo sie ja zrobic
+robienie sciezki - sprawdzanie na obu odpowiednich mapach czy jest puste i jak tak to dodawanie do sciezki. sciezka jako set tupli (x, y)
 solution 2 - 
 
 '''
@@ -13,79 +14,92 @@ from copy import deepcopy
 
 class Solution:
     
-    new_positions = {'>': lambda x, y, max_x: ((x + 1) % max_x, y),
-                     '<': lambda x, y, max_x: ((x - 1) % max_x, y),
-                     'v': lambda x, y, max_x: (x, y + 1),
-                     '^': lambda x, y, max_x: (x, y - 1),
+    new_positions = {'>': lambda x, y, max_x, max_y: ((x + 1) % max_x, y),
+                     '<': lambda x, y, max_x, max_y: ((x - 1) % max_x, y),
+                     'v': lambda x, y, max_x, max_y: (x, (y + 1) % max_y),
+                     '^': lambda x, y, max_x, max_y: (x, (y - 1) % max_y),
                      }
+    
+    diagonals = '^v'
+    verticals = '><'
     
     def __init__(self, new_map) -> None:
         self.x = 0
         self.y = 0
         self.x_goal = len(new_map[-1]) - 1
         self.y_goal = len(new_map) - 1
-        self.map = [new_map]
+        self.map = new_map
+        self.len_verticals = len(new_map[0])
+        self.len_diagonals = len(new_map) - 2
+        self.map_diagonals = [[[val if val not in Solution.verticals else '.' for val in row] for row in self.map[1:-1]]]
+        self.map_verticals = [[[val if val not in Solution.diagonals else '.' for val in row] for row in self.map[1:-1]]]
+        self.map_diagonals = self.move_blizzards(self.map_diagonals, self.len_diagonals)
+        self.map_verticals = self.move_blizzards(self.map_verticals, self.len_verticals)
+        self.map = [self.map[0]] + [['.' for _ in range(len(row))] for row in self.map[1:-1]] + [self.map[-1]] 
+        self.map[0][0] = '.'
+        self.map[-1][-1] = '.'
     
+    # to repair
     def solve(self):
-        # data to be put to queue
-        minutes, x, y = 0, self.x, self.y
-        # defining the queue and putting there first data
-        stack_of_moments = PriorityQueue()
-        stack_of_moments.put((minutes, x, y))
+        # data needed for looping -> initial minutes and set of points
+        minutes, set_of_points = 0, set()
+        set_of_points.add((self.x, self.y))
         # the 'magic'
-        while not stack_of_moments.empty():
-            act_minute, act_x, act_y = stack_of_moments.get()
-            # checking if what we got is our goal
-            if act_x == self.x_goal and act_y == self.y_goal:
-                return act_minute
-            # new minute
-            act_minute += 1
-            # move blizzards if necessary
-            if len(self.map) <= act_minute:
-                self.move_blizzards(act_minute)
-            
-            # adding do nothing option to the queue    
-            if self.map[act_minute][act_y][act_x] == '':
-                stack_of_moments.put((act_minute, act_x, act_y))
-            
-            # adding any other option to the queue
-            for x, y in self.check_where_to_go(act_minute, act_x, act_y):
-                stack_of_moments.put((act_minute, x, y))
+        while len(set_of_points):
+            minutes += 1
+            new_set_of_points = set()
+            for x, y in set_of_points:
+                for new_x, new_y in self.check_where_to_go(minutes, x, y):
+                    if new_x == self.x_goal and new_y == self.y_goal:
+                        return minutes
+                    new_set_of_points.add((new_x, new_y))
+            set_of_points = new_set_of_points
+           # print(minutes, set_of_points)
+          #  if minutes == 19:
+           #     break
 
         return -1
     
+    def check_other_maps(self, minute, x, y):
+        if y == 0 or y == len(self.map) - 1:
+            if self.map[y][x] == '.':
+                return True
+            else:
+                return False
+        if self.map_diagonals[minute % self.len_diagonals][y - 1][x] == '.' and self.map_verticals[minute % self.len_verticals][y - 1][x] == '.':
+            return True
+        return False
+    
     def check_where_to_go(self, minute, x, y):
-        #if 0 <= y < len(map[minute]) and 0 <= x < len(map[minute][y]):
-        if 0 <= x - 1 < len(self.map[minute][y]) and self.map[minute][y][x-1] == '':
+        if self.check_other_maps(minute, x, y):
+            yield x, y
+        if 0 <= x - 1 < len(self.map[y]) and self.check_other_maps(minute, x - 1, y): # and self.map[y][x-1] != '#' 
             yield x - 1, y
-        if 0 <= x + 1 < len(self.map[minute][y]) and self.map[minute][y][x+1] == '':
+        if 0 <= x + 1 < len(self.map[y]) and self.check_other_maps(minute, x + 1, y):
             yield x + 1, y
-        if 0 <= y - 1 < len(self.map[minute]) and self.map[minute][y-1][x] == '':
+        if 0 <= y - 1 < len(self.map) and self.check_other_maps(minute, x, y - 1):
             yield x, y - 1
-        if 0 <= y + 1 < len(self.map[minute]) and self.map[minute][y+1][x] == '':
+        if 0 <= y + 1 < len(self.map) and self.check_other_maps(minute, x, y + 1):
             yield x, y + 1
     
-    def move_blizzards(self, minute):
-        # TODO
-        # prepare an empty new map with all places filled with ''
-        new_map = [self.map[minute-1][0]]
-        for y in range(1, len(self.map[minute-1]) - 1):
-            tmp = ['' for _ in range(len(self.map[minute-1][y]))]
-            new_map.append(tmp)
-        new_map.append(self.map[minute-1][-1]) 
-        # for each blizzard in previous map add corresponding blizzard to a new one
-        for y, row in enumerate(self.map[minute-1]): # previous map
-            for x, data in enumerate(row):
-                if data not in ['#', '']:
-                    for blizzard in data:
-                        new_x, new_y = Solution.new_positions[blizzard](x, y, len(row))
-                        if new_y == 0:
-                            new_y = len(new_map) - 2
-                        elif new_y == len(new_map) - 1:
-                            new_y = 1
-                        new_map[new_y][new_x] += blizzard
-        # append new map to self.map
-        self.map.append(new_map)
+    def move_blizzards(self, act_map, minutes):
+        # iterate over all minutes
+        for _ in range(minutes - 1):
+            # prepare an empty new map with all places filled with '.'
+            new_map = [['.' for _ in range(len(row))] for row in act_map[-1]]
+            # for each blizzard in previous map add corresponding blizzard to a new one
+            for y, row in enumerate(act_map[-1]): # previous map
+                for x, data in enumerate(row):
+                    if data != '.':
+                        for blizzard in data:
+                            new_x, new_y = Solution.new_positions[blizzard](x, y, len(row), len(act_map[-1]))
+                            if new_map[new_y][new_x] == '.':
+                                new_map[new_y][new_x] = blizzard
+                            else:
+                                new_map[new_y][new_x] += blizzard
+            # append new map to act_map
+            act_map.append(new_map)
+        return act_map
         
 
 def get_map(filename):
