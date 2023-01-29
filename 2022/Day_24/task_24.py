@@ -39,7 +39,6 @@ class Solution:
         self.map[0][0] = '.'
         self.map[-1][-1] = '.'
     
-    # to repair
     def solve(self):
         # data needed for looping -> initial minutes and set of points
         minutes, set_of_points = 0, set()
@@ -54,9 +53,32 @@ class Solution:
                         return minutes
                     new_set_of_points.add((new_x, new_y))
             set_of_points = new_set_of_points
-           # print(minutes, set_of_points)
-          #  if minutes == 19:
-           #     break
+
+        return -1
+    
+    def solve_get_back_snacks(self):
+        minutes, set_of_points, goals = 0, set(), [(self.x_goal, self.y_goal), (0, 0), (self.x_goal, self.y_goal)]
+        set_of_points.add((self.x, self.y))
+        act_goal = 0
+        # the 'magic'
+        while len(set_of_points):
+            minutes += 1
+            new_set_of_points = set()
+            goal_reached = False
+            for x, y in set_of_points:
+                for new_x, new_y in self.check_where_to_go(minutes, x, y):
+                    if new_x == goals[act_goal][0] and new_y == goals[act_goal][1]:
+                        act_goal += 1
+                        goal_reached = True
+                        if act_goal == len(goals):
+                            return minutes
+                        new_set_of_points = set()
+                        new_set_of_points.add((new_x, new_y))
+                        break
+                    new_set_of_points.add((new_x, new_y))
+                if goal_reached:
+                    break
+            set_of_points = new_set_of_points
 
         return -1
     
@@ -121,6 +143,12 @@ def solution_1(task_map):
     solver = Solution(task_map)
     return solver.solve()
 
+
+def solution_2(task_map):
+    solver = Solution(task_map)
+    return solver.solve_get_back_snacks()
+
+
   
 def main():
     test_map_1, test_map_2 = get_map('2022/Day_24/test_1.txt'), get_map('2022/Day_24/test_2.txt')
@@ -128,6 +156,9 @@ def main():
     print('test 1:', solution_1(test_map_2))
     task_map = get_map('2022/Day_24/task.txt')
     print('Solution 1:', solution_1(task_map))
+    print('test 2:', solution_2(test_map_1))
+    print('test 2:', solution_2(test_map_2))
+    print('Solution 2:', solution_2(task_map))
     
     
 if __name__ == '__main__':
