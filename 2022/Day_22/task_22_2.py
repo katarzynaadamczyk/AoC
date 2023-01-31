@@ -5,7 +5,7 @@ my solution to tasks from day 22
 
 
 solution 2 - pomysl jest taki, zeby polaczyc ze soba sciany -> przygotowac to w init w Board. a pozniej operowac podobnie jak do tej pory
-30.01 -> robię przygotowanie klasy Board oprócz łączenia ze sobą Wallsów
+do zrobienia: polaczenia Walli (wall i cube) i przeskakiwanie miedzy scianami w Cube
 
 '''
 
@@ -69,7 +69,10 @@ class Cube:
                          }
     
     def __init__(self, new_map, size):
+        self.map = new_map
         self.walls = []
+        self.x_offset = new_map[0].find('.') % size
+        self.y_offset = 0
         Wall.reset_serial_no()
         for y in range(0, len(new_map), size):
             for x in range(0, len(new_map[y]), size):
@@ -84,15 +87,27 @@ class Cube:
         # actualize walls left, right, top, bottom
         # TODO
     
-    def get_act_y(self, y_offset):
-        return self.act_wall.get_min_y() + y_offset
+    def get_act_y(self):
+        return self.act_wall.get_min_y() + self.y_offset
     
-    def get_act_x(self, x_offset):
-        return self.act_wall.get_min_x() + x_offset
+    def get_act_x(self):
+        return self.act_wall.get_min_x() + self.x_offset
     
-    def get_new_position(self, x_offset, y_offset, facing):
+    def get_new_position(self, facing):
         # TODO
-        return x_offset, y_offset, facing
+        return self.x_offset, self.y_offset, facing
+    
+    # move for single walk value # TODO
+    def move(self, walk, facing):
+        for _ in range(walk):
+            new_x_offset, new_y_offset, new_facing = self.get_new_position(facing)
+            if self.map[self.act_wall.get_min_y()+new_y_offset][self.act_wall.get_min_x()+new_x_offset] == '.':
+                self.x_offset = new_x_offset
+                self.y_offset = new_y_offset
+                facing = new_facing
+            else:
+                break
+        return facing
         
 
 class Simulation:
@@ -106,36 +121,19 @@ class Simulation:
     
     
     def __init__(self, new_map, dirs, cube_size):
-        self.map = new_map
+       # self.map = new_map
         self.dirs = dirs[0]
         self.walks = dirs[1]
         self.facing = '>'
-        self.x_offset = new_map[0].find('.') % cube_size
-        self.y_offset = 0
         self.cube = Cube(new_map, cube_size)
-    
-    # get new x and y positions
-    def get_where_to_go(self):
-        return self.cube.get_new_position(self.x_offset, self.y_offset, self.facing)
-    
-    # move for single walk value
-    def move(self, walk):
-        for _ in range(walk):
-            new_x, new_y, new_facing = self.get_where_to_go()
-            if self.map[new_y][new_x] == '.':
-                self.x_offset = new_x
-                self.y_offset = new_y
-                self.facing = new_facing
-            else:
-                break
     
     def simulate(self):
         for walk, turn in zip_longest(self.walks, self.dirs, fillvalue='O'):
-            self.move(walk)
+            self.facing = self.cube.move(walk, self.facing)
             self.facing = Simulation.directions_to_facings[turn](self.facing)
     
     def get_the_password(self):
-        return 1000 * (self.cube.get_act_y(self.y_offset) + 1) + 4 * (self.cube.get_act_x(self.x_offset) + 1) + Simulation.points_for_facing[self.facing]
+        return 1000 * (self.cube.get_act_y() + 1) + 4 * (self.cube.get_act_x() + 1) + Simulation.points_for_facing[self.facing]
 
 
 
