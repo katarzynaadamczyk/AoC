@@ -62,6 +62,9 @@ class Wall:
     def get_min_x(self):
         return self.x_min
     
+    def __eq__(self, other):
+        return self.id == other.id and self.x_min == other.x_min and self.y_min == other.y_min and self.size == other.size
+    
     
 class Cube:
     
@@ -83,6 +86,9 @@ class Cube:
                             '^': lambda x, y, size: (x, size - 1),
                             'v': lambda x, y, size: (x, 0)
                             }
+    
+    facing_connections = {(), (), (), ()} # fill TODO
+        
     
     facings = ['>', 'v', '<', '^']
     len_facings = 4
@@ -128,6 +134,15 @@ class Cube:
                     wall_2.offsets_change[point_2_entrance] = Cube.simple_offset_change[point_2_entrance]
         
         while not self.all_connections_closed():
+            # TODO 
+            # just close all connections and it will be done ;)
+            for i, wall_1 in enumerate(self.walls):
+                for wall_2 in self.walls[i+1:]:
+                    for dir_1, entr_1, dir_2, entr_2 in Cube.facing_connections:
+                        if self.check_if_may_create_connection(wall_1, wall_2): # fill the directions TODO
+                            self.create_connection(wall_1, wall_2) # fill the directions TODO
+                            break
+                        
             break
         
         for wall in self.walls:
@@ -141,6 +156,14 @@ class Cube:
             if None in wall.next_walls.values():
                 return False
         return True
+    
+    def check_if_may_create_connection(self, wall_1, dir_1, entr_1, wall_2, dir_2, entr_2):
+        # TODO
+        return False
+    
+    def create_connection(self, wall_1, dir_1, entr_1, wall_2, dir_2, entr_2):
+        # TODO
+        pass
     
     def get_act_y(self):
         return self.act_wall.get_min_y() + self.y_offset
