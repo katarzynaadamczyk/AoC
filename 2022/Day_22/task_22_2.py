@@ -63,7 +63,12 @@ class Wall:
         return self.x_min
     
     def __eq__(self, other):
-        return self.id == other.id and self.x_min == other.x_min and self.y_min == other.y_min and self.size == other.size
+        if other is None:
+            return False
+        return self.serial_no == other.serial_no and self.x_min == other.x_min and self.y_min == other.y_min and self.size == other.size
+    
+    def get_next_wall(self, dir):
+        return self.next_walls.get(dir, None)
     
     
 class Cube:
@@ -81,13 +86,36 @@ class Cube:
                          'v': '^'
                          }
     
-    simple_offset_change = {'>': lambda x, y, size: (0, y),
-                            '<': lambda x, y, size: (size - 1, y),
-                            '^': lambda x, y, size: (x, size - 1),
-                            'v': lambda x, y, size: (x, 0)
+    simple_offset_change = {'<>': lambda x, y, size: (0, y),
+                            '><': lambda x, y, size: (size - 1, y),
+                            'v^': lambda x, y, size: (x, size - 1),
+                            '^v': lambda x, y, size: (x, 0),
+                            '>v': lambda x, y, size: (y, size - 1),
+                            'v>': lambda x, y, size: (size - 1, x),
+                            '^<': lambda x, y, size: (y, 0),
+                            '<^': lambda x, y, size: (0, x),
+                            '>>': lambda x, y, size: (size - 1, y),
+                            '<<': lambda x, y, size: (0, y)
                             }
     
-    facing_connections = {(), (), (), ()} # fill TODO
+    regular_offset_change = {'<>': lambda x, y, size: (x, size - 1 - y),
+                            '><': lambda x, y, size: (x, size - 1 - y),
+                            'v^': lambda x, y, size: (x, size - 1),
+                            '^v': lambda x, y, size: (x, 0),
+                            '>v': lambda x, y, size: (y, x),
+                            'v>': lambda x, y, size: (y, x),
+                            '^<': lambda x, y, size: (y, 0),
+                            '<^': lambda x, y, size: (0, x),
+                            '>>': lambda x, y, size: (x, size - 1 - y),
+                            '<<': lambda x, y, size: (0, size - 1 - y)
+                            }
+    
+    
+    facing_connections = [(Wall.up, Wall.right, Wall.left, Wall.down),
+                          (Wall.right, Wall.up, Wall.down, Wall.left),
+                          (Wall.up, Wall.right, Wall.down, Wall.right),
+                          (Wall.up, Wall.left, Wall.down, Wall.left),
+                          (Wall.right, Wall.down, Wall.right, Wall.up)] #, (), (), ()] # fill TODO
         
     
     facings = ['>', 'v', '<', '^']
@@ -126,30 +154,37 @@ class Cube:
                     common_points_2 = tuple(sorted(common_points_2))
                     point_1_entrance = wall_1.entrances[common_points_1]
                     point_2_entrance = wall_2.entrances[common_points_2]
-                    wall_1.next_walls[point_1_entrance] = wall_2
-                    wall_2.next_walls[point_2_entrance] = wall_1
-                    wall_1.facings_change[point_1_entrance] = Cube.facings_opposites[point_2_entrance]
-                    wall_2.facings_change[point_2_entrance] = Cube.facings_opposites[point_1_entrance]
-                    wall_1.offsets_change[point_1_entrance] = Cube.simple_offset_change[point_1_entrance]
-                    wall_2.offsets_change[point_2_entrance] = Cube.simple_offset_change[point_2_entrance]
+                    self.create_connection(wall_1, point_1_entrance, wall_2, point_2_entrance, Cube.simple_offset_change)
         
+        no_of_it = 0
+      #  self.walls = self.walls[1:] + self.walls[:1]
         while not self.all_connections_closed():
             # TODO 
             # just close all connections and it will be done ;)
-            for i, wall_1 in enumerate(self.walls):
-                for wall_2 in self.walls[i+1:]:
-                    for dir_1, entr_1, dir_2, entr_2 in Cube.facing_connections:
-                        if self.check_if_may_create_connection(wall_1, wall_2): # fill the directions TODO
-                            self.create_connection(wall_1, wall_2) # fill the directions TODO
+            no_of_it += 1
+            for dir_1, entr_1, dir_2, entr_2 in Cube.facing_connections:
+                for i, wall_1 in enumerate(self.walls):
+                    for wall_2 in self.walls[i+1:]:
+                        if self.check_if_may_create_connection(wall_1, dir_1, entr_1, wall_2, dir_2, entr_2):
+                            print('#####', wall_1, wall_2, dir_1, dir_2, entr_1, entr_2)
+                            self.create_connection(wall_1, entr_1, wall_2, entr_2, Cube.regular_offset_change)
+                            break
+                        if self.check_if_may_create_connection(wall_2, dir_1, entr_1, wall_1, dir_2, entr_2): 
+                            print('#####', wall_1, wall_2, dir_1, dir_2, entr_1, entr_2)
+                            self.create_connection(wall_2, entr_1, wall_1, entr_2, Cube.regular_offset_change)
                             break
                         
-            break
-        
+            if no_of_it > 10:
+                break
+        #
+        print('iterations: ', no_of_it)
         for wall in self.walls:
             print(wall)
             print(wall.next_walls)
             print(wall.facings_change)
             print(wall.offsets_change)
+        
+        self.changes = {}
             
     def all_connections_closed(self):
         for wall in self.walls:
@@ -158,12 +193,18 @@ class Cube:
         return True
     
     def check_if_may_create_connection(self, wall_1, dir_1, entr_1, wall_2, dir_2, entr_2):
-        # TODO
+        if wall_1.get_next_wall(dir_1) and wall_2.get_next_wall(dir_2) and wall_1.get_next_wall(entr_1) is None and wall_2.get_next_wall(entr_2) is None:
+            if wall_1.get_next_wall(dir_1) == wall_2.get_next_wall(dir_2):
+                return True
         return False
     
-    def create_connection(self, wall_1, dir_1, entr_1, wall_2, dir_2, entr_2):
-        # TODO
-        pass
+    def create_connection(self, wall_1, entr_1, wall_2, entr_2, offset_change):
+        wall_1.next_walls[entr_1] = wall_2
+        wall_2.next_walls[entr_2] = wall_1
+        wall_1.facings_change[entr_1] = Cube.facings_opposites[entr_2]
+        wall_2.facings_change[entr_2] = Cube.facings_opposites[entr_1]
+        wall_1.offsets_change[entr_1] = offset_change[entr_2 + entr_1]
+        wall_2.offsets_change[entr_2] = offset_change[entr_1 + entr_2]
     
     def get_act_y(self):
         return self.act_wall.get_min_y() + self.y_offset
@@ -174,20 +215,24 @@ class Cube:
     def get_new_position(self, facing):
         new_x, new_y = Cube.facing_to_new_x_y[facing](self.x_offset, self.y_offset)
         if 0 <= new_x < self.size and 0 <= new_y < self.size:
-            return new_x, new_y, facing
+            return self.act_wall, new_x, new_y, facing
+       # print('old:', self.act_wall, self.x_offset, self.y_offset, facing)
         new_facing = self.act_wall.facings_change[facing]
-        new_x, new_y = self.act_wall.offsets_change[facing]
-        self.act_wall = self.act_wall.next_walls[facing]
-        return new_x, new_y, new_facing
+        new_x, new_y = self.act_wall.offsets_change[facing](self.x_offset, self.y_offset, self.size)
+        new_wall = self.act_wall.next_walls[facing]
+       # print('new:', new_wall, new_x, new_y, new_facing)
+        self.changes.setdefault((self.act_wall.serial_no, new_wall.serial_no), ((self.x_offset, self.y_offset, facing), (new_x, new_y, new_facing)))
+        return new_wall, new_x, new_y, new_facing
     
     # move for single walk value
     def move(self, walk, facing):
         for _ in range(walk):
-            new_x_offset, new_y_offset, new_facing = self.get_new_position(facing)
-            if self.map[self.act_wall.get_min_y()+new_y_offset][self.act_wall.get_min_x()+new_x_offset] == '.':
+            new_wall, new_x_offset, new_y_offset, new_facing = self.get_new_position(facing)
+            if self.map[new_wall.get_min_y()+new_y_offset][new_wall.get_min_x()+new_x_offset] == '.':
                 self.x_offset = new_x_offset
                 self.y_offset = new_y_offset
                 facing = new_facing
+                self.act_wall = new_wall
             else:
                 break
         return facing
@@ -211,10 +256,14 @@ class Simulation:
         self.cube = Cube(new_map, cube_size)
     
     def simulate(self):
+      #  i = 0
         for walk, turn in zip_longest(self.walks, self.dirs, fillvalue='O'):
-            print(self.cube.act_wall)
+            #print(self.cube.act_wall)
             self.facing = self.cube.move(walk, self.facing)
             self.facing = Simulation.directions_to_facings[turn](self.facing)
+       #     i += 1
+        #    if i > 100:
+         #       break
     
     def get_the_password(self):
         return 1000 * (self.cube.get_act_y() + 1) + 4 * (self.cube.get_act_x() + 1) + Simulation.points_for_facing[self.facing]
@@ -241,15 +290,18 @@ def get_dirs(filename):
 
 def solution_2(task_map, task_dirs, cube_size):
     solution_board = Simulation(task_map, task_dirs, cube_size)
-   # solution_board.simulate()
+    solution_board.simulate()
+    for key, item in solution_board.cube.changes.items():
+        print(key)
+        print(item)
     return solution_board.get_the_password()
 
   
 def main():
-    test_map, test_dirs = get_map('2022/Day_22/test_map.txt'), get_dirs('2022/Day_22/test_dirs.txt') 
-    print('test 1:', solution_2(test_map, test_dirs, 4))
+    #test_map, test_dirs = get_map('2022/Day_22/test_map.txt'), get_dirs('2022/Day_22/test_dirs.txt') 
+    #print('test 2:', solution_2(test_map, test_dirs, 4))
     task_map, task_dirs = get_map('2022/Day_22/task_map.txt'), get_dirs('2022/Day_22/task_dirs.txt') 
-    print('Solution 1:', solution_2(task_map, task_dirs, 50))
+    print('Solution 2:', solution_2(task_map, task_dirs, 50))
     
     
 if __name__ == '__main__':
