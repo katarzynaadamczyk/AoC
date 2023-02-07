@@ -3,10 +3,12 @@ Advent of Code
 2022 day 24
 my solution to tasks from day 24
 
-
-solution 1 - podzielic na dwie mapy -> down/up i left/right. zrobic tyle map ile jest powtarzajacych sie a pozniej zrobic sciezke i zwrocic w ilu iteracjach udalo sie ja zrobic
-robienie sciezki - sprawdzanie na obu odpowiednich mapach czy jest puste i jak tak to dodawanie do sciezki. sciezka jako set tupli (x, y)
-solution 2 - 
+Class Solution keeps starting x, y (just for the beginning of simulation), goal_x and goal_y (to know for simulation when to end), keeps two arrays for blizzard maps. 
+Each array is created for as many unique minutes as needed -> for map ^v it is the y size of map excluding walls, for <> it is for x size of map.
+Solution 1 - In function Simulation.solve() first is created a set of points that a man (me) can be in first (0) minute. Then for next minutes the algorithm re-counts which are possible 
+positions and adds them to new set of points. If position reached is goal -> the function returns actual minute.
+solution 2 - same as solution 1, only there is an array of goals, and when third goal is reached then the function returns actual minute. The function is called
+Simulation.solve_get_back_snacks()
 
 '''
 
@@ -93,7 +95,7 @@ class Solution:
     def check_where_to_go(self, minute, x, y):
         if self.check_other_maps(minute, x, y):
             yield x, y
-        if 0 <= x - 1 < len(self.map[y]) and self.check_other_maps(minute, x - 1, y): # and self.map[y][x-1] != '#' 
+        if 0 <= x - 1 < len(self.map[y]) and self.check_other_maps(minute, x - 1, y): 
             yield x - 1, y
         if 0 <= x + 1 < len(self.map[y]) and self.check_other_maps(minute, x + 1, y):
             yield x + 1, y
@@ -103,7 +105,7 @@ class Solution:
             yield x, y + 1
     
     def move_blizzards(self, act_map, minutes):
-        # iterate over all minutes
+        # iterate over all minutes except first one as it is the starting data
         for _ in range(minutes - 1):
             # prepare an empty new map with all places filled with '.'
             new_map = [['.' for _ in range(len(row))] for row in act_map[-1]]

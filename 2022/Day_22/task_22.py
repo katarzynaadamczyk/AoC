@@ -6,7 +6,7 @@ my solution to tasks from day 22
 
 solution 1 - 
 Class Board keeps actual facing and position. Also it performs simulation as it is a simple simulation: for each step check if next step is '#'. If so it ends whe walks, in other case
-it finds next '.' in given line. Then man needs to change direction which is done by getting next direction to the left of right.
+it finds next '.' in given line. Then, man needs to change direction which is done by getting next direction to the left of right.
 
 '''
 
