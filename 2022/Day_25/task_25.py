@@ -4,7 +4,10 @@ Advent of Code
 my solution to tasks from day 25
 
 
-solution 1 - 
+solution 1 - Class Solution only encapsules the solution. First, function five_to_dec(number) counts the value of decimal number for given value in SNAFU -> it takes reversed
+SNAFU number and adds to result a multiplication of decimal value of each sign and 5 powered to actual index. To reverse it, dec_to_five(number): first find max index. Then 
+for each number, starting with counted max index, make an array of absolute values of substraction of actual number and multiplication of 5 ** index and value. 
+Then take the smallest value counted that way and add to result corresponding SNAFU sign. Actual number is number - multiplication of 5 ** index and value of SNAFU sign.
 
 '''
 
