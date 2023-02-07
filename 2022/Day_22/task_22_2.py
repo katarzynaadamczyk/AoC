@@ -1,12 +1,16 @@
 '''
 Advent of Code 
 2022 day 22
-my solution to tasks from day 22
+my solution to tasks from day 22 - not working for test data as the map looks differently from task map.
 
+solution 2:
 
-solution 2 - pomysl jest taki, zeby polaczyc ze soba sciany -> przygotowac to w init w Board. a pozniej operowac podobnie jak do tej pory
-do zrobienia: polaczenia Walli (wall i cube) i przeskakiwanie miedzy scianami w Cube
-# TODO - klasa Cube i Wall ewentualnie
+Class Wall represents wall of a cube. It has parameters: x_min, y_min, size of the wall. In addition it contains a dict of: next_walls -> which wall is next when reaching the end
+of given wall in any direction, facing_change -> to what facing it should be changed when reaching the end of the wall in given direction, offset_change -> how the offset is changed
+when reaching the wall in given direction.
+Class Cube represents cube with 6 Walls. It keeps map and actual x and y offset and performs moves for Simulation class.
+Class Simulation contains a list of walks, directions change and cube.  
+Just like in part 1, walking and changing directions is done in the same way, just needed to add classes Cube and Wall so that changing wall is done properly.
 '''
 
 import re
@@ -184,7 +188,7 @@ class Cube:
             print(wall.facings_change)
             print(wall.offsets_change)
         
-        self.changes = {}
+        self.changes = {} # dict to store changes of offsets and facings when changing walls, made to check if it is done properly
             
     def all_connections_closed(self):
         for wall in self.walls:
@@ -216,11 +220,9 @@ class Cube:
         new_x, new_y = Cube.facing_to_new_x_y[facing](self.x_offset, self.y_offset)
         if 0 <= new_x < self.size and 0 <= new_y < self.size:
             return self.act_wall, new_x, new_y, facing
-       # print('old:', self.act_wall, self.x_offset, self.y_offset, facing)
         new_facing = self.act_wall.facings_change[facing]
         new_x, new_y = self.act_wall.offsets_change[facing](self.x_offset, self.y_offset, self.size)
         new_wall = self.act_wall.next_walls[facing]
-       # print('new:', new_wall, new_x, new_y, new_facing)
         self.changes.setdefault((self.act_wall.serial_no, new_wall.serial_no), ((self.x_offset, self.y_offset, facing), (new_x, new_y, new_facing)))
         return new_wall, new_x, new_y, new_facing
     
@@ -256,14 +258,9 @@ class Simulation:
         self.cube = Cube(new_map, cube_size)
     
     def simulate(self):
-      #  i = 0
         for walk, turn in zip_longest(self.walks, self.dirs, fillvalue='O'):
-            #print(self.cube.act_wall)
             self.facing = self.cube.move(walk, self.facing)
             self.facing = Simulation.directions_to_facings[turn](self.facing)
-       #     i += 1
-        #    if i > 100:
-         #       break
     
     def get_the_password(self):
         return 1000 * (self.cube.get_act_y() + 1) + 4 * (self.cube.get_act_x() + 1) + Simulation.points_for_facing[self.facing]
