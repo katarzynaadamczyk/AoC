@@ -3,8 +3,8 @@ Advent of Code
 2023 day 2
 my solution to task 1 & 2
 
-solution 1 - 
-solution 2 - 
+solution 1 - for each line check if any of cubes is above limit, if is then do not add this line number to result
+solution 2 - for each line get max value for each cube color, then multiply the values and add to overall sum
 
 '''
 from functools import reduce
