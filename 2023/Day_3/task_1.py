@@ -3,8 +3,8 @@ Advent of Code
 2023 day 3
 my solution to task 1 & 2
 
-solution 1 - 
-solution 2 - 
+solution 1 - get each number and then check if near it is some other char than '.'
+solution 2 - get position of each * and then look for numbers around it
 
 '''
 from functools import reduce 
