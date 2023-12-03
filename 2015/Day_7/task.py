@@ -3,8 +3,8 @@ Advent of Code
 2015 day 7
 my solution to task 1 & 2
 
-solution 1 - 
-solution 2 - 
+solution 1 & 2 - create a set of ready-to-go values, and a dict of values/dict of params and function to calculate the value.
+Then make calculations until the required parameter can be found in set of calculated values.
 
 '''
 
@@ -52,7 +52,6 @@ def solution_1(filename, val_to_get):
                 if len(act_dict['PARAMS']) == 1:
                     vals_to_change[key] = functions[act_dict['FUNC']](act_tasks[act_dict['PARAMS'][0]])
                 elif len(act_dict['PARAMS']) == 2:
-                    print(key, act_dict)
                     vals_to_change[key] = functions[act_dict['FUNC']](act_tasks[act_dict['PARAMS'][0]], act_tasks[act_dict['PARAMS'][1]])
                 
         for key, val in vals_to_change.items():
