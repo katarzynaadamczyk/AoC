@@ -44,7 +44,6 @@ def solution_2(filename):
             cards_count[act_num + i] = cards_count[act_num] + cards_count.get(act_num + i)
     return sum(cards_count.values())
     
-    return 0
 
 def main():
     print('test 1:', solution_1('2023/Day_4/test.txt'))
