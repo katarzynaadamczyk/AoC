@@ -4,7 +4,7 @@ Advent of Code
 my solution to task 1 & 2
 
 solution 1 - check if each number is in winning set, count winning numbers and then add 2 ** (count - 1) to result
-solution 2 - 
+solution 2 - after doing as in solution 1, add appriopriate amount of cards to count of cards 
 
 '''
 
