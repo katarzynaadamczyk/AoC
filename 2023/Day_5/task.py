@@ -8,14 +8,16 @@ solution 2 -
 
 '''
 
+from sys import maxsize
+
 def get_seeds(line):
     line = line[line.find(':') + 1:].strip().split()
-    seeds = set()
+    seeds = []
     for seed in line:
-        seeds.add(int(seed))
+        seeds.append(int(seed))
     return seeds
 
-def get_ranges(line): #, first, last):
+def get_ranges(line): 
     line = line.split()
     nums = [int(x) for x in line]
     return nums
@@ -28,12 +30,10 @@ def get_data(filename):
         line = myfile.readline()
         transitions = []
         while line:
-          #  first = line[:line.find('-')]
-          #  last = line[line.rfind('-') + 1: line.rfind(' ')]
             new_list = []
             line = myfile.readline()
             while line and line != '\n':
-                new_list.append(get_ranges(line)) #, first, last))
+                new_list.append(get_ranges(line)) 
                 line = myfile.readline()    
             transitions.append(new_list)
             line = myfile.readline()
@@ -50,27 +50,33 @@ def transform_seed(seed, ranges):
 def solution_1(filename):
     seeds, transitions = get_data(filename)
     locations = []
-    print(transitions)
     for seed in seeds:
         transformed_seed = seed
-        print('seed 1: ', seed)
         for ranges in transitions:
             transformed_seed = transform_seed(transformed_seed, ranges)
-            print(transformed_seed)
         locations.append(transformed_seed)
-    print(locations)
     return min(locations)
 
 def solution_2(filename):
     seeds, transitions = get_data(filename)
-    return 0
+    print(len(seeds) // 2)
+    act_min_location = maxsize
+    for seed, val in zip(seeds[::2], seeds[1::2]):
+        print(seed, val)
+        for new_seed in range(seed, seed + val):
+            transformed_seed = new_seed
+            for ranges in transitions:
+                transformed_seed = transform_seed(transformed_seed, ranges)
+            if act_min_location > transformed_seed:
+                act_min_location = transformed_seed
+    return act_min_location
 
 def main():
     print('test 1:', solution_1('2023/Day_5/test.txt'))
     print('Solution 1:', solution_1('2023/Day_5/task.txt'))
     
-  #  print('test 2:', solution_2('2023/Day_4/test.txt'))
-  #  print('Solution 2:', solution_2('2023/Day_4/task.txt'))
+    print('test 2:', solution_2('2023/Day_5/test.txt'))
+    print('Solution 2:', solution_2('2023/Day_5/task.txt'))
 
 if __name__ == '__main__':
     main()
