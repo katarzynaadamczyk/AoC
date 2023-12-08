@@ -11,7 +11,7 @@ from re import findall
 class Node:
     def __init__(self, name, right, left) -> None:
         self.name = name
-        self.moves = {'R': right, 'L': left}
+        self.moves = {'L': right, 'R': left}
     
     def get_next(self, move):
         return self.moves[move]
@@ -32,8 +32,8 @@ class Solution:
     def __init__(self, filename, start_node) -> None:
         self.get_data(filename, start_node)
 
-    def get_data(self, filename, start_node):
-        self.root, self.moves = None, ''
+    def get_data(self, filename, end_char):
+        self.roots, self.moves = [], ''
         self.nodes = {}
         with open(filename, 'r') as myfile:
             self.moves = myfile.readline().strip()
@@ -41,30 +41,37 @@ class Solution:
             myfile.readline()
             line = myfile.readline()
             while line:
-                name, left, right = findall(r'\w+', line)
+                name, right, left = findall(r'\w+', line)
                 new_node = Node(name, right, left)
-                if name == start_node:
-                    self.root = new_node
+                if name.endswith(end_char):
+                    self.roots.append(new_node)
                 self.nodes[name] = new_node
                 line = myfile.readline()
         
 
-    def solution(self, end_name):
+    def solution(self, end_char):
         i = 0
-        act_node = self.root
-        while act_node.get_name() != end_name:
-            act_node = self.nodes[act_node.get_next(self.moves[i % self.moves_len])]
+        nodes = self.roots
+        all_in_end_char = False
+        while not all_in_end_char:
+            new_nodes = []
+            for node in nodes:
+                new_nodes.append(self.nodes[node.get_next(self.moves[i % self.moves_len])])
+            all_in_end_char = True
+            for node in new_nodes:
+                if not node.get_name().endswith(end_char):
+                    all_in_end_char = False
+                    break
             i += 1
+            nodes = new_nodes
         return i 
 
 
 def main():
-    sol = Solution('2023/Day_8/test_1.txt', 'AAA')
-    print('test 1:', sol.solution('ZZZ'))
-    sol = Solution('2023/Day_8/test_2.txt', 'AAA')
-    print('test 2:', sol.solution('ZZZ'))
-    sol = Solution('2023/Day_8/task.txt', 'AAA')
-    print('Solution 1:', sol.solution('ZZZ'))
+    sol = Solution('2023/Day_8/test_3.txt', 'A')
+    print('test 1:', sol.solution('Z'))
+    sol = Solution('2023/Day_8/task.txt', 'A')
+    print('Solution 1:', sol.solution('Z'))
 
 
 if __name__ == '__main__':
