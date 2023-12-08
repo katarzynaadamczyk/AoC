@@ -7,6 +7,7 @@ solution 1 -
 solution 2 - 
 '''
 from re import findall
+from math import lcm
 
 class Node:
     def __init__(self, name, right, left) -> None:
@@ -48,29 +49,38 @@ class Solution:
                 self.nodes[name] = new_node
                 line = myfile.readline()
         
+    def check_if_all_are_equal(self, times, adds, max_time):
+        for time, add in zip(times, adds):
+            if (max_time - time) % add != 0:
+                return False
+        return True
 
     def solution(self, end_char):
         i = 0
         nodes = self.roots
-        all_in_end_char = False
-        while not all_in_end_char:
+        times = dict()
+        while i < 100000:
             new_nodes = []
             for node in nodes:
-                new_nodes.append(self.nodes[node.get_next(self.moves[i % self.moves_len])])
-            all_in_end_char = True
-            for node in new_nodes:
-                if not node.get_name().endswith(end_char):
-                    all_in_end_char = False
-                    break
+                act_node = self.nodes[node.get_next(self.moves[i % self.moves_len])]
+                new_nodes.append(act_node)
+                if act_node.get_name().endswith(end_char):
+                    times.setdefault(act_node.get_name(), i + 1)
             i += 1
             nodes = new_nodes
-        return i 
+        return lcm(*times.values())
 
+    def printouts(self):
+        print('moves_len:', self.moves_len)
+        print('roots_len:', len(self.roots))
+        print('roots:', [node.get_name() for node in self.roots])
 
 def main():
     sol = Solution('2023/Day_8/test_3.txt', 'A')
+    sol.printouts()
     print('test 1:', sol.solution('Z'))
     sol = Solution('2023/Day_8/task.txt', 'A')
+    sol.printouts()
     print('Solution 1:', sol.solution('Z'))
 
 
