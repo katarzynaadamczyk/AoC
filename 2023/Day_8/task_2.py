@@ -1,10 +1,13 @@
 '''
 Advent of Code 
 2023 day 8
-my solution to task 1 & 2
+my solution to task 2
 
-solution 1 - 
-solution 2 - 
+First upload the data: first line to the moves. All the rest -> create Node and add it to the dict of nodes, 
+if the node name ends in 'A' then add it to the root list
+
+solution 2 - search for first reaching of the goal for each of the roots and then count their lcm (least common multiply) -> it is the answer
+
 '''
 from re import findall
 from math import lcm
@@ -48,18 +51,13 @@ class Solution:
                     self.roots.append(new_node)
                 self.nodes[name] = new_node
                 line = myfile.readline()
-        
-    def check_if_all_are_equal(self, times, adds, max_time):
-        for time, add in zip(times, adds):
-            if (max_time - time) % add != 0:
-                return False
-        return True
 
     def solution(self, end_char):
         i = 0
         nodes = self.roots
+        nodes_len = len(nodes)
         times = dict()
-        while i < 100000:
+        while len(times) < nodes_len:
             new_nodes = []
             for node in nodes:
                 act_node = self.nodes[node.get_next(self.moves[i % self.moves_len])]
