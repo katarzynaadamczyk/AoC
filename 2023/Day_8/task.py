@@ -1,10 +1,13 @@
 '''
 Advent of Code 
 2023 day 8
-my solution to task 1 & 2
+my solution to task 1 
+First upload the data: first line to the moves. All the rest -> create Node and add it to the dict of nodes, 
+if the node name is 'AAA' then it is root
 
-solution 1 - 
-solution 2 - 
+solution 1 - just follow the task directions until the road takes us to the goal which is 'ZZZ' -> in each step take next direction, 
+than change actual node to the corresponding next-node until this next node name is 'ZZZ'.  
+
 '''
 from re import findall
 
