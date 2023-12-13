@@ -1,6 +1,6 @@
 '''
 Advent of Code 
-2023 day 10
+2023 day 11
 my solution to task 1 & 2
 
 solution 1 - 
