@@ -55,15 +55,48 @@ class Solution:
         for act_map in self.data:
             results.append(self.check_vertical(act_map) + 100 * self.check_horizontal(act_map))
         return sum(results)
+    
+    def check_lines_2(self, line_1, line_2):
+        diff_count = 0
+        for char_1, char_2 in zip(line_1, line_2):
+            if char_1 != char_2:
+                diff_count += 1
+        return diff_count
+
+    
+    def check_horizontal_2(self, act_map):
+        max_i = len(act_map)
+        for i in range(max_i - 1):
+            if self.check_lines_2(act_map[i], act_map[i + 1]) <= 1:
+                down, up, reflection = 1, 2, self.check_lines_2(act_map[i], act_map[i + 1])
+                while i - down >= 0 and i + up < max_i:
+                    reflection += self.check_lines_2(act_map[i - down], act_map[i + up])
+                    down += 1
+                    up += 1
+                if reflection == 1:
+                    return i + 1
+        return 0
+    
+    def check_vertical_2(self, act_map):
+        return self.check_horizontal_2([[act_map[y][x] for y in range(len(act_map))] for x in range(len(act_map[0]))])
+
+
+    def solution_2(self):
+        results = []
+        for act_map in self.data:
+            results.append(self.check_vertical_2(act_map) + 100 * self.check_horizontal_2(act_map))
+        return sum(results)
 
 
 def main():
     sol = Solution('2023/Day_13/test.txt')
     print('TEST 1')
-    print('solution 1:', sol.solution_1())
+    print('Test 1:', sol.solution_1())
+    print('Test 1:', sol.solution_2())
     sol = Solution('2023/Day_13/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
+    print('Solution 2:', sol.solution_2())
 
 
 if __name__ == '__main__':
