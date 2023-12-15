@@ -1,11 +1,11 @@
 '''
 Advent of Code 
-2023 day 14
+2023 day 15
 my solution to task 1 & 2
 
-solution 1 - 
+solution 1 - follow the orders to get a hash
 
-solution 2 - 
+solution 2 - create a dict of boxes -> box_no: list of tuples: (lens_name, lens_force), follow the orders to put and delete lens from boxes to get the result.
 
 '''
 
@@ -15,6 +15,7 @@ class Solution:
     
     def __init__(self, filename) -> None:
         self.get_data(filename)
+
 
     def get_data(self, filename):
         self.data = []
