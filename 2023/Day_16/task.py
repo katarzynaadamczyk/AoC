@@ -3,9 +3,10 @@ Advent of Code
 2023 day 16
 my solution to task 1 & 2
 
-solution 1 - 
+solution 1 - follow the road as in the instruction using queue and set of (point, direction) already used so that the beam does not go to an eternal cycle.
+then return the count of unique points in given set
 
-solution 2 - 
+solution 2 - perform as in solution 1 for each starting point described in the task and return the highest energy value
 
 '''
 from queue import Queue
@@ -76,7 +77,7 @@ class Solution:
     def move_beam(self, starting_point, direction):
         # queue of (point, direction)
         points_queue = Queue()
-        # set of (point, direction) so that moves ends somewhere -> if a (point, direction) is in this set then do not put it to the queue
+        # set of (point, direction) so that bean move ends somewhere -> if a (point, direction) is in this set then do not put it to the queue
         points_directions_set = set()
         new_directions = self.get_directions(starting_point, direction)
         for direction in new_directions:
