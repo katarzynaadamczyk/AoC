@@ -85,7 +85,7 @@ class Solution:
         del self.round_rocks
         self.round_rocks = new_rocks_set
 
-    # TO DO
+
     def move_east(self):
         new_rocks_set = set()
         for y in range(self.max_y):
@@ -134,20 +134,21 @@ class Solution:
 
     def solution_2(self, cycles=1000000000, test_range=100, min_start=10):
         results = []
+        do_tests, new_i = False, 0
         for i in range(test_range):
             self.spin_cycle()
             if i % 10 == 0:
                 print(i)
             results.append(self.get_result())
-        first_val = results[min_start]
+        first_val = results[-1]
         next_first_vals_index = self.get_next_val(first_val, min_start + 1, results)
-        if next_first_vals_index - min_start < 10:
-            next_first_vals_index = self.get_next_val(first_val, next_first_vals_index + 1, results)
-        while not self.check_lists(results[min_start:next_first_vals_index], results[next_first_vals_index:2 * next_first_vals_index - min_start]):
-            next_first_vals_index = self.get_next_val(first_val, next_first_vals_index + 1, results)
-        print(next_first_vals_index - min_start)
+        act_i = next_first_vals_index + 1
+        while results[act_i] != first_val and results[next_first_vals_index:act_i] != results[act_i:act_i + act_i - next_first_vals_index]:
+            act_i += 1
+        diff =  act_i - next_first_vals_index
+        print(diff)
         print(results)
-        return results[next_first_vals_index + (cycles - 1 - next_first_vals_index) % (next_first_vals_index - min_start)]
+        return results[next_first_vals_index + (cycles - 1 - next_first_vals_index) % diff]
 
 
 def main():
