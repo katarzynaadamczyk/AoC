@@ -3,13 +3,12 @@ Advent of Code
 2023 day 13
 my solution to task 1 & 2
 
-solution 1 - 
+solution 1 - first search for reflection through a horizontal line, then search for reflection when the axis are switched. 
 
-solution 2 - 
+solution 2 - same as above, but the reflections need to have a one different position so instead of checking on a boolean value, there is a check
+on an iteger value.
 
 '''
-from itertools import combinations
-
 class Solution:
 
     
