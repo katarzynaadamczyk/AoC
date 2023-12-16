@@ -9,6 +9,8 @@ solution 2 -
 
 '''
 
+from functools import reduce
+
 
 class Solution:
 
@@ -38,12 +40,31 @@ class Solution:
         print(substrs)
         return substrs
 
+# jeszcze nie do konca dobrze, bo co jesli na poczatku jest # a na koncu dużo wolnego miejsca
+    # albo na odwrot?
+    def get_possibilities_for_one_substr(self, substr, num):
+        print(substr, num)
+        if len(substr) < num:
+            return 0
+        if len(substr) == num:
+            return 1
+        if substr.count('#') == 0:
+            return len(substr) - num + 1
+        i = 0
+        while i < len(substr) and substr[i] == substr[-1 - i] == '?':
+            i += 1
+        return 0 # TODO
+    
+    def get_possibilities_for_few_nums(self, substr, nums):
+        pass
 
     def solution_1(self):
         results = []
         for i, (row, row_len, nums) in enumerate(zip(self.data, self.data_lens, self.nums)):
-            self.get_substr(row, row_len)
-
+            act_substrs = self.get_substr(row, row_len)
+            if len(act_substrs) == len(nums):
+                results.append(reduce(lambda x, y: x * y, [self.get_possibilities_for_one_substr(substr, num) for num, substr in zip(nums, act_substrs)]))
+                print(i, results[-1])
             
         
         return sum(results)
