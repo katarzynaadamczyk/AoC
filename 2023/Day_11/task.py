@@ -3,9 +3,9 @@ Advent of Code
 2023 day 11
 my solution to task 1 & 2
 
-solution 1 - 
-
-solution 2 - 
+solution 1 & 2 - first search for empty lines on x axis. Then iterate over y, if galaxy in line then add points changing x if necessary, then add
+1 to y, if no galaxy in this y position then add expanding number. When it is done, then combine each pair of galaxies and count their manhattan
+distance.
 
 '''
 from itertools import combinations
