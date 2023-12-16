@@ -3,9 +3,13 @@ Advent of Code
 2023 day 10
 my solution to task 1 & 2
 
-solution 1 - 
+solution 1 - general idea: have a Priority queue, putting actual distance and point. Need to have also a dict of visited points with minimum distance
+as value. For each point get associated points and put them to queue with distance + 1. 
+Return the sum of values of visited points dict.
 
-solution 2 - 
+solution 2 - general idea: first exclude points that are outside of the loop. Then follow the loop in the right direction excluding points that
+are to the left of it and all the points that connect to them that are not in the visited points keys nor are already excluded. Return the substraction
+of all points on the map - number of loop points - number of excluded points.
 
 '''
 from queue import PriorityQueue
