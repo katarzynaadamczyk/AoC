@@ -3,9 +3,14 @@ Advent of Code
 2023 day 14
 my solution to task 1 & 2
 
-solution 1 - 
+solution 1 - keep round rocks and cube rocks positions in different sets. Add north, south, east and west lines to prevent round rocks from falling down the edges.
+Move north function iterates over each x, then y positions of this x position for cube rocks. Then it counts number of round rocks between each pair of neighbor cube rocks.
+Then it adds right y, x points to new round rock set. And at the end of iteration it switches new set with the old one.
+Result is the sum of (max_y - y) for y, _ in round_rocks_set.
 
-solution 2 - 
+solution 2 - Similarly to above, create functions to move south, east and west. Then a function to spin the board. At the end of each spin add the 
+load of the north support beam to the results list. Make some iterations so that it is possible that the load will reoccur. Count in how many iterations
+it does so. Then count the result.
 
 '''
 
