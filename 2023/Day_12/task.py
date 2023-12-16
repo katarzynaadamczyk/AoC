@@ -40,20 +40,19 @@ class Solution:
         print(substrs)
         return substrs
 
-# jeszcze nie do konca dobrze, bo co jesli na poczatku jest # a na koncu dużo wolnego miejsca
-    # albo na odwrot?
+
     def get_possibilities_for_one_substr(self, substr, num):
         print(substr, num)
-        if len(substr) < num:
+        substr_len = len(substr)
+        if substr_len < num or substr.count('#') > num:
             return 0
-        if len(substr) == num:
+        if substr_len == num:
             return 1
         if substr.count('#') == 0:
-            return len(substr) - num + 1
-        i = 0
-        while i < len(substr) and substr[i] == substr[-1 - i] == '?':
-            i += 1
-        return 0 # TODO
+            return substr_len - num + 1
+        i_min = substr.find('#')
+        i_max = substr.rfind('#')
+        return min([i_min, substr_len - 1 - i_max, num - (i_max - i_min + 1)]) + 1
     
     def get_possibilities_for_few_nums(self, substr, nums):
         pass
