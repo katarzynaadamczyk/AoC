@@ -55,6 +55,7 @@ class Solution:
         return min([i_min, substr_len - 1 - i_max, num - (i_max - i_min + 1)]) + 1
     
     def get_possibilities_for_few_nums(self, substr, nums):
+        # TODO
         pass
 
     def solution_1(self):
@@ -64,7 +65,7 @@ class Solution:
             if len(act_substrs) == len(nums):
                 results.append(reduce(lambda x, y: x * y, [self.get_possibilities_for_one_substr(substr, num) for num, substr in zip(nums, act_substrs)]))
                 print(i, results[-1])
-            
+            # TODO
         
         return sum(results)
 
