@@ -1,11 +1,11 @@
 '''
 Advent of Code 
 2023 day 17
-my solution to task 1 & 2
+my solution to task 1
 
-solution 1 - 
-
-solution 2 - 
+solution 1 - general idea -> have a priority queue that prioritizes the (load, position, direction, actual_no_of_moves_in_given_direction).
+Also there is a need to have a set of tuples with (position, direction, actual_no_of_moves_in_given_direction), so that it does not get in a loop.
+Return first load when getting a position gives goal position.
 
 '''
 

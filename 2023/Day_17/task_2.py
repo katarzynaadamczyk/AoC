@@ -3,7 +3,8 @@ Advent of Code
 2023 day 17
 my solution to task 2
 
-solution 2 - 
+solution 2 - same as task 1, with changed conditions -> crucible may go in one direction until 10 move, and it cannot turn until the no of moves
+in actual direction is less than 4.
 
 '''
 
