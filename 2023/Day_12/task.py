@@ -54,18 +54,41 @@ class Solution:
         i_max = substr.rfind('#')
         return min([i_min, substr_len - 1 - i_max, num - (i_max - i_min + 1)]) + 1
     
-    def get_possibilities_for_few_nums(self, substr, nums):
-        # TODO
-        pass
+
+    def get_possible_substr_divisions(self, substrs, num):
+        results = []
+        for substr in substrs:
+            if substr.count('#') == len(substr):
+                results.append([substr])
+                continue
+            tmp = []
+            for i in range(1, len(substr) - 1):
+                if substr[i] == '?':
+                    tmp.append([substr[:i], substr[i+1:]])
+            results.append(tmp)
+        print(results)
+        return []
+
+
+    def get_possibilities_for_few_nums(self, substrs, nums):
+        self.get_possible_substr_divisions(substrs, 2)
+        return sum([])
+    
+
+    def get_result_for_ideal_match(self, substrs, nums):
+        return reduce(lambda x, y: x * y, [self.get_possibilities_for_one_substr(substr, num) for num, substr in zip(nums, substrs)])
+
 
     def solution_1(self):
         results = []
         for i, (row, row_len, nums) in enumerate(zip(self.data, self.data_lens, self.nums)):
             act_substrs = self.get_substr(row, row_len)
             if len(act_substrs) == len(nums):
-                results.append(reduce(lambda x, y: x * y, [self.get_possibilities_for_one_substr(substr, num) for num, substr in zip(nums, act_substrs)]))
-                print(i, results[-1])
-            # TODO
+                results.append(self.get_result_for_ideal_match(act_substrs, nums))
+            else:
+                results.append(self.get_possibilities_for_few_nums(act_substrs, nums))
+            
+            print(i, results[-1])
         
         return sum(results)
 
