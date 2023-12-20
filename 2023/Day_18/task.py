@@ -1,11 +1,10 @@
 '''
 Advent of Code 
 2023 day 18
-my solution to task 1 & 2
+my solution to task 1 
 
-solution 1 - 
-
-solution 2 - 
+solution 1 - add each point of the boundary to boundary set (set_of_points_boundary), then flood-fill agorithm to add points to set_of_points_inside.
+Result is the number of points in the union of this two sets.
 
 '''
 from queue import Queue

@@ -3,7 +3,7 @@ Advent of Code
 2023 day 18
 my solution to task 2 
 
-solution 2 - 
+solution 2 - not working -> just counting the lines, go to task_2_2
 
 '''
 from queue import Queue
