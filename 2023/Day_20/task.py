@@ -169,6 +169,8 @@ class Solution:
             highs.append(new_high)
             if self.total_check():
                 break
+        print(lows)
+        print(highs)
         return (sum(lows) * iterations // i + sum(lows[:iterations % i])) * (sum(highs) * iterations // i + sum(highs[:iterations % i])) 
 
 
@@ -187,7 +189,7 @@ class Solution:
 
         return False    
 
-    def solution_2(self, iterations=1000, name='jq'):
+    def solution_2(self, iterations=1000, name='rx'):
         self.create_modules()
         i = 0
         while i < iterations:
