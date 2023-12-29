@@ -3,9 +3,14 @@ Advent of Code
 2023 day 12
 my solution to task 1 & 2
 
-solution 1 - 
+solution 1 - create a class Module that is a super class to all other types of modules so that each class contains (overall) same functionalities.
+Unpack information from task.txt in such a way that each line contains information about name, type and destinations (add button as well). 
+Then create a dict {name: module}. Then push the button -> perform pushing the button and add to Priority Queue next moves so that operations are
+performed in a correct way. Count the number of pulses and add them to list.
 
-solution 2 - 
+solution 2 - I saw in my data that the output is getting signal from a conjuction module which gives low signal only when its inputs are all high.
+So I checked when its inputs are high and if they are high always in same step number (they are). If so, least common multiplier for iteration number of 
+first high output from each of module is correct answer.
 
 '''
 
@@ -98,7 +103,7 @@ class Solution:
 
 
     def get_data(self, filename):
-        self.data, self.nums, self.data_lens = [], [], []
+        self.data = []
         with open(filename, 'r') as myfile:
             for line in myfile:
                 line = line.strip().split(' -> ')
