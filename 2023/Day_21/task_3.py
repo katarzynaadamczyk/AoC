@@ -62,6 +62,10 @@ class Solution:
     
 
     def solution_1(self, start_pos=(5,5), iterations=6):
+        return self.get_gardener_positions(start_pos, iterations)[-1]
+    
+
+    def get_gardener_positions(self, start_pos=(5,5), iterations=6):
         act_gardener_positions = set()
         act_gardener_positions.add(start_pos)
         len_of_gardener_positions = [1]
@@ -74,50 +78,24 @@ class Solution:
             del act_gardener_positions
             act_gardener_positions = new_positions
             if len(len_of_gardener_positions) > 2 and len_of_gardener_positions[-1] == len_of_gardener_positions[-3]:
-                print(start_pos, iterations, len_of_gardener_positions)
-                if len(len_of_gardener_positions) % 2 == iterations % 2:
-                    return len_of_gardener_positions[-1]
-                return len_of_gardener_positions[-2]
-        print(start_pos, iterations, len_of_gardener_positions)
-        return len_of_gardener_positions[-1]
-    
-    def get_parameter_A_B(self, coordinate, steps):
-        result = 0
-        for point in product((coordinate, self.max_x - 1 - coordinate), repeat=2):
-            result += self.solution_1(start_pos=point, iterations=steps)
-        return result
-    
-    
-    def get_parameter_E_F(self, coordinate_1, coordinate_2, coordinate_3, steps):
-        result = 0
-        for point in [(coordinate_1, coordinate_2), (coordinate_2, coordinate_1), (coordinate_1, coordinate_3), (coordinate_3, coordinate_1)]:
-            result += self.solution_1(start_pos=point, iterations=steps)
-        return result
-    
-    def get_sum_even(self, num):
-        return sum([i for i in range(0, num-1, 2)])
+                return len_of_gardener_positions
+        return len_of_gardener_positions
     
     def solution_2(self, steps=50, start_pos=(5,5)):
         N = steps // self.max_y
         print(N)
-        # counts add
-        add = self.solution_1(start_pos=start_pos, iterations=self.max_y * 2)
-        # counts F 
-        F = self.get_parameter_E_F(start_pos[0], 0, self.max_x - 1, 2 * self.max_x)
-        # counts F_prim 
-        F_prim = self.get_parameter_E_F(start_pos[0], 0, self.max_x - 1, self.max_x - 1)
-        # counts E
-        E = self.get_parameter_E_F(start_pos[0], 0, self.max_x - 1, 2 * self.max_x - 1)
-        # counts A
-        A = self.get_parameter_A_B(0, 2 * self.max_x)
-        # counts A_prim
-        A_prim = self.get_parameter_A_B(0, self.max_x + self.max_x // 2)
-        # counts B
-        B = self.get_parameter_A_B(0, 2 * self.max_x + 1)
-        # counts B_prim
-        B_prim = self.get_parameter_A_B(0, self.max_x // 2)
-        print(add, F, F_prim, E, A, A_prim, B, B_prim)
-        result = add + F_prim + N // 2 * E + (N // 2 - 1) * F + self.get_sum_even(N) * B + N * B_prim + (N // 2 - 1) ** 2 * A + (N - 1) * A_prim
+        gardener_positions = self.get_gardener_positions(start_pos=start_pos, iterations=steps)
+        if len(gardener_positions) % 2 == 1:
+            neg = gardener_positions[-1]
+            pos = gardener_positions[-2]
+        else:
+            neg = gardener_positions[-2]
+            pos = gardener_positions[-1]
+        # counts 
+        pos_prim = 0 # TODO
+        neg_prim = 0 # TODO
+        neg_bis = 0 # TODO
+        result = N ** 2 * pos + N * pos_prim + (N - 1) ** 2 * neg + (N - 1) * neg_prim + neg_bis
         return result
 
 
