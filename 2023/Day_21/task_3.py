@@ -62,7 +62,8 @@ class Solution:
     
 
     def solution_1(self, start_pos=(5,5), iterations=6):
-        return self.get_gardener_positions(start_pos, iterations)[-1]
+        gardener_positions = self.get_gardener_positions(start_pos, iterations)
+        return gardener_positions[-1] if (iterations + 1) % 2 == len(gardener_positions) % 2 else gardener_positions[-2]
     
 
     def get_gardener_positions(self, start_pos=(5,5), iterations=6):
@@ -81,20 +82,33 @@ class Solution:
                 return len_of_gardener_positions
         return len_of_gardener_positions
     
+    def get_parameter_diag(self, coordinate, steps):
+        result = 0
+        for point in product((coordinate, self.max_x - 1 - coordinate), repeat=2):
+            result += self.solution_1(start_pos=point, iterations=steps)
+        return result
+    
+    
+    def get_parameter_hor_ver(self, coordinate_1, coordinate_2, coordinate_3, steps):
+        result = 0
+        for point in [(coordinate_1, coordinate_2), (coordinate_2, coordinate_1), (coordinate_1, coordinate_3), (coordinate_3, coordinate_1)]:
+            result += self.solution_1(start_pos=point, iterations=steps)
+        return result
+    
     def solution_2(self, steps=50, start_pos=(5,5)):
         N = steps // self.max_y
         print(N)
         gardener_positions = self.get_gardener_positions(start_pos=start_pos, iterations=steps)
-        if len(gardener_positions) % 2 == 1:
+        if len(gardener_positions) % 2 == 0:
             neg = gardener_positions[-1]
             pos = gardener_positions[-2]
         else:
             neg = gardener_positions[-2]
             pos = gardener_positions[-1]
         # counts 
-        pos_prim = 0 # TODO
-        neg_prim = 0 # TODO
-        neg_bis = 0 # TODO
+        pos_prim = self.get_parameter_diag(0, self.max_x // 2 - 1) # TODO
+        neg_prim = self.get_parameter_diag(0, self.max_x + self.max_x // 2 - 1) # TODO
+        neg_bis = self.get_parameter_hor_ver(start_pos[0], 0, self.max_x - 1, self.max_x - 1) # TODO
         result = N ** 2 * pos + N * pos_prim + (N - 1) ** 2 * neg + (N - 1) * neg_prim + neg_bis
         return result
 
@@ -110,11 +124,8 @@ def main():
     sol = Solution('2023/Day_21/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1(iterations=64, start_pos=(65, 65)))
-    print('Solution 2 - 327', sol.solution_2(steps=327, start_pos=(65, 65)))
-    #print('Solution 2 - 26501365:', sol.solution_2(steps=26501365, start_pos=(65, 65)))
-   # print('Solution 1:', sol.solution_1(iterations=200))
-  #  print('Solution 1:', sol.solution_1(iterations=300))
-   # print('Solution 1:', sol.solution_1(iterations=1000))
+    #print('Solution 2 - 327', sol.solution_2(steps=327, start_pos=(65, 65)))
+    print('Solution 2 - 26501365:', sol.solution_2(steps=26501365, start_pos=(65, 65)))
 
 
 
