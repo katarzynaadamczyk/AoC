@@ -3,6 +3,8 @@ Advent of Code
 2023 day 24
 my solution to task 1 & 2
 
+** my worst code in this aoc
+
 solution 1 - 
 
 solution 2 - 
@@ -118,7 +120,6 @@ class Solution:
             result.setdefault(i, val)
         return result
     
-    # TO REPAIR
     def add_unknown_to_equation(self, equation, unknown_1, unknown_pos=1):
         equation = list(equation)
         for i in range(len(equation)):
@@ -127,9 +128,7 @@ class Solution:
             if i in unknown_1.keys():
                 equation[i] -= equation[unknown_pos] * unknown_1[i]
         equation[unknown_pos] = 0
-       # print(equation)
         common_div = gcd(*[x for x in equation if x != 0]) 
-       # print(common_div)
         return [x // common_div for x in equation]
     
     
