@@ -114,6 +114,8 @@ def main():
     print('test 1:', sol.solution_1())
     sol = Solution('2023/Day_12/test_2.txt')
     print('test 2:', sol.solution_1())
+    sol = Solution('2023/Day_12/test_3.txt')
+    print('test 3:', sol.solution_1())
     sol = Solution('2023/Day_12/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
