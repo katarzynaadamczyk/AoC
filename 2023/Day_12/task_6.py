@@ -5,9 +5,19 @@ my solution to task 1 & 2
 
 working solution with all commented code removed
 
-solution 1 - 
+solution 1 - Each line is solved with use of dynamic programming. I use 2D table -> rows are for numbers (lengths of groups of damaged springs -> '#' hash),
+columns are possibilities for each line in given index of the string. Before getting to the table I shorten the line by removing unnecessary operational
+springs ('.' -  dots). Then create first line of our table by putting 1 to every possible place for the end of first group of #. Then middle lines:
+check when they may start by finding first index with non-zero value in previous line, add actual num value to it. Then find last possible index - 
+len(row) - sum(nums[num_index+1:]) - len(nums[num_index+1:]). Then check surrounding dots and add the difference to min_index and max_index.
+Then put 0 to line[:min_index]. Then calculate possibilities for each index in range(min_index, max_index + 1). Add to table sum of values from previous
+line starting from last previous hash index to actual_index - actual_num. 
+Then calculate similarily for last line with remembering to have last hash in the result.
+Result for line is sum of values in last line.
+Result for whole task is sum of results for each line.
 
-solution 2 - 
+
+solution 2 - works same as solution 1, with the difference that for each line I firstly join with '.' [line] * 5. Then it is all the same as solution 1.
 
 '''
 
