@@ -3,6 +3,8 @@ Advent of Code
 2023 day 12
 my solution to task 1 & 2
 
+working solution with all commented code removed
+
 solution 1 - 
 
 solution 2 - 
@@ -58,10 +60,19 @@ class Solution:
         return line
     
     def calculate_sum_index(self, row, min_index, num, sum_index):
-        hash_index = row[sum_index:min_index - num].find('#')
-        if hash_index >=0 and sum_index + hash_index < min_index:
-            sum_index += hash_index
+        hash_index = row[:min_index - num + 1].rfind('#')
+        if hash_index > 0:
+            sum_index = hash_index
         return sum_index
+    
+    def calculate_last_position(self, row, num, nums):
+        row_len = len(row)
+        if row[-1] == '#' or not '.' in row[row_len - num:row_len] and row[row_len - 1 - num] != '#': # TODO !!!
+            return 0
+        for i in range(row_len - 2, sum(nums[:-1]) + len(nums[:-1]), -1):
+            if not '.' in row[i + 1 - num:i + 1] and row[i + 1] != '#' and row[i-num] != '#':
+                return row_len - 1 - i
+        return 0
 
     def get_first_line(self, row, nums):
         line = []
@@ -82,44 +93,30 @@ class Solution:
     
     def get_middle_line(self, row, nums, num_index, result):
         min_index = self.get_first_available_index(result, nums[num_index])
-        max_index = self.get_last_available_index(len(row), nums, num_index)
+        max_index = self.get_last_available_index(len(row), nums, num_index) - self.last_pos
         sum_index = max(min_index - nums[num_index] - 1, 0)
         sum_index = self.calculate_sum_index(row, min_index, nums[num_index], sum_index)
-        min_hash_index = row[min_index:max_index + 1].find('#')
-        max_hash_index = row[min_index:max_index + 1].rfind('#')
-        #print(result)
-      #  print(min_index)
-      #  print(max_index)
-     #   print(min_hash_index)
-     #   print(max_hash_index)
-     #   print(num_index, ':', nums[num_index])
-      #  print(min_index, max_index)
-       # print(min_hash_index, max_hash_index)
-        # TODO
-        if max_hash_index >= 0 and '#' not in row[min_index + max_hash_index:min_index + max_hash_index + nums[num_index]]:
-           # max_index = min(max_index, min_index + min_hash_index + nums[num_index])
-            max_index = min(max_index, min_index + min_hash_index + nums[num_index])
-            if max_hash_index != min_hash_index and max_hash_index - min_hash_index + 1 <= nums[num_index] \
-                and '.' not in row[min_index + min_hash_index:min_index + max_hash_index + 1]:
-                min_index += max_hash_index
-        print(min_index, max_index)
         
+        max_last_dot = row[:max_index+1].rfind('.')
+        
+        if max_last_dot >= 0 and max_index - max_last_dot < nums[num_index]:
+            max_index = max_last_dot - 1
+        min_last_dot = row[:min_index+1].rfind('.')
+        if min_last_dot >=0 and min_index - min_last_dot < nums[num_index]:
+            min_index = min_last_dot + nums[num_index]
+        if max_index < min_index:
+            min_index = max_index
         
         line = []
         line = self.insert_zeros(line, 0, min_index)
         for i, val in enumerate(self.get_val(min_index, max_index, nums[num_index], row), min_index):
             sum_index = self.calculate_sum_index(row, i, nums[num_index], sum_index)
-            line.append(val * sum(result[-1][sum_index:i - nums[num_index]]))
-      #      print(i, line, sum_index)
-          #  if line[-1] == 0 and line[-2] != 0 and 0 in result[-1][sum_index:i - nums[num_index]]:
-           #     sum_index += result[-1][sum_index:i - nums[num_index]].index(0)
+            line.append(val * sum(result[-1][sum_index:i - nums[num_index]])) 
         line = self.insert_zeros(line, max_index + 1, len(row))
         return line
 
     def get_last_line(self, row, num, result):
         min_index = self.get_first_available_index(result, num)
-       # print(result)
-       # print(min_index)
         sum_index = self.calculate_sum_index(row, min_index, num, min_index - num - 1)
         
         last_hash_in_row = row.rfind('#')
@@ -130,12 +127,6 @@ class Solution:
         for i, val in enumerate(self.get_val(min_index, len(row) - 2, num, row), min_index):
             sum_index = self.calculate_sum_index(row, i, num, sum_index)
             line.append(val * sum(result[-1][sum_index:i - num]))
-      #      print(i, line, sum_index)
-            #hash_index = row[i - num - 1:len(row) - num - 1].find('#')
-            #if hash_index > 0 and sum_index + hash_index < i:
-             #   sum_index += hash_index
-           # if line[-1] == 0 and line[-2] != 0 and 0 in result[-1][sum_index:i - num]:
-           #     sum_index += result[-1][sum_index:i - num].index(0)
         if row[-num - 1] != '#' and '.' not in row[-num::]:
             sum_index = self.calculate_sum_index(row, len(row) - 1, num, sum_index)
             line.append(sum(result[-1][sum_index:-1 - num]))
@@ -144,10 +135,12 @@ class Solution:
         return line
 
     def get_possibilities_for_one_string(self, row, nums):
-        print(row, nums)
+       # print(row, nums)
         # rejecting unnecessary '.' in the string
         substrs = self.get_substr(row, len(row))
         row = '.'.join(substrs)
+        
+        self.last_pos = self.calculate_last_position(row, nums[-1], nums)
         
         # create table for dynamic programming
         # each row is for unique num
@@ -159,7 +152,7 @@ class Solution:
         for num_no in range(1, len(nums) - 1):
             result.append(self.get_middle_line(row, nums, num_no, result))
         result.append(self.get_last_line(row, nums[-1], result))
-        print(result)
+        #print(result)
         return sum(result[-1])
     
 
@@ -169,8 +162,7 @@ class Solution:
         for row, nums in zip(self.data, self.nums):
             results.append(self.get_possibilities_for_one_string(row, nums))
             
-            print(row, results[-1])
-     #   print(results)
+            #print(row, results[-1])
         return sum(results)
 
     def solution_2(self):
@@ -180,31 +172,37 @@ class Solution:
             nums = nums * 5
             results.append(self.get_possibilities_for_one_string(act_row, nums))
             
-            print(row, results[-1])
+          #  print(row, results[-1])
         
         return sum(results)
 
 def main():
+    results = []
+    true_results = [21, 525152, 16, 2, 23, 4, 7, 2]
     print('TASK 1')
     sol = Solution('2023/Day_12/test.txt')
     print('TEST 1')
-    print('test 1:', sol.solution_1())
- #   print('test 1:', sol.solution_2())
+    results.append(sol.solution_1())
+    results.append(sol.solution_2())
     sol = Solution('2023/Day_12/test_2.txt')
-    print('test 2:', sol.solution_1())
-   # print('test 2:', sol.solution_2())
+    results.append(sol.solution_1())
     sol = Solution('2023/Day_12/test_3.txt')
-    print('test 3:', sol.solution_1())
+    results.append(sol.solution_1())
     sol = Solution('2023/Day_12/test_4.txt')
-    print('test 4:', sol.solution_1())
+    results.append(sol.solution_1())
     sol = Solution('2023/Day_12/test_5.txt')
-    print('test 5:', sol.solution_1())
+    results.append(sol.solution_1())
     sol = Solution('2023/Day_12/test_7.txt')
-    print('test 7:', sol.solution_1(), '? 7')
-   # sol = Solution('2023/Day_12/task.txt')
-   # print('SOLUTION')
-   # print('Solution 1:', sol.solution_1(), '? 6949')
-   # print('Solution 1:', sol.solution_2())
+    results.append(sol.solution_1())
+    sol = Solution('2023/Day_12/test_8.txt')
+    results.append(sol.solution_1())
+    for x, y in zip(results, true_results):
+        print(x, '?', y)
+    sol = Solution('2023/Day_12/task.txt')
+    print('SOLUTION')
+    print('Solution 1:', sol.solution_1(), '? 6949')
+    results.append(sol.solution_1())
+    print('Solution 2:', sol.solution_2(), '? 51456609952403')
 
 
 if __name__ == '__main__':

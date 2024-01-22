@@ -103,7 +103,7 @@ class Solution:
             results.append(self.get_possibilities_for_few_nums(act_substrs, nums))
             
             print(row, results[-1])
-        
+        print(results)
         return sum(results)
 
 
@@ -116,9 +116,13 @@ def main():
     print('test 2:', sol.solution_1())
     sol = Solution('2023/Day_12/test_3.txt')
     print('test 3:', sol.solution_1())
-    sol = Solution('2023/Day_12/task.txt')
-    print('SOLUTION')
-    print('Solution 1:', sol.solution_1())
+    sol = Solution('2023/Day_12/test_4.txt')
+    print('test 4:', sol.solution_1())
+    sol = Solution('2023/Day_12/test_5.txt')
+    print('test 5:', sol.solution_1())
+  #  sol = Solution('2023/Day_12/task.txt')
+  #  print('SOLUTION')
+  #  print('Solution 1:', sol.solution_1())
 
 
 if __name__ == '__main__':
