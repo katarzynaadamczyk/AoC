@@ -1,9 +1,11 @@
 '''
 Advent of Code 
 2023 day 19
-my solution to task 1 
+my solution to task 2 
 
-solution 1 - 
+solution 1 - with use of copy, deepcopy to copy the points (ending and starting values for each parameter) and as well with use of queue follow the
+workflow to find all possible combinations. First point has all parameters set to min = 1, max = 4000. Then it goes with the workflow and divides 
+itself into smaller pieces. At the end use reduce to count the possibilities for each point.
 
 '''
 from queue import Queue
