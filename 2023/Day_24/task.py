@@ -5,9 +5,12 @@ my solution to task 1 & 2
 
 ** my worst code in this aoc
 
-solution 1 - 
+solution 1 - count for each line a and b parameters and find intersection point for each combination of lines. Define, based on the intersection position,
+whether it is in range. Count the points that meet within the range.
 
-solution 2 - 
+solution 2 - create and solve a set of equations with 4 unknown variables. Meaning -> take a few lines from input and create equations, then solve them
+Firstly, there was an equation with 2 unknowns, so I created a nested for loop to find the possible answer -> it was to find DX and DY so it was to find
+2 unknowns in range (-1000, 1000) (for test purposes in range (-10, 10)). Then count X and Y values, and do the same to find DZ and Z values.
 
 '''
 
