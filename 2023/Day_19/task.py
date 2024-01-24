@@ -3,7 +3,9 @@ Advent of Code
 2023 day 19
 my solution to task 1 
 
-solution 1 - 
+solution 1 - just for each part follow the process as described in the task. To do so, I created a dict of workflows, keys are names, items are dicts :). 
+For each part check their final answer -> make tests until it gets to either R or A. If it ends at A then add it to result. 
+At the end sum all the data for each point and sum them together.
 
 '''
 from queue import Queue

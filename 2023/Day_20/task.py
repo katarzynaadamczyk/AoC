@@ -3,13 +3,20 @@ Advent of Code
 2023 day 12
 my solution to task 1 & 2
 
-solution 1 - 
+solution 1 - create a class Module that is a super class to all other types of modules so that each class contains (overall) same functionalities.
+Unpack information from task.txt in such a way that each line contains information about name, type and destinations (add button as well). 
+Then create a dict {name: module}. Then push the button -> perform pushing the button and add to Priority Queue next moves so that operations are
+performed in a correct way. Count the number of pulses and add them to list.
 
-solution 2 - 
+solution 2 - I saw in my data that the output is getting signal from a conjuction module which gives low signal only when its inputs are all high.
+So I checked when its inputs are high and if they are high always in same step number (they are). If so, least common multiplier for iteration number of 
+first high output from each of module is correct answer.
 
 '''
 
 from queue import PriorityQueue
+from math import lcm
+from copy import copy
 
 HIGH = True # high pulse
 LOW = False # low pulse
@@ -26,6 +33,9 @@ class Module:
 
     def check_position(self):
         return True
+    
+    def get_inputs(self):
+        return []
 
 class Button(Module):
     def __init__(self, lst_of_modules, name) -> None:
@@ -71,6 +81,9 @@ class Conjunction(Module):
     
     def check_position(self):
         return not sum(self.inputs.values())
+    
+    def get_inputs(self):
+        return self.inputs
 
 
 class Solution:
@@ -86,11 +99,11 @@ class Solution:
 
     def __init__(self, filename) -> None:
         self.get_data(filename)
-        print(self.data)
+      #  print(self.data)
 
 
     def get_data(self, filename):
-        self.data, self.nums, self.data_lens = [], [], []
+        self.data = []
         with open(filename, 'r') as myfile:
             for line in myfile:
                 line = line.strip().split(' -> ')
@@ -169,35 +182,40 @@ class Solution:
             highs.append(new_high)
             if self.total_check():
                 break
-        print(lows)
-        print(highs)
+      #  print(lows)
+      #  print(highs)
         return (sum(lows) * iterations // i + sum(lows[:iterations % i])) * (sum(highs) * iterations // i + sum(highs[:iterations % i])) 
 
 
-    def push_the_button_2(self, name):
+    def push_the_button_2(self, names_dict, i):
         pulses_queue = PriorityQueue()
         pulses_queue.put((0, Solution.BUTTON, LOW, Solution.BUTTON))
         while not pulses_queue.empty():
             act_step, module, pulse, prev_module = pulses_queue.get()
-            if module == name:
-                print(act_step, module, pulse, prev_module)
             if module in self.lst_of_modules.keys():
                 act_iter = self.lst_of_modules[module].receive_a_pulse(pulse, prev_module)
                 if act_iter is not None:
                     for new_module, new_pulse in act_iter:
                         pulses_queue.put((act_step + 1, new_module, new_pulse, module)) 
+                        if module in names_dict.keys() and new_pulse == HIGH:
+                            names_dict[module].append((i, act_step + 1))
+        for val in names_dict.values():
+            if len(val) == 0:
+                return False
+        return True
 
-        return False    
-
-    def solution_2(self, iterations=1000, name='rx'):
+    def solution_2(self, iterations=10000, name='jq'):
         self.create_modules()
         i = 0
+        names_dict = {}
+        for input_name in self.lst_of_modules[name].get_inputs():
+            names_dict.setdefault(input_name, copy([]))
         while i < iterations:
             i += 1
-            done = self.push_the_button_2(name)
+            done = self.push_the_button_2(names_dict, i)
             if done:
                 break
-        return (done, i) 
+        return lcm(*[x[0][0] for x in names_dict.values()]) 
 
 
 def main():

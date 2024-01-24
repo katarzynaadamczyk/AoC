@@ -1,11 +1,13 @@
 '''
 Advent of Code 
 2023 day 12
-my solution to task 1 & 2
+my solution to task 1 
 
-solution 1 - 
+in this file there is only task 1 solved properly (I mean, it works well for task 2 too, but it is too slow to get the answer in reasonable time)
 
-solution 2 - 
+solution 1 - each line is solved with Queue approach -> in each iteration I change existing '?' to # and . and each of this possibilities add to
+queue if hash count in line is less than sum(nums). If there is no '?' then check if it is a correct string. If so, add 1 to result.
+
 
 '''
 
@@ -78,13 +80,13 @@ class Solution:
                 # put # in place of ?
                 act_line_1 = act_line[:act_new_i] + '#' + act_line[act_new_i+1:]
             #   print(act_line_1)
-                if act_line_1.count('#') <= nums_sum: # TODO WARUNEK
+                if act_line_1.count('#') <= nums_sum: 
                     sub_queue.put(self.get_substr(act_line_1, len(act_line_1)))
                 # put . in place of ?
                 act_line_1 = act_line[:act_new_i] + '.' + act_line[act_new_i+1:]
                 sub_queue.put(self.get_substr(act_line_1, len(act_line_1)))
             else:
-             #   print(act_substrs)
+            #    print(act_substrs)
                 if len(act_substrs) == nums_len:
                     result += self.get_result_for_ideal_match(act_substrs, nums)
               #  print(result)
@@ -103,7 +105,7 @@ class Solution:
             results.append(self.get_possibilities_for_few_nums(act_substrs, nums))
             
             print(row, results[-1])
-        
+        print(results)
         return sum(results)
 
 
@@ -114,9 +116,15 @@ def main():
     print('test 1:', sol.solution_1())
     sol = Solution('2023/Day_12/test_2.txt')
     print('test 2:', sol.solution_1())
-    sol = Solution('2023/Day_12/task.txt')
-    print('SOLUTION')
-    print('Solution 1:', sol.solution_1())
+    sol = Solution('2023/Day_12/test_3.txt')
+    print('test 3:', sol.solution_1())
+    sol = Solution('2023/Day_12/test_4.txt')
+    print('test 4:', sol.solution_1())
+    sol = Solution('2023/Day_12/test_5.txt')
+    print('test 5:', sol.solution_1())
+  #  sol = Solution('2023/Day_12/task.txt')
+  #  print('SOLUTION')
+  #  print('Solution 1:', sol.solution_1())
 
 
 if __name__ == '__main__':
