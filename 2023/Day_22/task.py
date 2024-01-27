@@ -6,7 +6,7 @@ my solution to task 1 & 2
 solution 1 - 
 
 '''
-
+from copy import copy
 from typing import Type
 
 class Brick:
@@ -29,21 +29,11 @@ class Brick:
         self.max_z -= val_to_substract
     
     def check_if_shares_x_y(self, second_brick): # : Type[Brick]):
-        # checking x part 1
         if (self.min_x <= second_brick.min_x <= self.max_x or self.min_x <= second_brick.max_x <= self.max_x or \
             second_brick.min_x <= self.min_x <= second_brick.max_x or second_brick.min_x <= self.max_x <= second_brick.max_x) and \
             (self.min_y <= second_brick.min_y <= self.max_y or self.min_y <= second_brick.max_y <= self.max_y or \
             second_brick.min_y <= self.min_y <= second_brick.max_y or second_brick.min_y <= self.max_y <= second_brick.max_y) :
             return True
-        # checking x part 2
-       # if second_brick.min_x <= self.min_x <= second_brick.max_x or second_brick.min_x <= self.max_x <= second_brick.max_x:
-            return True
-        # checking y part 1
-        #if self.min_y <= second_brick.min_y <= self.max_y or self.min_y <= second_brick.max_y <= self.max_y:
-         #   return True
-        # checking y part 2
-        #if second_brick.min_y <= self.min_y <= second_brick.max_y or second_brick.min_y <= self.max_y <= second_brick.max_y:
-         #   return True
         return False
     
     def add_brick_up(self, second_brick):
@@ -57,6 +47,19 @@ class Brick:
     
     def can_get_smashed(self):
         return len(self.up_bricks) == 0 or min([brick.get_bricks_down_num() for brick in self.up_bricks]) > 1
+    
+    def count_next_bricks_fall(self, set_of_fallen_bricks):
+        result = 0
+        for brick in self.up_bricks:
+            if len(set([next_brick.name for next_brick in brick.down_bricks]).difference(set_of_fallen_bricks)) == 0:
+                set_of_fallen_bricks.add(brick.name)
+                result += 1 + brick.count_next_bricks_fall(set_of_fallen_bricks)
+        return result
+
+    def get_no_of_next_bricks_fall(self):
+        if len(self.up_bricks) == 0:
+            return 0
+        return self.count_next_bricks_fall(set([self.name]))
 
 
 
@@ -99,7 +102,6 @@ class Solution:
             for height in sorted(filter(lambda x: x <= self.bricks_to_move[0].min_z, self.bricks_on_ground.keys()), reverse=True):
                 for brick in self.bricks_on_ground[height]:
                     if brick.check_if_shares_x_y(self.bricks_to_move[0]):
-                        print(self.bricks_to_move[0].name, brick.name)
                         self.bricks_to_move[0].move_down(height)
                         self.put_brick_on_another_brick(brick)
                         brick_put = True
@@ -116,20 +118,31 @@ class Solution:
             for brick in brick_list:
                 result += brick.can_get_smashed()
         return result
-        
-
-    def solution_1(self):
-    #    print('x', self.min_x, self.max_x)
-    #    print('y', self.min_y, self.max_y)
-    #    print('z', self.min_z, self.max_z)
-    #    print([(x.name, x.min_z, x.max_z) for x in filter(lambda x: x.min_z == 1, self.bricks_to_move)])
+    
+    def prepare_tower_to_count_solution(self):
         self.put_first_bricks_on_the_ground()
         self.move_bricks()
-        for key, item in self.bricks_on_ground.items():
-            print(key, [x.name for x in item])
-    #    print([(x.name, x.min_z, x.max_z) for x in filter(lambda x: x.min_z == 1, self.bricks_to_move)])
-        
+        # printouts just to make sure it looks ok
+       # for key, item in self.bricks_on_ground.items():
+        #    print(key, [x.name for x in item])
+
+
+    def solution_1(self):
+        self.prepare_tower_to_count_solution()
         return self.get_number_of_bricks_that_can_be_smashed()
+    
+    def solution_2(self):
+        if len(self.bricks_to_move) > 0:
+            self.prepare_tower_to_count_solution()
+        result = 0
+        for _, values in sorted(self.bricks_on_ground.items(), key=lambda x: x[0], reverse=True):
+            for brick in values:
+              #  print(brick.name, result)
+                result += brick.get_no_of_next_bricks_fall()
+               # print(brick.name, result)
+        return result
+        
+
 
 
 def main():
@@ -137,9 +150,11 @@ def main():
     sol = Solution('2023/Day_22/test.txt')
     print('TEST 1')
     print('test 1:', sol.solution_1())
+    print('test 2:', sol.solution_2())
     sol = Solution('2023/Day_22/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
+    print('Solution 2:', sol.solution_2())
 
 
 if __name__ == '__main__':
