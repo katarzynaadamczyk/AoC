@@ -3,11 +3,16 @@ Advent of Code
 2023 day 22
 my solution to task 1 & 2 
 
-solution 1 - 
+solution 1 - Firstly prepare the environment - read the file and for each brick create an instance of class Brick and append it to list 
+bricks_to_move. Then sort this list by min_z parameter. Next, put bricks with min_z equal to 1 on the ground. Then put every other brick on 
+brick that is already on the ground or right away on ground. Then for each brick check minimum number of bricks all its up_bricks are put on. 
+If this minimum is greater than 1 the brick can be smashed.
+
+solution 2 - Prepare the environment as above. Then for each brick check all up bricks if they will smash if the one below is smashed. It is 
+done by checking if difference between set of down bricks for given up brick and set of fallen bricks is an empty set. If so then add to
+fallen bricks set given brick and check for its up bricks same combination.
 
 '''
-from copy import copy
-from typing import Type
 
 class Brick:
     def __init__(self, line: str, name: int) -> None:
@@ -76,12 +81,6 @@ class Solution:
                 new_brick = Brick(line.strip(), name)
                 self.bricks_to_move.append(new_brick)
         self.bricks_to_move.sort(key=lambda x: x.min_z)
-        self.min_x = min(self.bricks_to_move, key=lambda x: x.min_x).min_x
-        self.min_y = min(self.bricks_to_move, key=lambda x: x.min_y).min_y
-        self.min_z = min(self.bricks_to_move, key=lambda x: x.min_z).min_z
-        self.max_x = max(self.bricks_to_move, key=lambda x: x.max_x).max_x
-        self.max_y = max(self.bricks_to_move, key=lambda x: x.max_y).max_y
-        self.max_z = max(self.bricks_to_move, key=lambda x: x.max_z).max_z
 
     def put_brick_on(self):
         self.bricks_on_ground.setdefault(self.bricks_to_move[0].max_z + 1, [])
