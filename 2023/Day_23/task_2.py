@@ -3,7 +3,7 @@ Advent of Code
 2023 day 23
 my solution to task 1 & 2 
 
-solution 1 - 
+solution 1 - first 
 
 solution 2 - 
 
@@ -116,24 +116,24 @@ class Solution:
     
     def solution_2(self):
         self.shorten_hike_map_2()
-        hikes_min = 0
+        hikes_lens = []
         hikes_queue = PriorityQueue()
         visited_points = set()
         visited_points.add(self.start_point)
         hikes_queue.put((0, self.start_point, visited_points))
         while not hikes_queue.empty():
             act_step, act_point, visited_points = hikes_queue.get()
-         #   print(act_point)
             if act_point == self.end_point:
-                hikes_min = min(hikes_min, act_step)
-                print(hikes_min)
+                hikes_lens.append(act_step)
+                if len(hikes_lens) > 10: # to end the program
+                    break
             for point, steps in self.short_hike_map_2[act_point].items():
                 if point not in visited_points:
                     new_visited_points = copy(visited_points)
                     new_visited_points.add(point)
                     hikes_queue.put((act_step - steps, point, new_visited_points))
-        
-        return -1 * hikes_min
+       # print(hikes_lens)
+        return -1 * min(hikes_lens)
         
 
 
