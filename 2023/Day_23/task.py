@@ -3,6 +3,7 @@ Advent of Code
 2023 day 23
 my solution to task 1 & 2 
 
+** old version, working for task 1, for task 2 is too slow
 solution 1 - 
 
 solution 2 - 
@@ -75,25 +76,18 @@ class Solution:
     def solution_2(self):
         visited_points = set()
         visited_points.add(self.start_point)
-        visited_points_max_vals = dict()
         points_queue = PriorityQueue()
         points_queue.put((self.start_point, 0, visited_points))
         hikes_len = []
         while not points_queue.empty():
             act_point, steps, visited_points = points_queue.get()
-            print(act_point)
             if act_point == self.end_point:
                 hikes_len.append(-1 * steps)
                 continue
-            visited_points_max_vals.setdefault(act_point, steps)
-           # if steps > visited_points_max_vals[act_point]:
-           #     continue
-            visited_points_max_vals[act_point] = min(visited_points_max_vals[act_point], steps)
             for new_point in self.get_next_moves_2(act_point, visited_points):
                 new_visited_points = copy(visited_points)
                 new_visited_points.add(new_point)
                 points_queue.put((new_point, steps - 1, new_visited_points))
-        print(visited_points_max_vals)
         print(hikes_len)
         return max(hikes_len)
         
