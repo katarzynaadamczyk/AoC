@@ -4,7 +4,7 @@ Advent of Code
 my solution to task 1 & 2 
 
 ** old version, working for task 1, for task 2 is too slow
-solution 1 - 
+solution 1 - go from starting point point by point using queue. Return top number of steps.
 
 solution 2 - 
 

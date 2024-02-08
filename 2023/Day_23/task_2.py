@@ -3,9 +3,12 @@ Advent of Code
 2023 day 23
 my solution to task 1 & 2 
 
-solution 1 - first 
+** new, working well version
+solution 1 as in task 1
+solution 2 - first, shorten map -> make a dict of points which lead to other points and keep their distance in (point_1: [(point_2, distance),
+(point_3, distance)]). Then go using priority queue and keep the number of steps so far * (-1) as priority. End the while loop when there is 10 
+final distances and return lowest of them multiplied by -1. 
 
-solution 2 - 
 
 '''
 from copy import copy
