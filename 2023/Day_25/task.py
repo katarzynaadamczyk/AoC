@@ -4,9 +4,10 @@ Advent of Code
 my solution to task 1 & 2 
 
 
-solution 1 - 
+solution 1 - search for most used connections by going from 100 nodes to another 100 nodes, them remove top 3 connections and after that count 
+the number of nodes that are available from each point of one of top 3 connections, then multiply given numbers and return the result
 
-solution 2 - 
+solution 2 - it was just putting a button on page :)
 
 '''
 
