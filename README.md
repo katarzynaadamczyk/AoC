@@ -9,4 +9,7 @@ Puzzles I solved from year 2015.
 I solved puzzles from all days from advent 2021.
 
 # 2022
-Puzzles I solved from year 2022. Solution idea explanation is in each code file.
+Puzzles I solved in AoC ad 2022. Solution idea explanation is in each code file.
+
+# 2023
+Puzzles I solved in AoC ad 2023. Solution idea explanation is in each code file.
