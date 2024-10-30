@@ -2,7 +2,12 @@
 Advent of Code 
 2015 day 11
 my solution to task 1
-task 1 - 
+task 1 - yes, it can work faster - I did not add constraints with equality and straight non-increasing numbers, 
+but added oil constraint to adding and it works fast enough
+idea is to add to last ord(char) 1, if it exceeds 25 -> move one backwards until there is nothing to add
+check if no oil is in numbers
+check other constraints
+if all good change ints to chars and return
 
 
 '''
