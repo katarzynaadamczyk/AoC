@@ -1,15 +1,10 @@
 '''
 Advent of Code 
-2015 day 9
-my solution to task 1
-task 1 - dijskra's algorithm using priority queue with len(track) and act_track_val as priorities
-task 2 - dijskra's algorithm using priority queue with len(track) and -1 * act_track_val as priorities
+2015 day 10
+my solution to task 1 & 2
+task 1&2 - generate all values iteratively as indicated in the task
 
 '''
-
-import re
-from queue import PriorityQueue
-from itertools import combinations
 
 class Solution:
 
