@@ -48,7 +48,6 @@ class Solution:
                 act_index -= 1
             else:
                 act_index = min(Solution.pass_len - 1, act_index + 1)
-            if act_index == Solution.pass_len - 1:
                 added = True
         self.get_differences()
        # print(''.join([chr(Solution.a_ord + x) for x in self.data]))
@@ -87,7 +86,7 @@ def main():
     sol = Solution('hxbxwxba')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
-    print('Solution 2:', sol.solution_1())
+    print('Solution 2:', sol.solution_1(), 'should equal hxcaabcc')
 
 
 if __name__ == '__main__':
