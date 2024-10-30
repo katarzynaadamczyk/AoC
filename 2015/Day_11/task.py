@@ -8,6 +8,7 @@ task 1 -
 '''
 
 class Solution:
+    pass_len = 8
     a_ord = ord('a')
     max_val = ord('z') - ord('a') + 1
     oil_set = {ord('i') - ord('a'), ord('o') - ord('a'), ord('l') - ord('a')}
@@ -25,7 +26,7 @@ class Solution:
         return len(set(self.data).intersection(Solution.oil_set)) == 0
     
     def constraint_two_same_letters(self):
-        if self.differences.count(0) > 1 and len(self.differences) - 1 - self.differences[::-1].index(0) - self.differences.index(0) >= 1:
+        if self.differences.count(0) > 1 and len(self.differences) - 1 - self.differences[::-1].index(0) - self.differences.index(0) > 1:
             return True
         return False
     
@@ -37,9 +38,37 @@ class Solution:
         return False
 
 
+    def add(self):
+        act_index = Solution.pass_len - 1
+        added = False
+        while act_index >= 0 and not added:
+            self.data[act_index] += 1
+            if self.data[act_index] // Solution.max_val == 1:
+                self.data[act_index] %= Solution.max_val
+                act_index -= 1
+            else:
+                act_index = min(Solution.pass_len - 1, act_index + 1)
+            if act_index == Solution.pass_len - 1:
+                added = True
+        self.get_differences()
+       # print(''.join([chr(Solution.a_ord + x) for x in self.data]))
+
+    def replace_oil(self):
+        for char in Solution.oil_set:
+            if char in self.data:
+                act_index = self.data.index(char)
+                self.data[act_index] = char + 1
+                for i in range(act_index + 1, Solution.pass_len):
+                    self.data[i] = 0
+        self.get_differences()
+
+
     def solution_1(self):
-        pass
-        return None
+        self.add()
+        while not (self.constraint_increasing_straight() and self.constraint_two_same_letters() and self.constraint_not_oil()):
+            self.add()
+            self.replace_oil()
+        return ''.join([chr(Solution.a_ord + x) for x in self.data])
 
 
 
@@ -48,9 +77,6 @@ class Solution:
 
 def main():
     print('TASK 1')
-    sol = Solution('hxbxwxba')
-    print(sol.constraint_increasing_straight())
-    '''
     sol = Solution('abcdefgh')
     print('TEST 1')
     print('test 1:', sol.solution_1(), 'should equal: abcdffaa')
@@ -61,8 +87,8 @@ def main():
     sol = Solution('hxbxwxba')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
-    #print('Solution 2:', sol.solution_1())
-'''
+    print('Solution 2:', sol.solution_1())
+
 
 if __name__ == '__main__':
     main()
