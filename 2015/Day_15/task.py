@@ -2,7 +2,9 @@
 Advent of Code 
 2015 day 15
 my solution to task 1
-task 1 - 
+task 1 - iterate over all possible values to find most scoring cookie, not proceeding with any value <= 0
+task 2 - iterate over all possible values to find most scoring cookie, not proceeding with any value <= 0 and total calories != 500
+
 
 
 '''
