@@ -13,6 +13,8 @@ import re
 class Solution:
     names = ['capacity', 'durability', 'flavor', 'texture', 'calories']
     first_len = 4
+    calories = 'calories'
+    calories_per_cookie = 500
 
     def __init__(self, filename) -> None:
         self.ingredients_dict = {name: [] for name in Solution.names}
@@ -65,6 +67,28 @@ class Solution:
 
 
         return max_value
+
+    def solution_2(self, total: int=100) -> int:
+        max_value = 0
+
+        for vals in self.generate(total - self.no_of_ingredients + 2, self.no_of_ingredients - 1):
+            vals = list(vals)
+            vals.append(total - sum(vals))
+            act_calories = sum([a * b for a, b in zip(vals, self.ingredients_dict[Solution.calories])])
+            if act_calories != Solution.calories_per_cookie:
+                continue
+            result = []
+            for name in Solution.names[:-1]:
+                act_val = reduce(lambda a, b: a + b, [x * y for x, y in zip(vals, self.ingredients_dict[name])])
+                if act_val <= 0:
+                    break
+                result.append(act_val)
+            if len(result) == Solution.first_len:
+                max_value = max(max_value, reduce(lambda a, b: a * b, result))
+
+
+
+        return max_value
     
     
 
@@ -75,11 +99,11 @@ def main():
     sol = Solution('2015/Day_15/test.txt')
     print('TEST 1')
     print('test 1:', sol.solution_1(), 'should equal 62842880')
-    #print('test 1:', sol.solution_2())
+    print('test 1:', sol.solution_2())
     sol = Solution('2015/Day_15/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
-    #print('Solution 2:', sol.solution_2())
+    print('Solution 2:', sol.solution_2())
    
 
 
