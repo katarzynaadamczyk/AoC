@@ -4,7 +4,9 @@ Advent of Code
 my solution to task 1
 task 1 - solved using heapq priority queue, I make every possible combination 
 and check if the sum is equal to given liters of eggnogg, if it is more then I abandon this leaf
-task 2 - add to first part saving min number of containers
+task 2 - solved using heapq priority queue, I make every possible combination 
+and check if the sum is equal to given liters of eggnogg (+ check if it is of minimum length), if it is more (or uses more containers) 
+then I abandon this leaf
 
 
 '''
@@ -32,7 +34,6 @@ class Solution:
             act_i, act_comb = heapq.heappop(queue)
             if sum(act_comb) == total:
                 no_of_combinations += 1
-                self.min_no_of_containers = min(self.min_no_of_containers, len(act_comb))
                 continue
             if sum(act_comb) > total or act_i == self.no_of_containers:
                 continue
@@ -48,7 +49,10 @@ class Solution:
         heapq.heappush(queue, (1, [self.containers[0]]))
         while queue:
             act_i, act_comb = heapq.heappop(queue)
-            if sum(act_comb) == total and len(act_comb) == self.min_no_of_containers:
+            if sum(act_comb) == total and len(act_comb) <= self.min_no_of_containers:
+                if len(act_comb) < self.min_no_of_containers:
+                    self.min_no_of_containers = len(act_comb)
+                    no_of_combinations = 0
                 no_of_combinations += 1
                 continue
             if sum(act_comb) >= total or act_i == self.no_of_containers or len(act_comb) >= self.min_no_of_containers:
