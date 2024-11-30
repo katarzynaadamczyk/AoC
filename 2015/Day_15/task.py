@@ -7,34 +7,70 @@ task 1 -
 
 '''
 
+from functools import reduce
+import re
+
 class Solution:
     names = ['capacity', 'durability', 'flavor', 'texture', 'calories']
+    first_len = 4
 
     def __init__(self, filename) -> None:
-        self.ingredients_dict = {}
+        self.ingredients_dict = {name: [] for name in Solution.names}
         self.get_data(filename)
+        print(self.ingredients_dict)
+        self.no_of_ingredients = len(self.ingredients_dict[Solution.names[0]])
 
     def get_data(self, filename):
-
         with open(filename, 'r') as myfile:
             for line in myfile:
-                line = line.strip()
-                line = line.split(':')
-                name = line[0].strip()
-                self.ingredients_dict.setdefault(name, {})
-                for chunk in line[1].split(','):
-                    chunk = chunk.split()
-                    self.ingredients_dict[name].setdefault(chunk[0].strip(), int(chunk[1].strip()))
+                numbers = re.findall(r'-?\d+', line)
+                for num, name in zip(numbers, Solution.names):
+                    self.ingredients_dict[name].append(int(num))
+
+    def generate_1(self, max_val):
+        for i in range(1, max_val):
+            yield i
+    
+    def generate_3(self, max_val):
+        for i in range(1, max_val):
+            for j in range(1, max_val - i):
+                for k in range(1, max_val - i - j):
+                    yield i, j, k
+
+    def generate(self, max_val, num=1, *args):
+        if num == 1:
+            for i in range(1, max_val - sum(args)):
+                yield i, *args
+        else:
+            for i in range(1, max_val - sum(args)):
+                for j in self.generate(max_val, num-1, i, *args):
+                    yield j
+
+
+    def solution_1(self, total: int=100) -> int:
+        max_value = 0
+
+        for vals in self.generate(total - self.no_of_ingredients + 2, self.no_of_ingredients - 1):
+            vals = list(vals)
+            vals.append(total - sum(vals))
+            result = []
+            for name in Solution.names[:-1]:
+                act_val = reduce(lambda a, b: a + b, [x * y for x, y in zip(vals, self.ingredients_dict[name])])
+                if act_val <= 0:
+                    break
+                result.append(act_val)
+            if len(result) == Solution.first_len:
+                max_value = max(max_value, reduce(lambda a, b: a * b, result))
 
 
 
-    def solution_1(self):
-        return 
+        return max_value
     
     
 
 
 def main():
+
     print('TASK 1')
     sol = Solution('2015/Day_15/test.txt')
     print('TEST 1')
