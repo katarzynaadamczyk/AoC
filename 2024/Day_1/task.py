@@ -2,7 +2,8 @@
 Advent of Code 
 2024 day 1
 my solution to tasks
-task 1 - 
+task 1 - heapify both lists and then pick up always smallest one and adding to result their difference
+task 2 - create Counter of list 2 and move through list 1 to multiply value by number of counts from Counter, add those values
 
 
 '''
