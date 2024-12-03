@@ -41,15 +41,15 @@ class Solution:
     def solution_2(self) -> int:
         result = 0
         flag = True
-        for line in self.commands:
-            for chunk in re.findall(r"mul\(\d{1,3},\d{1,3}\)|do\(\)|don't\(\)", line):
-                if chunk == 'do()':
-                    flag = True
-                elif chunk == "don't()":
-                    flag = False
-                else:
-                    if flag:
-                        result += self.get_chunk_result(chunk)
+        # added ''.join below to repair corrupted data
+        for chunk in re.findall(r"mul\(\d{1,3},\d{1,3}\)|do\(\)|don't\(\)", ''.join(self.commands)):
+            if chunk == 'do()':
+                flag = True
+            elif chunk == "don't()":
+                flag = False
+            else:
+                if flag:
+                    result += self.get_chunk_result(chunk)
 
             
         return result
