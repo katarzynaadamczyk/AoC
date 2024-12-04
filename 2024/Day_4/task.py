@@ -61,11 +61,35 @@ class Solution:
 
         return result
 
+    def get_result_for_x_y(self, word, word_len, x, y):
+        result = 0
+        word1 = ''.join([self.table[y + s][x + s] for s in range(word_len)])
+        word2 = ''.join([self.table[y + s][x + word_len - 1 - s] for s in range(word_len)])
+        if word1 == word or word1[::-1] == word:
+            result += 1
+        if word2 == word or word2[::-1] == word:
+            result += 1
+        return result
+
+
+    def search_diagonal_2(self, word):
+        word_len, result = len(word), 0
+        for y in range(self.table_size - word_len + 1):
+            for x in range(self.table_size - word_len + 1):
+                result += self.get_result_for_x_y(word, word_len, x, y)
+        return result
+
 
     def solution_1(self, word='XMAS') -> int:
         result = self.search_vertical(word)
         result += self.search_horizontal(word)
         result += self.search_diagonal(word)
+        return result
+
+    def solution_1_2(self, word='XMAS') -> int:
+        result = self.search_vertical(word)
+        result += self.search_horizontal(word)
+        result += self.search_diagonal_2(word)
         return result
     
     def solution_2(self) -> int:
@@ -80,6 +104,15 @@ class Solution:
                         result += 1
         return result
 
+    def solution_2_2(self, word='MAS') -> int:
+        result = 0
+        word_len = len(word)
+        for y in range(0, self.table_size - word_len + 1):
+            for x in range(0, self.table_size - word_len + 1):
+                if self.get_result_for_x_y(word, word_len, x, y) == 2:
+                    result += 1
+        return result
+
     
 
 def main():
@@ -88,11 +121,15 @@ def main():
     sol = Solution('2024/Day_4/test.txt')
     print('TEST 1')
     print('test 1:', sol.solution_1(), 'should equal 18')
+    print('test 1:', sol.solution_1_2(), 'should equal 18')
     print('test 1:', sol.solution_2(), 'should equal 9')
+    print('test 1:', sol.solution_2_2(), 'should equal 9')
     sol = Solution('2024/Day_4/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
+    print('Solution 1:', sol.solution_1_2())
     print('Solution 2:', sol.solution_2()) # 1945 too low
+    print('Solution 2:', sol.solution_2_2()) 
    
 
 
