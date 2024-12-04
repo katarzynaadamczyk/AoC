@@ -2,12 +2,19 @@
 Advent of Code 
 2024 day 4
 my solution to tasks
-task 1 - 
+task 1 - first attempt - search vertically line after line, horizontally - switch axis and do as vertically, 
+diagonally - get each diagonal and check as vertically (using defaultdict)
+task 1 - second attempt - search vertically line after line, horizontally - switch axis and do as vertically, 
+diagonally - for each square of word len in table check diagonals for given word 
+task 2 - like diagonally in second attempt task 1 but there also two attemps
+first attempt - as the word was of size 3 check if middle letter is correct, then check if left upper with right bottom create 
+same set as left bottom and right upper letter and are same as prepared dict in function
+second attempt - using functions same as second attempt in task 2, check if word in diagonals match given word
+
 
 
 '''
 from collections import defaultdict
-import re
 
 class Solution:
 
