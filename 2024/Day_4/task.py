@@ -7,12 +7,14 @@ task 1 -
 
 '''
 from collections import defaultdict
+import re
 
 class Solution:
 
     def __init__(self, filename) -> None:
         self.table = []
         self.get_data(filename)
+        self.table_size = len(self.table)
 
     def get_data(self, filename):
         with open(filename, 'r') as myfile:
@@ -37,19 +39,18 @@ class Solution:
     def search_horizontal(self, word):
         result = 0
         for i in range(len(self.table[0])):
-            line = ''.join([self.table[y][i] for y in range(len(self.table))])
+            line = ''.join([self.table[y][i] for y in range(self.table_size)])
             result += self.get_result_for_line(line, word)
             result += self.get_result_for_line(line[::-1], word)
         return result
     
     def search_diagonal(self, word):
         result = 0
-        matrix_size = len(self.table)
 
         diagonal1 = defaultdict(list) # For the top right to bottom left
         diagonal2 = defaultdict(list) # For the top left to bottom right
-        for i in range(matrix_size):
-            for j in range(matrix_size):
+        for i in range(self.table_size):
+            for j in range(self.table_size):
                 diagonal1[i-j].append(self.table[i][j])
                 diagonal2[i+j].append(self.table[i][j])
         for diagonal in [diagonal1, diagonal2]:
@@ -66,10 +67,19 @@ class Solution:
         result += self.search_horizontal(word)
         result += self.search_diagonal(word)
         return result
+    
+    def solution_2(self) -> int:
+        result = 0
+        MS_set = set(['M', 'S'])
+        for y in range(1, self.table_size -1):
+            for x in range(1, self.table_size -1):
+                if self.table[y][x] == 'A':
+                    one_set = set([self.table[y-1][x-1], self.table[y+1][x+1]])
+                    two_set = set([self.table[y-1][x+1], self.table[y+1][x-1]])
+                    if one_set == MS_set and two_set == MS_set:
+                        result += 1
+        return result
 
-    
-    
-    
     
 
 def main():
@@ -78,11 +88,11 @@ def main():
     sol = Solution('2024/Day_4/test.txt')
     print('TEST 1')
     print('test 1:', sol.solution_1(), 'should equal 18')
-  #  print('test 1:', sol.solution_2(), 'should equal 48')
+    print('test 1:', sol.solution_2(), 'should equal 9')
     sol = Solution('2024/Day_4/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
-  #  print('Solution 2:', sol.solution_2()) 
+    print('Solution 2:', sol.solution_2()) # 1945 too low
    
 
 
