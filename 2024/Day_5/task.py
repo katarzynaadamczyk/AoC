@@ -2,7 +2,12 @@
 Advent of Code 
 2024 day 5
 my solution to tasks
-task 1 - 
+task 1 - working on sets - for each update check for each i in range(0, len(update) - 1) check if difference between set of 
+rest of update (update[i+1:]) and numbers that need to be after update[i] equals to en empty set
+task 2 - working on sets - check if update is not valid is as in task 1, task 2 is about putting in right order, so I iterate starting
+from the end of update and if any number should precede actual number, I eliminate it from new_update then add it to beginning of new_update
+
+both tasks end same way - get sum of middle element for each valid for task update
 
 '''
 
