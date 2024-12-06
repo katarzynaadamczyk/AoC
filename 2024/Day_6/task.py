@@ -2,7 +2,13 @@
 Advent of Code 
 2024 day 6
 my solution to tasks
-task 1 - 
+task 1 - solution working faster than second 
+idea -> while in lab: go in each direction to find wall -> then add to set of all visited positions all positions between act position till new position
+-> check if left lab -> if so exit -> if no then change direction and do it again
+return len of set of visited points 
+task 2 - solution working faster than second
+for each point in set from task 1 without starting position put in that place and obstacle and do as in task 2, but keep set of all visited 
+positions with direction, if (position, direction) tuple in set then add 1 to result and exit while loop 
 
 '''
 from tqdm import tqdm

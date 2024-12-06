@@ -2,7 +2,7 @@
 Advent of Code 
 2024 day 6
 my solution to tasks
-task 1 - 
+task 1 & 2 - general idea as in task but this is a brute force solution -> in each iteration get new position with new direction
 brute foce solution
 
 
