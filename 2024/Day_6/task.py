@@ -32,31 +32,31 @@ class Solution:
         return (Solution.positions.index(act_position) + 1) % Solution.no_of_positions
     
     def get_next_stop_up(self, act_position):
-        route = ''.join([self.lab_map[i][act_position[1]] for i in range(act_position[0], self.min_y - 1, -1)])
+        route = ''.join([self.lab_map[i][act_position[1]] for i in range(act_position[0] - 1, self.min_y - 1, -1)])
         next_stop = route.find('#')
         if next_stop >= 0:
-            return (act_position[0] - next_stop + 1, act_position[1])
+            return (act_position[0] - next_stop, act_position[1])
         return (self.min_y, act_position[1])
     
     def get_next_stop_right(self, act_position):
-        route = self.lab_map[act_position[0]][act_position[1]:]
+        route = self.lab_map[act_position[0]][act_position[1] + 1:]
         next_stop = route.find('#')
         if next_stop >= 0:
-            return (act_position[0], act_position[1] + next_stop - 1)
+            return (act_position[0], act_position[1] + next_stop)
         return (act_position[0], self.max_x)
     
     def get_next_stop_down(self, act_position):
-        route = ''.join([self.lab_map[i][act_position[1]] for i in range(act_position[0], self.max_y + 1)])
+        route = ''.join([self.lab_map[i][act_position[1]] for i in range(act_position[0] + 1, self.max_y + 1)])
         next_stop = route.find('#')
         if next_stop >= 0:
-            return (act_position[0] + next_stop - 1, act_position[1])
+            return (act_position[0] + next_stop, act_position[1])
         return (self.max_y, act_position[1])
     
     def get_next_stop_left(self, act_position):
-        route = self.lab_map[act_position[0]][:act_position[1] + 1][::-1]
-        next_stop = route.find('#')
+        route = self.lab_map[act_position[0]][:act_position[1]]
+        next_stop = route.rfind('#')
         if next_stop >= 0:
-            return (act_position[0], act_position[1] - next_stop + 1)
+            return (act_position[0], next_stop + 1)
         return (act_position[0], self.max_x)
     
     def put_to_set(self, act_position, new_position, set_of_positions):
