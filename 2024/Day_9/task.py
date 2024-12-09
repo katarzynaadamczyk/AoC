@@ -2,7 +2,22 @@
 Advent of Code 
 2024 day 9
 my solution to tasks
-task 1 - 
+
+first prepare layout -> list of tuples (n, index), if index == -1 it is a free space
+task 1 - keep track of index of actual right tuple and how many number have already been taken.
+iterate over layout from left to right to get a new one. 
+if left index >= right index -> stop iterating, take only remaining number of values
+if left value != free space then add (num, val) to new layout
+else keep adding values from right index until free space is filled up
+to get result iterate over new layout while keeping track of index 
+
+task 2 - split layout into list of nums and free spaces containing tuples: (index, (count, values))
+keep track of moved tuples
+iterate over nums from right to left
+    in each iteration iterate over empty to find right spot
+        if found then add it to empty list and to set of moved tuples and stop iterating through empty
+to get result iterate over nums -> if tuple is in moved set then ignore it
+and over empty -> if tuple is free space ignore it
 
 
 '''
@@ -91,7 +106,8 @@ class Solution:
     def solution_2(self) -> int:
         result = 0
         empty, nums = self.divide_layout_for_empty_and_nums()
-        moved = set() # set of indices moved to empty
+        moved = set() # set of tuples moved to empty
+        
         for (i, tpl) in tqdm(nums[::-1]):
             new_empty = empty
             for x, (j, empts) in enumerate(empty):
@@ -105,8 +121,7 @@ class Solution:
                     moved.add(tpl)
                     break
             empty = new_empty
-       # print(nums)
-       # print(empty)
+
         for (i, tpl) in nums:
             if tpl not in moved:
                 for j in range(i, i+tpl[0]):
@@ -132,7 +147,7 @@ def main():
     print('test 1:', sol.solution_2(), 'should equal 2858')
     sol = Solution('2024/Day_9/task.txt')
     print('SOLUTION')
-    print('Solution 1:', sol.solution_1()) # 24407607019085 too high
+    print('Solution 1:', sol.solution_1())
     print('Solution 2:', sol.solution_2())
    
 
