@@ -64,13 +64,20 @@ class Solution:
                 took_from_last += will_take
                 right_pos, took_from_last = self.get_new_right_values(right_pos, took_from_last)
             
-
-    
+    def divide_layout_for_empty_and_nums(self):
+        i = 0
+        empty, nums = [], []
+        for tpl in self.layout:
+            if tpl[1] == self.free_space:
+                empty.append((i, tpl))
+            else:
+                nums.append((i, tpl))
+            i += tpl[0]
+        return empty, nums
     
     def solution_1(self) -> int:
         result = 0
         self.move_layout()
-     #   print(self.new_layout)
         i = 0
         for num, val in self.new_layout:
             for j in range(i, i+num):
@@ -82,8 +89,35 @@ class Solution:
 
     
     def solution_2(self) -> int:
-        results = set()
-        return len(results)
+        result = 0
+        empty, nums = self.divide_layout_for_empty_and_nums()
+        moved = set() # set of indices moved to empty
+        for (i, tpl) in tqdm(nums[::-1]):
+            new_empty = empty
+            for x, (j, empts) in enumerate(empty):
+                if j > i:
+                    break
+                if empts[1] == self.free_space and empts[0] >= tpl[0]:
+                    if empts[0] == tpl[0]:
+                        new_empty = empty[:x] + [(j, tpl)] + empty[x+1:]
+                    else:
+                        new_empty = empty[:x] + [(j, tpl), (j + tpl[0], (empts[0] - tpl[0], self.free_space))] + empty[x+1:]
+                    moved.add(tpl)
+                    break
+            empty = new_empty
+       # print(nums)
+       # print(empty)
+        for (i, tpl) in nums:
+            if tpl not in moved:
+                for j in range(i, i+tpl[0]):
+                    result += j * tpl[1]
+        
+        for (i, tpl) in empty:
+            if tpl[1] != self.free_space:
+                for j in range(i, i+tpl[0]):
+                    result += j * tpl[1]
+        
+        return result
 
 
 
@@ -95,11 +129,11 @@ def main():
     sol = Solution('2024/Day_9/test.txt')
     print('TEST 1')
     print('test 1:', sol.solution_1(), 'should equal 1928')
- #   print('test 1:', sol.solution_2(), 'should equal 34')
+    print('test 1:', sol.solution_2(), 'should equal 2858')
     sol = Solution('2024/Day_9/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1()) # 24407607019085 too high
-  #  print('Solution 2:', sol.solution_2())
+    print('Solution 2:', sol.solution_2())
    
 
 
