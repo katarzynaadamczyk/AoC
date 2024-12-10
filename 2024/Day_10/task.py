@@ -51,8 +51,6 @@ class Solution:
                             new_act_positions.add(new_point)
                 act_positions = new_act_positions
             result += len(act_positions)
-
-
         return result
     
 
@@ -60,7 +58,26 @@ class Solution:
     
     def solution_2(self) -> int:
         result = 0
-        
+        for trailhead in tqdm(self.trailheads):
+            visited_points = set()
+            visited_points.add(trailhead)
+            act_positions = set()
+            act_positions.add(trailhead)
+            how_many_routes_led_here = {}
+            how_many_routes_led_here.setdefault(trailhead, 1)
+            for _ in range(9):
+                new_act_positions = set()
+                for point in act_positions:
+                    for new_point in self.get_possible_moves(point, self.get_map_value(point)):
+                        how_many_routes_led_here.setdefault(new_point, 0)
+                        how_many_routes_led_here[new_point] += how_many_routes_led_here.get(point, 0)
+                        if new_point not in visited_points:
+                            visited_points.add(new_point)
+                            new_act_positions.add(new_point)
+                
+                act_positions = new_act_positions
+            for position in act_positions:
+                result += how_many_routes_led_here[position]
         return result
 
 
@@ -72,12 +89,12 @@ def main():
     print('TASK 1')
     sol = Solution('2024/Day_10/test.txt')
     print('TEST 1')
-    print('test 1:', sol.solution_1(), 'should equal ?')
-  # print('test 1:', sol.solution_2(), 'should equal ?')
+    print('test 1:', sol.solution_1(), 'should equal 36')
+    print('test 1:', sol.solution_2(), 'should equal 81')
     sol = Solution('2024/Day_10/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
-   # print('Solution 2:', sol.solution_2())
+    print('Solution 2:', sol.solution_2())
    
 
 
