@@ -3,7 +3,15 @@ Advent of Code
 2024 day 10
 my solution to tasks
 
-task 1 - 
+task 1 - both tasks are based on BST algorithm - keeping track of visited points to counting same new points - not needed (commented)
+for each trailhead:
+    create set of consisting of trailhead (1 point)
+    for 9 iterations:
+        go through map each step at a time and check all possible moves to create set of new points available
+    after 9 iterations there are only points with value 9 so add lenght of such a set to results
+task 2 - keeping track of how many routes led to given point
+    as above but when getting a new point, add it to dict of points and add value of point that led to this point
+    after 9 iterations there are only points with value 9 so add values from dict for each point
 
 
 '''
@@ -38,17 +46,17 @@ class Solution:
     def solution_1(self) -> int:
         result = 0
         for trailhead in tqdm(self.trailheads):
-            visited_points = set()
-            visited_points.add(trailhead)
+         #   visited_points = set()
+          #  visited_points.add(trailhead)
             act_positions = set()
             act_positions.add(trailhead)
             for _ in range(9):
                 new_act_positions = set()
                 for point in act_positions:
                     for new_point in self.get_possible_moves(point, self.get_map_value(point)):
-                        if new_point not in visited_points:
-                            visited_points.add(new_point)
-                            new_act_positions.add(new_point)
+                 #       if new_point not in visited_points:
+                 #           visited_points.add(new_point)
+                        new_act_positions.add(new_point)
                 act_positions = new_act_positions
             result += len(act_positions)
         return result
@@ -59,8 +67,8 @@ class Solution:
     def solution_2(self) -> int:
         result = 0
         for trailhead in tqdm(self.trailheads):
-            visited_points = set()
-            visited_points.add(trailhead)
+         #   visited_points = set()
+          #  visited_points.add(trailhead)
             act_positions = set()
             act_positions.add(trailhead)
             how_many_routes_led_here = {}
@@ -71,11 +79,12 @@ class Solution:
                     for new_point in self.get_possible_moves(point, self.get_map_value(point)):
                         how_many_routes_led_here.setdefault(new_point, 0)
                         how_many_routes_led_here[new_point] += how_many_routes_led_here.get(point, 0)
-                        if new_point not in visited_points:
-                            visited_points.add(new_point)
-                            new_act_positions.add(new_point)
+                     #   if new_point not in visited_points:
+                     #       visited_points.add(new_point)
+                        new_act_positions.add(new_point)
                 
                 act_positions = new_act_positions
+
             for position in act_positions:
                 result += how_many_routes_led_here[position]
         return result
