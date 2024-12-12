@@ -3,7 +3,23 @@ Advent of Code
 2024 day 12
 my solution to tasks
 
-task 1 - 
+before each task there is a need to get gardens areas as sets 
+so in initialization there is a division for garden areas 
+
+task 1 - for each garden area:
+            calculate area: simply len of garden points set
+            calculate perimeter: for each point in garden area check each neighboring point -> 
+            if it is not in garden area then add 1 to perimeter
+            multiply these two values and add them to result
+task 2 - calculating sides is a little more complicated task:
+        for each garden area:
+            calculate sides:
+                firstly create set of all points that not all neighboring points are in garden points set
+                then put them into correct sets: for up side, down side, left side and right side
+                for each side set calculate number of sides (side is if points on same x or y are in growing by 1 sequence, otherwise 
+                there is next side)
+            
+                
 
 '''
 
@@ -24,6 +40,7 @@ class Solution:
                              'down': self.get_number_of_up_down_sides,
                              'left': self.get_number_of_left_right_sides,
                              'right': self.get_number_of_left_right_sides}
+        
         self.areas = self.get_garden_areas()
 
     def get_data(self, filename):
