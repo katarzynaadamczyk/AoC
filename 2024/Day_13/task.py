@@ -39,18 +39,19 @@ class Solution:
                 tag += 1
    
     
-    def get_tokens_for_machine(self, machine):
+    def get_tokens_for_machine(self, machine, add_constraint=True):
         # calculate a
         diff = machine['BY'] * machine['AX'] - machine['BX'] * machine['AY']
         if diff == 0: 
             return 0
         a = (machine['BY'] * machine['X'] - machine['BX'] * machine['Y']) // diff
-        if a < 0 or a > 100 or machine['BX'] == 0:
+        if a < 0 or machine['BX'] == 0 or (add_constraint and a > 100):
             return 0
         # calculate b
         b1 = (machine['X'] - machine['AX'] * a) // machine['BX']
         b2 = (machine['Y'] - machine['AY'] * a) // machine['BY']
-        if b1 == b2 and 0 <= b1 <= 100:
+        if b1 == b2 and 0 <= b1 and machine['AX'] * a + machine['BX'] * b1 == machine['X'] and \
+            machine['AY'] * a + machine['BY'] * b1 == machine['Y'] and (not add_constraint or add_constraint and b1 <=100):
             return a * 3 + b1
         return 0
     
@@ -67,7 +68,6 @@ class Solution:
         b2 = (machine['Y'] - machine['AY'] * a) // machine['BY']
         if b1 == b2 and 0 <= b1 and machine['AX'] * a + machine['BX'] * b1 == machine['X'] and \
             machine['AY'] * a + machine['BY'] * b1 == machine['Y']:
-            #print(a, b1)
             return a * 3 + b1
         return 0
     
@@ -81,7 +81,7 @@ class Solution:
         for machine in self.claw_machines:
             machine['X'] += 10000000000000
             machine['Y'] += 10000000000000
-            result += self.get_tokens_for_machine_2(machine)
+            result += self.get_tokens_for_machine(machine, False)
         return result
 
     
