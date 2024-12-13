@@ -3,9 +3,13 @@ Advent of Code
 2024 day 13
 my solution to tasks
 
+linear algebra equations
+need to find a, b in following equations
+AX * a + BX * b = X
+AY * a + BY * b = Y
 
 
-task 1 - 
+task 1 & 2 - are same, but first may be solved via a brute force, for second it is not an option in a reasonable time
             
                 
 
@@ -55,21 +59,6 @@ class Solution:
             return a * 3 + b1
         return 0
     
-    def get_tokens_for_machine_2(self, machine):
-        # calculate a
-        diff = machine['BY'] * machine['AX'] - machine['BX'] * machine['AY']
-        if diff == 0: 
-            return 0
-        a = (machine['BY'] * machine['X'] - machine['BX'] * machine['Y']) // diff
-        if a < 0 or machine['BX'] == 0:
-            return 0
-        # calculate b
-        b1 = (machine['X'] - machine['AX'] * a) // machine['BX']
-        b2 = (machine['Y'] - machine['AY'] * a) // machine['BY']
-        if b1 == b2 and 0 <= b1 and machine['AX'] * a + machine['BX'] * b1 == machine['X'] and \
-            machine['AY'] * a + machine['BY'] * b1 == machine['Y']:
-            return a * 3 + b1
-        return 0
     
     def solution_1(self) -> int:
         return sum([self.get_tokens_for_machine(machine) for machine in self.claw_machines])
