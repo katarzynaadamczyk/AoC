@@ -3,14 +3,20 @@ Advent of Code
 2024 day 14
 my solution to tasks
 
+task 1 - using math operations calculate position of each robot after 100 s, divide robots into 4 groups and 
+multiply len of the groups together
+task 2 - first approach was to brute force each second and save picture of it and look through all pictures to find the Christmas Tree
+second approach -> after getting positions 
+                search for first 4 lines of Christmas Tree, 
+                if it is in positions set then save the picture and return time
 
-task 1 -        
 
 '''
 
 from tqdm import tqdm
 import numpy as np
 from PIL import Image
+
 
 class Solution:
 
@@ -79,7 +85,7 @@ class Solution:
 
     
     def solution_2(self, max_x=101, max_y=103) -> int:
-        for sec in tqdm(range(10000)):
+        for sec in tqdm(range(7000, 8000)):
             positions = set()
             for robot in self.robots.values():
                 positions.add(self.get_robot_final_position(robot, max_x, max_y, sec))
