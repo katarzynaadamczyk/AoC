@@ -85,7 +85,7 @@ class Solution:
 
     
     def solution_2(self, max_x=101, max_y=103) -> int:
-        for sec in tqdm(range(7000, 8000)):
+        for sec in tqdm(range(0, 10000)):
             positions = set()
             for robot in self.robots.values():
                 positions.add(self.get_robot_final_position(robot, max_x, max_y, sec))
