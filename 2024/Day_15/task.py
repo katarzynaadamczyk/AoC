@@ -1,9 +1,16 @@
 '''
 Advent of Code 
 2024 day 15
-my solution to tasks
+my solution to task 1 only
 
-task 1 - 
+first create a set of all boxes locations and another set of walls locations 
+and keep robot postion
+
+task 1 - for each direction in directions:
+            check for all boxes that will / could be moved
+            check if last position is not a wall
+            then move robot and maybe some boxes
+        at the end sum GPS of all boxes positions 
 
 '''
 
