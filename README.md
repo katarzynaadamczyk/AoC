@@ -15,4 +15,4 @@ Puzzles I solved in AoC ad 2022. Solution idea explanation is in each code file.
 Puzzles I solved in AoC ad 2023. Solution idea explanation is in each code file.
 
 # 2024
-Puzzles I solved in AoC ad 2023. Solution idea explanation is in each code file.
+Puzzles I solved in AoC ad 2024. Solution idea explanation is in each code file.
