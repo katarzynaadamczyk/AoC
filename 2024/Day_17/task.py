@@ -173,7 +173,6 @@ class Solution:
                 self.registers['A'] = a
                 for instruction, operand in zip(self.instructions_operands[:len(self.instructions_operands) - 2:2], \
                                                 self.instructions_operands[1:len(self.instructions_operands) - 1:2]):
-                    
                     output = self.functions[instruction](operand)
                     if type(output) == type(1) and output == act_value:
                         for i in range(a * 2 ** param, a * 2 ** param + 2 ** param):
