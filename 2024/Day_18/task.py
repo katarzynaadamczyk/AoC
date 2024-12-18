@@ -9,6 +9,7 @@ task 1 - BFS algorithm avoiding fallen bytes only
 task 2 - linear search to find first byte that prevents having a route to final_position
 keep adding new falling bytes to bytes_falling set, after each new byte check if there is a route to the end (let_us_move), if it returns
 0 then return lastly fallen byte
+linear search works in 11 seconds - fine for me
 
 '''
 from tqdm import tqdm
@@ -84,7 +85,7 @@ class Solution:
 
 
     
-   # @time_it
+    @time_it
     def solution_1(self) -> int:
         '''
         get result for task 1
@@ -98,7 +99,7 @@ class Solution:
         '''
         for byte_fall in tqdm(self.next_bytes_falling):
             self.bytes_falling.add(byte_fall)
-            if self.solution_1() == 0:
+            if self.let_us_move() == 0:
                 return byte_fall
         return 0
     
