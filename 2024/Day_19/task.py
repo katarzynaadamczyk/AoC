@@ -6,8 +6,8 @@ my solution to tasks
 
 task 1 - recurrent algorithm with memoization
 
-task 2 - I got really stuck trying to make 2D DP table, I asked GPT for help, 
-it is an easy 1D DP approach 
+task 2 - I got really stuck trying to make 2D DP table, I asked GPT for help with my buggy code, 
+he show me an easy 1D DP approach, how could I forget about that? :) 
 
 '''
 
@@ -95,6 +95,7 @@ class Solution:
     
         # Iterate through the sequence
         for i in range(1, n + 1):
+            # iterate through towels
             for towel in valid_towels:
                 len_towel = len(towel)
                 if i >= len_towel and sequence[i - len_towel:i] == towel:
@@ -122,8 +123,6 @@ class Solution:
         get result for task 2
         '''
         result = 0
-        self.number_for_sequences = {x: 1 for x in self.towels}
-        self.number_for_sequences[''] = 1
         for sequence in self.sequences:
             result += self.get_number_of_sequences(sequence, self.get_valid_towels(sequence))
         return result
