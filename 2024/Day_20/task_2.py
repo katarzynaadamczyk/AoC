@@ -4,13 +4,7 @@ Advent of Code
 my solution to tasks
 
 
-task 1 - first get the path, then for each point check if there are possible cheating positions of size 2, if so
-check if profit is >= treshold, if so add 1 to result
-
-task 2 - also a brute force, for each position get all possible cheating positions with max path len equal to 20, count those points 
-for which path length >= treshold, it runs in ~20 s
-I got another idea -> instead of counting paths I should get all points that are in manhattan distance <= 20 and are on the path
-will try to implement it in task_2.py
+task 1 & 2 solved using manhattan distance - is not as fast as I thought it would be, brute force takes similar amount of time ~12 s
 
 '''
 
@@ -40,7 +34,6 @@ class Solution:
         self.directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
         self.min_x, self.min_y = 0, 0
         self.point_len = {self.start_pos: 0}
-        self.min_point, self.max_point = (self.min_y, self.min_x), (self.max_y, self.max_x)
 
 
 
@@ -59,6 +52,7 @@ class Solution:
                         self.end_pos = (y, x)
                 self.max_x = x
             self.max_y = y
+
 
     def get_next_possible_points(self, point):
         '''
@@ -86,66 +80,38 @@ class Solution:
                 heapq.heappush(stack, (act_len + 1, new_point))
         return 0
 
-    def get_possible_cheating_points(self, point):
-        '''
-        get possible cheating points given position
-        '''
-        for direction in self.directions:
-            wall_point = (direction[0] + point[0], direction[1] + point[1])
-            new_point = (2 * direction[0] + point[0], 2 * direction[1] + point[1])
-            if wall_point in self.walls and new_point in self.point_len.keys():
-                yield new_point
 
-    def get_possible_cheating_points_2(self, point):
-        '''
-        get possible cheating points given position for task 2
-        path len from point to new_point <= 20
-        '''
-        stack = []
-        heapq.heapify(stack)
-        heapq.heappush(stack, (0, point))
-        result = set()
-        visited_points = set()
-        visited_points.add(point)
-        while stack:
-            act_len, act_point = heapq.heappop(stack)
-            if act_point in self.point_len.keys():
-                result.add((act_len, act_point))
-            if act_len == 20 or act_point[0] < self.min_y or act_point[1] < self.min_x \
-                or act_point[0] > self.max_y or act_point[1] > self.max_x:
-                continue
-            for direction in self.directions:
-                new_point = (direction[0] + act_point[0], direction[1] + act_point[1])
-                if new_point not in visited_points:
-                    visited_points.add(new_point)
-                    heapq.heappush(stack, (act_len + 1, new_point))
-        return result
+    def manhattan_distance(self, point1, point2):
+        return abs(point1[0] - point2[0]) + abs(point1[1] - point2[1])
 
-    def check_cheating_possibilities(self, treshold):
+
+    def calculate_distances_between_points(self):
+        '''
+        get all pairs of points for needed distances
+        '''
+        self.distances = {}
+        not_saw_points = set(self.point_len.keys())
+        for point in self.point_len.keys():
+            not_saw_points.remove(point)
+            for point_2 in not_saw_points:
+                dist = self.manhattan_distance(point, point_2)
+                if dist <= 20: # no need to keep dist > 20 as it will not be needed
+                    self.distances.setdefault(dist, [])
+                    self.distances[dist].append(sorted([point, point_2], key=lambda x: -1 * (self.point_len[x])))
+
+
+    def check_cheating_possibilities(self, distance, treshold):
         '''
         get all possible cheating possibilities that have value above treshold
-        only for part 1
         '''
         result = 0
-        for point in self.point_len.keys():
-            for new_point in self.get_possible_cheating_points(point):
-                if self.point_len[new_point] > self.point_len[point] and \
-                    self.point_len[new_point] - self.point_len[point] - 2 >= treshold:
-                        result += 1
+        for distance in range(2, distance + 1):
+            if distance in self.distances.keys():
+                for point1, point2 in self.distances[distance]:
+                    if self.point_len[point1] - self.point_len[point2] - distance >= treshold:
+                        result += 1 
         return result
     
-    def check_cheating_possibilities_2(self, treshold):
-        '''
-        get all possible cheating possibilities that have value above treshold
-        only for part 1
-        '''
-        result = 0
-        for point in self.point_len.keys():
-            for path_len, new_point in self.get_possible_cheating_points_2(point):
-                if self.point_len[new_point] > self.point_len[point] and \
-                    self.point_len[new_point] - self.point_len[point] - path_len >= treshold:
-                        result += 1
-        return result
     
     
     @time_it
@@ -154,7 +120,8 @@ class Solution:
         get result for task 1
         '''
         self.get_route()
-        return self.check_cheating_possibilities(treshold)
+        self.calculate_distances_between_points()
+        return self.check_cheating_possibilities(2, treshold)
     
 
     @time_it
@@ -162,7 +129,7 @@ class Solution:
         '''
         get result for task 2
         '''
-        return self.check_cheating_possibilities_2(treshold)
+        return self.check_cheating_possibilities(20, treshold)
     
 
 
