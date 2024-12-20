@@ -4,15 +4,19 @@ Advent of Code
 my solution to tasks
 
 
-task 1 - 
+task 1 - first get the path, then for each point check if there are possible cheating positions of size 2, if so
+check if profit is >= treshold, if so add 1 to result
 
-task 2 - 
+task 2 - also a brute force, for each position get all possible cheating positions with max path len equal to 20, count those points 
+for which path length >= treshold, it runs in ~20 s
+I got another idea -> instead of counting paths I should get all points that are in manhattan distance <= 20 and are on the path
+will try to implement it in task_2.py
 
 '''
 
 import time
 import heapq
-from collections import Counter
+from tqdm import tqdm
 
 def time_it(func):
     def wrapper(*args,**kwargs):
@@ -62,8 +66,7 @@ class Solution:
         '''
         for direction in self.directions:
             new_point = (direction[0] + point[0], direction[1] + point[1])
-            if self.min_point <= new_point <= self.max_point and \
-                new_point not in self.walls and new_point not in self.point_len.keys():
+            if new_point not in self.walls and new_point not in self.point_len.keys():
                 yield new_point
     
     def get_route(self):
@@ -93,9 +96,35 @@ class Solution:
             if wall_point in self.walls and new_point in self.point_len.keys():
                 yield new_point
 
+    def get_possible_cheating_points_2(self, point):
+        '''
+        get possible cheating points given position for task 2
+        path len from point to new_point <= 20
+        '''
+        stack = []
+        heapq.heapify(stack)
+        heapq.heappush(stack, (0, point))
+        result = set()
+        visited_points = set()
+        visited_points.add(point)
+        while stack:
+            act_len, act_point = heapq.heappop(stack)
+            if act_point in self.point_len.keys():
+                result.add((act_len, act_point))
+            if act_len == 20 or act_point[0] < self.min_y or act_point[1] < self.min_x \
+                or act_point[0] > self.max_y or act_point[1] > self.max_x:
+                continue
+            for direction in self.directions:
+                new_point = (direction[0] + act_point[0], direction[1] + act_point[1])
+                if new_point not in visited_points:
+                    visited_points.add(new_point)
+                    heapq.heappush(stack, (act_len + 1, new_point))
+        return result
+
     def check_cheating_possibilities(self, treshold):
         '''
-        get all possible cheating possibilities in one dictionary
+        get all possible cheating possibilities that have value above treshold
+        only for part 1
         '''
         result = 0
         for point in self.point_len.keys():
@@ -104,8 +133,19 @@ class Solution:
                     self.point_len[new_point] - self.point_len[point] - 2 >= treshold:
                         result += 1
         return result
-
-# points_small = dict(filter(lambda (a,(b,c)): b<5 and c < 5, points.items()))
+    
+    def check_cheating_possibilities_2(self, treshold):
+        '''
+        get all possible cheating possibilities that have value above treshold
+        only for part 1
+        '''
+        result = 0
+        for point in self.point_len.keys():
+            for path_len, new_point in self.get_possible_cheating_points_2(point):
+                if self.point_len[new_point] > self.point_len[point] and \
+                    self.point_len[new_point] - self.point_len[point] - path_len >= treshold:
+                        result += 1
+        return result
     
     
     @time_it
@@ -118,12 +158,11 @@ class Solution:
     
 
     @time_it
-    def solution_2(self) -> int:
+    def solution_2(self, treshold=100) -> int:
         '''
         get result for task 2
         '''
-        result = 0
-        return result
+        return self.check_cheating_possibilities_2(treshold)
     
 
 
@@ -135,12 +174,12 @@ def main():
     sol = Solution('2024/Day_20/test.txt')
     print('TEST 1')
     print('test 1:', sol.solution_1(20), 'should equal 5')
-   # print('test 1:', sol.solution_2(50), 'should equal 285')
+    print('test 1:', sol.solution_2(50), 'should equal 285')
     print('SOLUTION')
     sol = Solution('2024/Day_20/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
-    #print('Solution 2:', sol.solution_2()) 
+    print('Solution 2:', sol.solution_2()) 
    
 
 
