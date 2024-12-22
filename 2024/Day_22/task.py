@@ -3,9 +3,13 @@ Advent of Code
 2024 day 22
 my solution to tasks
 
-task 1 - 
+task 1 - a simple for loop in each iteration counting the next num value, returning it and adding to result
 
-task 2 - 
+task 2 -
+for each num: 
+    for each sequence of price changes check if sequence was already noted - if so, add bananas to deafultdict and sequence to saw sequences, 
+    if not continue
+return top value 
 
 
 '''
