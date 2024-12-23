@@ -88,48 +88,39 @@ class Solution:
                     break
                 min_sequence_len = path_len
                 resulting_counter = Counter(act_sequence + 'A')
-                continue
+                break
             for direction, new_position in keypad[act_position].items():
                 if new_position not in pos_sequence:
                     heapq.heappush(stack, (path_len + 1, new_position, act_sequence + direction, pos_sequence + new_position))
         self.min_sequences[(start_position, char)] = resulting_counter
         return resulting_counter
-
     
     
     @time_it
-    def solution_1(self) -> int:
+    def solution_1(self, num_of_robots) -> int:
         '''
         get result for task 1
         '''
         result = 0
-        for sequence in self.sequences:
+        for sequence in tqdm(self.sequences):
             # numeric keypad transform to moves of first robot
             start_pos = 'A'
             seq_int = int(sequence[:-1])
             possible_sequence = Counter()
             for char in sequence:
-                possible_sequence[(start_pos, char)] = self.get_min_paths_to_get_char(start_pos, char, self.numeric_keypad)
+                possible_sequence += self.get_min_paths_to_get_char(start_pos, char, self.numeric_keypad)
                 start_pos = char
             print(possible_sequence)
             # robot moves to transform (as 2 more robots so range 2)
-            for _ in range(2):
+            for _ in range(num_of_robots):
                 robot_sequence = Counter()
                 for char, value in possible_sequence.items():
-                    start_pos = 'A'
-                    robot_possible_sequences = set([''])
-                    for char in sequence:
-                        new_possible_sequences = set([''])
-                        for new_seq in self.get_min_paths_to_get_char(start_pos, char, self.directional_keypad):
-                            for seq in robot_possible_sequences:
-                                new_possible_sequences.add(seq + new_seq)
-                        new_possible_sequences.remove('')
-                        robot_possible_sequences = new_possible_sequences
-                        start_pos = char
-                    new_robot_possible_sequences = new_robot_possible_sequences.union(robot_possible_sequences)
-                possible_sequences = new_robot_possible_sequences
-
-            result += seq_int * min([len(x) for x in possible_sequences])
+                    for new_char, new_value in self.get_min_paths_to_get_char('A', char, self.directional_keypad).items():
+                        robot_sequence[new_char] += new_value * value
+                possible_sequence = robot_sequence
+                print(possible_sequence)
+            print(seq_int, possible_sequence.total())
+            result += seq_int * possible_sequence.total()
         return result
     
 
@@ -149,12 +140,12 @@ def main():
     print('TEST 1')
     sol = Solution('2024/Day_21/test.txt')
     print('TEST 1')
-    print('test 1:', sol.solution_1(), 'should equal ?')
+    print('test 1:', sol.solution_1(2), 'should equal ?')
  #   print('test 1:', sol.solution_2(), 'should equal ?')
     print('SOLUTION')
     sol = Solution('2024/Day_21/task.txt')
     print('SOLUTION')
-    print('Solution 1:', sol.solution_1())
+    print('Solution 1:', sol.solution_1(2))
  #   print('Solution 2:', sol.solution_2()) 
    
 
