@@ -1,11 +1,18 @@
 '''
 Advent of Code 
-2024 day 21
+2024 day 23
 my solution to tasks
 
-task 1 - 
+task 1 - triple for loop and add to result sorted tuples to prevent duplicates, return len(result)
 
-task 2 - 
+task 2 - analyzing data I found out that most commont tuple will be one of len == max(len(x) for x in all_sets) - 1
+the general idea:
+counter of possible tuples = Counter() or defaultdict(int)
+for each computer's connections:
+    add computer to connection and get sorted tuple of connection
+    for each i in range(len(connection))
+        counter[connection[:i] + connection[i+1:]] += 1
+return most common tuple from counter
 
 
 '''
@@ -67,15 +74,14 @@ class Solution:
         get result for task 2
         '''
         # add each computer to its LAN
-        computer_lans = []
+        lans_dict = Counter() # defaultdict(int)
         for key, value in self.computer_connections.items():
-            computer_lans.append(tuple(sorted(value.union(set([key])))))
-        # 
-        lans_dict = defaultdict(int)
-        for lan in computer_lans:
+            # add each computer to its LAN
+            lan = tuple(sorted(value.union(set([key]))))
             for i in range(len(lan)):
                 lans_dict[lan[:i] + lan[i+1:]] += 1
-        result = max(lans_dict.items(), key=lambda x: x[1])
+        # result is most common tuple
+        result = lans_dict.most_common(1)[0] # max(lans_dict.items(), key=lambda x: x[1]) if using defaultdict
         return ','.join(result[0])
     
 
