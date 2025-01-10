@@ -14,7 +14,8 @@ import time
 import heapq
 from tqdm import tqdm
 from sys import maxsize
-from collections import Counter
+from collections import Counter, defaultdict
+from itertools import product
 
 def time_it(func):
     def wrapper(*args,**kwargs):
@@ -130,7 +131,35 @@ class Solution:
                     new_result.append(c + new_c)
             result = new_result
         return result
-        
+
+    def get_best_dict(self):
+        '''
+        function to get dictionary of min_sequences
+        that gets smallest values
+        '''
+        needed_moves = set(product(self.directional_keypad.keys(), repeat=2))
+        directional_sequences = {key: self.get_min_paths_to_get_char(key[0], key[1], self.directional_keypad) for key in needed_moves}
+        possible_dicts = [defaultdict(str)]
+        for key, values in directional_sequences.items():
+            new_result = []
+            for value in values:
+                for act_dict in possible_dicts:
+                    act_dict[key] = value
+                    new_result.append(act_dict)
+            possible_dicts = new_result
+        sequence_to_check = ''.join([''.join(s) for s in needed_moves])
+        dict_number_new_seq_len = [] # put tuples(dict_no, new_seq_len)
+        for i, act_dict in tqdm(enumerate(possible_dicts)):
+            print(sequence_to_check)
+            for _ in range(2):
+                start_pos = 'A'
+                new_seq = ''
+                for char in sequence_to_check:
+                    new_seq += act_dict[(start_pos, char)]
+                    start_pos = char
+                sequence_to_check = new_seq
+            dict_number_new_seq_len.append((i, len(new_seq)))
+        print(dict_number_new_seq_len)
     
     
     @time_it
@@ -138,8 +167,8 @@ class Solution:
         '''
         get result for task 1
         '''
-        start_pos = 'A'
         result = 0
+        self.possible_sequences = dict()
         for sequence in tqdm(self.sequences):
             # numeric keypad transform to moves of first robot
             start_pos = 'A'
@@ -152,6 +181,7 @@ class Solution:
                         new_possible_sequences.add(seq + new_seq)
                 possible_sequences = new_possible_sequences
                 start_pos = char
+            self.possible_sequences[seq_int] = possible_sequences
             # robot moves to transform (as 2 more robots so range 2)
             for _ in range(2):
                 new_robot_possible_sequences = set()
@@ -177,11 +207,10 @@ class Solution:
         '''
         get result for task 2
         '''
-        '''
-        get result for task 1
-        '''
-        start_pos = 'A'
         result = 0
+        self.get_best_dict()
+        # TODO
+        return 0
         for sequence in self.sequences:
             # numeric keypad transform to moves of first robot
             start_pos = 'A'
@@ -203,7 +232,7 @@ class Solution:
                     new_robot_possible_sequences += self.get_new_robot_possible_sequences(sequence)
                 possible_sequences = [x for x in new_robot_possible_sequences if x.total() == min([x.total() for x in new_robot_possible_sequences])]
                 print(possible_sequences)
-                break
+                
             print(seq_int, min([x.total() for x in new_robot_possible_sequences]))
 
             result += seq_int * min([x.total() for x in new_robot_possible_sequences])
@@ -220,12 +249,12 @@ def main():
     print('TEST 1')
     print(sol.get_min_paths_to_get_char('A', 'A', sol.directional_keypad))
     print('test 1:', sol.solution_1(), 'should equal ?')
-    print('test 1:', sol.solution_2(25), 'should equal ?')
+    print('test 2:', sol.solution_2(25), 'should equal ?')
     print('SOLUTION')
-    sol = Solution('2024/Day_21/task.txt')
+  #  sol = Solution('2024/Day_21/task.txt')
    # print('SOLUTION')
-    print('Solution 1:', sol.solution_1())
-    print('Solution 2:', sol.solution_2(25)) 
+  #  print('Solution 1:', sol.solution_1())
+  #  print('Solution 2:', sol.solution_2(25)) 
    
 
 
