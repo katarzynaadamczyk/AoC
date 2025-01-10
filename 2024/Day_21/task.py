@@ -249,11 +249,11 @@ def main():
     print('TEST 1')
     print(sol.get_min_paths_to_get_char('A', 'A', sol.directional_keypad))
     print('test 1:', sol.solution_1(), 'should equal ?')
-    print('test 2:', sol.solution_2(25), 'should equal ?')
+   # print('test 2:', sol.solution_2(25), 'should equal ?')
     print('SOLUTION')
-  #  sol = Solution('2024/Day_21/task.txt')
+    sol = Solution('2024/Day_21/task.txt')
    # print('SOLUTION')
-  #  print('Solution 1:', sol.solution_1())
+    print('Solution 1:', sol.solution_1())
   #  print('Solution 2:', sol.solution_2(25)) 
    
 

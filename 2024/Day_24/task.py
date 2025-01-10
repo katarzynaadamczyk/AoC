@@ -28,10 +28,11 @@ class TreeNode:
                'OR': lambda a, b: 1 if a == 1 or b == 1 else 0}
     
 
-    def __init__(self, func='', next_nodes=None, value=-1):
+    def __init__(self, name, func='', next_nodes=None, value=-1):
         '''
         initialize TreeNode
         '''
+        self.name = name
         self.func = func
         self.next_nodes = next_nodes
         self.value = value
@@ -41,10 +42,25 @@ class TreeNode:
             self.next_nodes = [nodes[node] for node in self.next_nodes]
 
     def get_value(self):
-        if self.value == -1:    
+        if self.next_nodes is not None:    
             self.value = TreeNode.actions[self.func](*[node.get_value() for node in self.next_nodes])
         return self.value
     
+    def get_next_nodes(self):
+        if self.next_nodes is None:
+            return []
+        return self.next_nodes
+    
+    def __repr__(self):
+        return str({self.name: [self.value, [node.name for node in self.get_next_nodes()]]})
+    
+    def get_all_below_nodes(self):
+        if self.next_nodes is None:
+            return []
+        lst = [node.name for node in self.get_next_nodes()]
+        for node in self.next_nodes:
+            lst += node.get_all_below_nodes()
+        return lst
 
 
 class Solution:
@@ -71,18 +87,35 @@ class Solution:
                     continue
                 if valued_nodes:
                     i = line.find(':')
-                    self.nodes.setdefault(line[:i], TreeNode(value=int(line[i+1:].strip())))
+                    self.nodes.setdefault(line[:i], TreeNode(name=line[:i], value=int(line[i+1:].strip())))
                 else:
                     line = [x.strip() for x in line.strip().split()]
-                    self.nodes.setdefault(line[-1], TreeNode(func=line[1], next_nodes=[line[0], line[2]]))
+                    self.nodes.setdefault(line[-1], TreeNode(name=line[-1], func=line[1], next_nodes=[line[0], line[2]]))
 
     def get_values(self, start_char='z'):
+        '''
+        get number for start_char starting wires
+        '''
         z_names = sorted(filter(lambda x: x.startswith(start_char), self.nodes_values.keys()), reverse=True)
         z_values = ''.join([str(self.nodes_values[x]) for x in z_names])
-        print(z_values)
-        print(int(z_values, base=2))
         return z_values
+    
 
+    def get_wrong_z_wires(self):
+        '''
+        get wrong z wires results
+        '''
+        rest = 0
+        z_names = [z[1:] for z in sorted(filter(lambda x: x.startswith('z'), self.nodes_values.keys()), reverse=False)]
+        wrong_z_names = []
+        for i in z_names[:-1]:
+            sum_nums = sum([rest, self.nodes_values['x' + i], self.nodes_values['y' + i]])
+            if not sum_nums % 2 == self.nodes_values['z' + i]:
+                wrong_z_names.append('z' + i)
+            rest = 1 if sum_nums >= 2 else 0
+        if rest != self.nodes_values['z' + z_names[-1]]:
+            wrong_z_names.append('z' + z_names[-1])
+        return wrong_z_names
 
     
     @time_it
@@ -102,12 +135,15 @@ class Solution:
         '''
         get result for task 2
         '''
-        result = 0
-        self.get_values('x')
+        wrong_results_of_z_wires = self.get_wrong_z_wires()
         
-        self.get_values('y')
+        print(len(self.nodes))
+        nodes_to_check = []
+        for node_name in wrong_results_of_z_wires:
+            nodes_to_check += self.nodes[node_name].get_all_below_nodes()
+        print(set(nodes_to_check))
+        print(len(set(nodes_to_check)))
         
-        self.get_values('z')
         # TODO
         return 0
     
