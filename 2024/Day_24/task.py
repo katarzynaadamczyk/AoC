@@ -9,7 +9,7 @@ task 2 -
 
 
 '''
-from collections import Counter
+from collections import Counter, defaultdict
 import time
 
 def time_it(func):
@@ -47,15 +47,25 @@ class TreeNode:
         return self.value
     
     def get_next_nodes(self):
+        '''
+        return next_nodes if existing, empty list otherwise
+        '''
         if self.next_nodes is None:
             return []
         return self.next_nodes
     
     def __repr__(self):
+        '''
+        needed for printing for task 2 but may be useless
+        '''
         return str({self.name: self.value if self.next_nodes is None else ' '.join([self.next_nodes[0].name, self.func, 
                                                                                     self.next_nodes[-1].name])})
     
     def get_all_below_nodes(self):
+        '''
+        return list of all nodes below actual node
+        seemed to be needed for task 2, but may be unnecessary
+        '''
         if self.next_nodes is None:
             return []
         lst = [node.name for node in self.get_next_nodes()]
@@ -71,7 +81,8 @@ class Solution:
         initialize Solution
         '''
         self.nodes = {} # str: TreeNode
-        self.next_nodes = {} # str: {func: str, nodes: set}
+        self.before_nodes = {} # str: {func: str, nodes: set}
+        self.next_nodes = defaultdict(set) # str: set(str)
         self.get_data(filename)
         # update Next TreeNodes in each TreeNode
         for node in self.nodes.values():
@@ -93,7 +104,10 @@ class Solution:
                 else:
                     line = [x.strip() for x in line.strip().split()]
                     self.nodes.setdefault(line[-1], TreeNode(name=line[-1], func=line[1], next_nodes=[line[0], line[2]]))
-                    self.next_nodes.setdefault(line[-1], {'func': line[1], 'nodes': set([line[0], line[2]])})
+                    self.before_nodes.setdefault(line[-1], {'func': line[1], 'nodes': set([line[0], line[2]])})
+                    self.next_nodes[line[0]].add(line[-1])
+                    self.next_nodes[line[2]].add(line[-1])
+
 
     def get_values(self, start_char='z'):
         '''
@@ -154,7 +168,12 @@ class Solution:
         for node, count in c.items():
             print(self.nodes[node], count)
         print({x: len(v) for x, v in nodes_to_check_sets.items()})
+        print('before nodes')
+        print(self.before_nodes)
+        print('next nodes')
         print(self.next_nodes)
+        print(self.before_nodes['hjp'])
+        print(self.next_nodes['hjp'])
         
         # TODO
         return 0
@@ -169,7 +188,7 @@ class Solution:
         '''
         results = []
         # first check if first two results are correct
-        if self.next_nodes['z00']['func'] == 'XOR' and set(['x00', 'y00']) == self.next_nodes['z00']['nodes']:
+        if self.before_nodes['z00']['func'] == 'XOR' and set(['x00', 'y00']) == self.before_nodes['z00']['nodes']:
             print('first node correct')
     #    rest_node = 
         return ','.join(sorted(results))
