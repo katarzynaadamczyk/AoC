@@ -9,7 +9,7 @@ task 2 -
 
 
 '''
-
+from collections import Counter
 import time
 
 def time_it(func):
@@ -52,7 +52,8 @@ class TreeNode:
         return self.next_nodes
     
     def __repr__(self):
-        return str({self.name: [self.value, [node.name for node in self.get_next_nodes()]]})
+        return str({self.name: self.value if self.next_nodes is None else ' '.join([self.next_nodes[0].name, self.func, 
+                                                                                    self.next_nodes[-1].name])})
     
     def get_all_below_nodes(self):
         if self.next_nodes is None:
@@ -70,6 +71,7 @@ class Solution:
         initialize Solution
         '''
         self.nodes = {} # str: TreeNode
+        self.next_nodes = {} # str: {func: str, nodes: set}
         self.get_data(filename)
         # update Next TreeNodes in each TreeNode
         for node in self.nodes.values():
@@ -91,6 +93,7 @@ class Solution:
                 else:
                     line = [x.strip() for x in line.strip().split()]
                     self.nodes.setdefault(line[-1], TreeNode(name=line[-1], func=line[1], next_nodes=[line[0], line[2]]))
+                    self.next_nodes.setdefault(line[-1], {'func': line[1], 'nodes': set([line[0], line[2]])})
 
     def get_values(self, start_char='z'):
         '''
@@ -104,6 +107,7 @@ class Solution:
     def get_wrong_z_wires(self):
         '''
         get wrong z wires results
+        probably not necessary function
         '''
         rest = 0
         z_names = [z[1:] for z in sorted(filter(lambda x: x.startswith('z'), self.nodes_values.keys()), reverse=False)]
@@ -131,28 +135,47 @@ class Solution:
     
 
     @time_it
-    def solution_2(self) -> int:
+    def solution_2_v1_for_tests(self) -> int:
         '''
         get result for task 2
+        first attempt to understand task - probably not necessary
         '''
         wrong_results_of_z_wires = self.get_wrong_z_wires()
         
         print(len(self.nodes))
         nodes_to_check = []
+        nodes_to_check_sets = {}
         for node_name in wrong_results_of_z_wires:
-            nodes_to_check += self.nodes[node_name].get_all_below_nodes()
-        print(set(nodes_to_check))
-        print(len(set(nodes_to_check)))
+            nodes = self.nodes[node_name].get_all_below_nodes()
+            nodes_to_check += nodes
+            nodes_to_check_sets[node_name] = set(nodes)
+    # print(set(nodes_to_check))
+        c = Counter(nodes_to_check)
+        for node, count in c.items():
+            print(self.nodes[node], count)
+        print({x: len(v) for x, v in nodes_to_check_sets.items()})
+        print(self.next_nodes)
         
         # TODO
         return 0
     
 
+    @time_it
+    def solution_2(self) -> int:
+        '''
+        get result for task 2
+        go through all inputs and outputs and check if logic is correct
+        add to results wires will see what happens
+        '''
+        results = []
+        # first check if first two results are correct
+        if self.next_nodes['z00']['func'] == 'XOR' and set(['x00', 'y00']) == self.next_nodes['z00']['nodes']:
+            print('first node correct')
+    #    rest_node = 
+        return ','.join(sorted(results))
 
-    
 
 def main():
-
     print('TEST 1')
     sol = Solution('2024/Day_24/test.txt')
     print('TEST 1')
@@ -166,7 +189,8 @@ def main():
     sol = Solution('2024/Day_24/task.txt')
    # print('SOLUTION')
     print('Solution 1:', sol.solution_1())
-    print('Solution 2:', sol.solution_2()) 
+    print('Solution 2:', sol.solution_2_v1_for_tests())
+    print('Solution 2:', sol.solution_2())
    
 
 
