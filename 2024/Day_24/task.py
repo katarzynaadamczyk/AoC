@@ -7,7 +7,8 @@ task 1 - done 100% by myself, prepared a TreeNode for each operation and process
 
 task 2 - as I tried to do it by myself I invented a way that there is a need to check if nodes contain appropriate
 values as function and node, but my solution failed to work as there was some bug in the code
-I found a working solution on reddit (https://www.reddit.com/r/adventofcode/comments/1hl698z/comment/m3kt1je/) and updated it 
+I found a working solution on reddit (https://www.reddit.com/r/adventofcode/comments/1hl698z/comment/m3kt1je/) and updated it for my data
+it is something I was working on but could not find good if-else conditions
 
 
 '''
