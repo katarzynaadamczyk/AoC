@@ -83,7 +83,9 @@ class Solution:
         '''
         self.nodes = {} # str: TreeNode
         self.before_nodes = {} # str: {func: str, nodes: set}
-        self.next_nodes = defaultdict(set) # str: set(str)
+        self.and_node_counter = defaultdict(int) # str: int
+        self.xor_node_counter = defaultdict(int) # str: int
+        self.or_node_counter = defaultdict(int) # str: int
         self.get_data(filename)
         # update Next TreeNodes in each TreeNode
         for node in self.nodes.values():
@@ -105,9 +107,15 @@ class Solution:
                 else:
                     line = [x.strip() for x in line.strip().split()]
                     self.nodes.setdefault(line[-1], TreeNode(name=line[-1], func=line[1], next_nodes=[line[0], line[2]]))
-                    self.before_nodes.setdefault(line[-1], {'func': line[1], 'nodes': set([line[0], line[2]])})
-                    self.next_nodes[line[0]].add(line[-1])
-                    self.next_nodes[line[2]].add(line[-1])
+                    if line[1] == 'AND':
+                        self.and_node_counter[line[0]] += 1
+                        self.and_node_counter[line[2]] += 1
+                    elif line[1] == 'XOR':
+                        self.xor_node_counter[line[0]] += 1
+                        self.xor_node_counter[line[2]] += 1
+                    else:
+                        self.or_node_counter[line[0]] += 1
+                        self.or_node_counter[line[2]] += 1
 
 
     def get_values(self, start_char='z'):
@@ -183,65 +191,9 @@ class Solution:
         '''
         results = set()
         # first check if first two results are correct
-        if self.before_nodes['z00']['func'] == 'XOR' and set(['x00', 'y00']) == self.before_nodes['z00']['nodes']:
-            print('first node correct')
-        # no need to implement else as it is in fact correct
-        if self.next_nodes['x00'] == self.next_nodes['y00']:
-            rest_node = [node for node in self.next_nodes['x00'] if not re.match(r'z\d\d', node)][0]
-        z_names = [z[1:] for z in sorted(filter(lambda x: x.startswith('z'), self.nodes_values.keys()), reverse=False)]
-        print(z_names)
-        for name in z_names[1:-1]:
-            act_nodes = set(['x' + name, 'y' + name])
-            if self.next_nodes['x' + name] != self.next_nodes['y' + name]:
-                # will not happen as all first nodes have same next nodes
-                for node in self.next_nodes['x' + name].difference(self.next_nodes['y' + name]):
-                    results.append(node)
-                for node in self.next_nodes['y' + name].difference(self.next_nodes['x' + name]):
-                    results.append(node)
-            xor_node, and_node = None, None
-            for node in self.next_nodes['x' + name].union(self.next_nodes['y' + name]):
-                if re.match(r'z\d\d', node):
-                    results.add(node)
-                # xor node
-                elif self.before_nodes[node]['func'] == 'XOR':
-                    xor_node = node
-                # and node
-                elif self.before_nodes[node]['func'] == 'AND':
-                    and_node = node
-                # other
-                else:
-                    results.append(node)
-            # rest node
-            if xor_node is not None:
-                if rest_node is None:
-                    rest_node = [node for node in self.before_nodes[xor_node] if node != xor_node][0]
-                    results.add(rest_node)
-                new_rest_node = None
-                for node in self.next_nodes[xor_node]:
-                    if self.before_nodes[node]['func'] == 'AND':
-                        if re.match('z\d\d', node):
-                            results.add(node)
-                        else:
-                            new_rest_node = node
-                    elif self.before_nodes[node]['func'] == 'XOR':
-                        if not re.match('z\d\d', node):
-                            results.add(node)
-                    else:
-                        results.add(node)
-            
-            rest_node = None
-            
-            if and_node is not None:
-                for node in self.next_nodes[and_node]:
-                    if self.before_nodes[node]['func'] == 'OR':
-                        if re.match('z\d\d', node):
-                            results.add(node)
-                        elif new_rest_node is not None and self.before_nodes[node]['nodes'] != set([new_rest_node, and_node]):
-                            results.add(node)
-                        else:
-                            rest_node = node
-                    else:
-                        results.add(node)
+        print(self.and_node_counter)
+        print(self.or_node_counter)
+        print(self.xor_node_counter)
                         
         return ','.join(sorted(results))
 
