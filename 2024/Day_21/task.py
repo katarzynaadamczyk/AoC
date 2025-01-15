@@ -3,9 +3,11 @@ Advent of Code
 2024 day 21
 my solution to tasks
 
-task 1 - 
-
-task 2 - 
+task 1 - first solution works well but too slow for task 2
+file task_2.py has a faster solution (still 20 s to get results for task 2 but it is good enough)
+in each iteration get a list of all possible shortest paths for given robot
+it is a string that is why there is so much counting
+task_2.py works on Counters of (start, stop): count
 
 
 '''
@@ -132,35 +134,6 @@ class Solution:
             result = new_result
         return result
 
-    def get_best_dict(self):
-        '''
-        function to get dictionary of min_sequences
-        that gets smallest values
-        '''
-        needed_moves = set(product(self.directional_keypad.keys(), repeat=2))
-        directional_sequences = {key: self.get_min_paths_to_get_char(key[0], key[1], self.directional_keypad) for key in needed_moves}
-        possible_dicts = [defaultdict(str)]
-        for key, values in directional_sequences.items():
-            new_result = []
-            for value in values:
-                for act_dict in possible_dicts:
-                    act_dict[key] = value
-                    new_result.append(act_dict)
-            possible_dicts = new_result
-        sequence_to_check = ''.join([''.join(s) for s in needed_moves])
-        dict_number_new_seq_len = [] # put tuples(dict_no, new_seq_len)
-        for i, act_dict in tqdm(enumerate(possible_dicts)):
-            print(sequence_to_check)
-            for _ in range(2):
-                start_pos = 'A'
-                new_seq = ''
-                for char in sequence_to_check:
-                    new_seq += act_dict[(start_pos, char)]
-                    start_pos = char
-                sequence_to_check = new_seq
-            dict_number_new_seq_len.append((i, len(new_seq)))
-        print(dict_number_new_seq_len)
-    
     
     @time_it
     def solution_1(self) -> int:
@@ -200,50 +173,9 @@ class Solution:
           #  print(seq_int, min([len(x) for x in possible_sequences]))
             result += seq_int * min([len(x) for x in possible_sequences])
         return result
-    
 
-    @time_it
-    def solution_2(self, add_robots_no) -> int:
-        '''
-        get result for task 2
-        '''
-        result = 0
-        self.get_best_dict()
-        # TODO
-        return 0
-        for sequence in self.sequences:
-            # numeric keypad transform to moves of first robot
-            start_pos = 'A'
-            seq_int = int(sequence[:-1]) # keep in mind integer value of first robot input
-            possible_sequences = set([''])
-            for char in sequence:
-                new_possible_sequences = set()
-                for new_seq in self.get_min_paths_to_get_char(start_pos, char, self.numeric_keypad):
-                    for seq in possible_sequences:
-                        new_possible_sequences.add(seq + new_seq)
-                possible_sequences = new_possible_sequences
-                start_pos = char
-            # transform robot moves to sequence of moves
-            possible_sequences = self.transform_possible_sequences(possible_sequences)
-            # robot moves to transform (as 2 more robots so range 2)
-            for _ in tqdm(range(add_robots_no)):
-                new_robot_possible_sequences = []
-                for sequence in possible_sequences:
-                    new_robot_possible_sequences += self.get_new_robot_possible_sequences(sequence)
-                possible_sequences = [x for x in new_robot_possible_sequences if x.total() == min([x.total() for x in new_robot_possible_sequences])]
-                print(possible_sequences)
-                
-            print(seq_int, min([x.total() for x in new_robot_possible_sequences]))
-
-            result += seq_int * min([x.total() for x in new_robot_possible_sequences])
-        return result
-    
-
-
-    
 
 def main():
-
     print('TEST 1')
     sol = Solution('2024/Day_21/test.txt')
     print('TEST 1')
