@@ -1,6 +1,6 @@
 '''
 Advent of Code 
-2024 day 21
+2024 day 24
 my solution to tasks
 
 task 1 - done 100% by myself, prepared a TreeNode for each operation and processed it
