@@ -17,3 +17,4 @@ Puzzles I solved in AoC ad 2023. Solution idea explanation is in each code file.
 
 # 2024
 Puzzles I solved in AoC ad 2024. Solution idea explanation is in each code file.
+I got really confused in task 24 part 2 and task 19 part 2 and used help from reddit.
