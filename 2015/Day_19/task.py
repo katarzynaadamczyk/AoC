@@ -4,8 +4,24 @@ Advent of Code
 my solution to tasks
 
 task 1 - brute force on lists & tuples (for adding to set and counting the number of distinct tuples)
-task 2 - using memoization (seen_molecules) and heapq as priority queue (instead of PriorityQueue from queue module) 
+task 2 - using memoization (seen_molecules) and heapq as priority queue (instead of PriorityQueue from queue module) -> need to re-think this idea
+task 2 -> better solution: reverse engineering
+create a dict of tuples changing to unique molecule
 
+loop over molecule and change what suits 
+    molecule_copy = copy(molecule)
+    changes = 0
+    i = 0
+    while i < len(molecule_copy):
+        if len(molecule_copy) == 1:
+            break
+        for tuple_, new_molecule in tuple_to_molecule_dict.items():
+            tuple_len = len(tuple_)
+            if molecule_copy[i:i+tuple_len] == tuple:
+                changes += 1
+                molecule_copy = molecule_copy[:i] + [new_molecule] + molecule_copy[i+tuple_len:]
+                break
+    
 '''
 import time
 from collections import defaultdict
