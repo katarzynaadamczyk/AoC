@@ -4,27 +4,15 @@ Advent of Code
 my solution to tasks
 
 task 1 - brute force on lists & tuples (for adding to set and counting the number of distinct tuples)
-task 2 - using memoization (seen_molecules) and heapq as priority queue (instead of PriorityQueue from queue module) -> need to re-think this idea
-task 2 -> better solution: reverse engineering
-create a dict of tuples changing to unique molecule
-
-loop over molecule and change what suits 
-    molecule_copy = copy(molecule)
-    changes = 0
-    i = 0
-    while i < len(molecule_copy):
-        if len(molecule_copy) == 1:
-            break
-        for tuple_, new_molecule in tuple_to_molecule_dict.items():
-            tuple_len = len(tuple_)
-            if molecule_copy[i:i+tuple_len] == tuple:
-                changes += 1
-                molecule_copy = molecule_copy[:i] + [new_molecule] + molecule_copy[i+tuple_len:]
-                break
+task 2 -> reverse engineering:
+            1. create a dict of tuples changing to unique molecule
+            2. loop over molecule to find all possible changes and change them to single molecule until len(molecule) == 1 && molecule == init_molecule (e)
+            3. return value of changes made in such a way
     
 '''
 import time
 from collections import defaultdict
+from copy import copy
 import heapq
 
 def time_it(func):
@@ -114,53 +102,81 @@ class Solution:
                 result.add(tuple(self.molecule[:i] + values + self.molecule[i+1:]))
         return len(result)
     
-    def check_compatibility(self, new_molecules: list[str], common_number: int = 0) -> int:
-        result = common_number
-        for a, b in zip(new_molecules, self.molecule):
-            if a != b:
-                break
-            result += 1
-        return result
+    def reverse_dict(self, init_molecule: str) -> dict[tuple[str, ...], str]:
+        self.reversed_changes_to = {}
+        for key, values in self.possible_changes.items():
+            if key == init_molecule:
+                self.possible_outcome = values
+                continue
+            for value in values:
+                self.reversed_changes_to[tuple(value)] = key
+        return self.reversed_changes_to 
 
+    def _is_molecule_changing_to_init_molecule(self, molecule: list[str]) -> bool:
+        for outcome in self.possible_outcome:
+            if molecule == outcome:
+                return True
+        return False
+    
+    def change_duplicates(self, molecule: list[str]) -> tuple[int, list[str]]:
+        duplicates_dict = {('Ca', 'Ca'): 'Ca', ('Ti', 'Ti'): 'Ti'}
+        changes = 0
+        changes_made = True
+        while changes_made:
+            changes_made = False
+            i = 0
+            while i < len(molecule):
+                for tuple_, item in duplicates_dict.items():
+                    tuple_len = len(tuple_)
+                    tuple_list = list(tuple_)
+                    if molecule[i:i+tuple_len] == tuple_list:
+                        molecule = molecule[:i] + [item] + molecule[i+tuple_len:]
+                        changes_made = True
+                        changes += 1
+                i += 1
+        return changes, molecule
+
+    
 
     @time_it
     def solution_2(self, init_molecule: str = 'e') -> int:
         '''
         get result for task 2
         '''
-        # prepare heap
-        queue = []
-        seen_molecules = set()
-        for molecule in self.possible_changes.get(init_molecule, []):
-            common_number = self.check_compatibility(molecule)
-            heapq.heappush(queue, (1, -1 * common_number, molecule))
-            seen_molecules.add(tuple(molecule))
-        # get len of desired molecule
-        final_len = len(self.molecule)
-        # run queue
-        index = 0
-        while queue:
-            result, common_number, molecules = heapq.heappop(queue)
-            print(common_number, result, molecules)
-            common_number *= -1
-            if len(molecules) > final_len:
-                continue
-            if common_number == final_len:
-                return result
-            for i, molecule in enumerate(molecules[common_number-1], start=common_number-1):
-                for values in self.possible_changes[molecule]:
-                    new_molecules = molecules[:i] + values + molecules[i+1:]
-                    new_molecules_tuple = tuple(new_molecules)
-                    if new_molecules_tuple in seen_molecules:
-                        continue
-                    seen_molecules.add(new_molecules_tuple)
-                    common_number = self.check_compatibility(new_molecules)
-                    heapq.heappush(queue, (result + 1, -1 * common_number,  new_molecules))
-            index += 1
-            if index > 100:
+        # prepare dict
+        self.reverse_dict(init_molecule)
+        # change CaCa to Ca and TiTi to Ti
+        copy_molecule = copy(self.molecule)
+        changes, copy_molecule = self.change_duplicates(copy_molecule)
+        print(copy_molecule)
+        # prepare queue
+        queue = [] # (changes, act_molecule)
+        seen = set() 
+        heapq.heappush(queue, (changes, copy_molecule))
+        seen.add(tuple(copy_molecule))
+        # iterate over heap
+        j = 0
+        while heapq:
+            j += 1
+            changes, molecule = heapq.heappop(queue)
+            if self._is_molecule_changing_to_init_molecule(molecule):
+                return changes + 1
+            for tuple_, new_molecule in self.reversed_changes_to.items():
+                tuple_len = len(tuple_)
+                for i in range(len(molecule)):
+                    if molecule[i:i+tuple_len] == list(tuple_):
+                        molecule_copy = molecule[:i] + [new_molecule] + molecule[i+tuple_len:]
+                        if tuple(molecule_copy) not in seen:
+                            heapq.heappush(queue, (changes + 1, molecule_copy))
+                            seen.add(tuple(molecule_copy))
+            if j % 2000 == 0:
+                print(len(seen))
+                print(molecule)
+                print(len(molecule))
+                print(molecule_copy)
+                print(len(molecule_copy))
+                print(changes)
                 break
-        print(len(seen_molecules))
-        print(len(queue))
         return -1
 
 
