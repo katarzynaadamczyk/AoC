@@ -34,6 +34,7 @@ class Solution:
         self.possible_molecules = set()
         self.molecule = []
         self.filename = filename
+        self.blockings = ("Rn", "Y", "Ar")
         self.get_data(filename)
 
     def get_data(self, filename):
@@ -110,6 +111,16 @@ class Solution:
                 continue
             for value in values:
                 self.reversed_changes_to[tuple(value)] = key
+        return self.reversed_changes_to
+    
+    def reverse_dict_2(self, init_molecule: str) -> dict[str, str]:
+        self.reversed_changes_to = {}
+        for key, values in self.possible_changes.items():
+            if key == init_molecule:
+                self.possible_outcome = set(["".join(value) for value in values])
+                continue
+            for value in values:
+                self.reversed_changes_to["".join(value)] = key
         return self.reversed_changes_to 
 
     def _is_molecule_changing_to_init_molecule(self, molecule: list[str]) -> bool:
@@ -119,13 +130,13 @@ class Solution:
         return False
     
     def change_duplicates(self, molecule: list[str]) -> tuple[int, list[str]]:
-        duplicates_dict = {('Ca', 'Ca'): 'Ca', ('Ti', 'Ti'): 'Ti'}
+        duplicates_dict = {('Ca', 'Ca'): 'Ca', ('Ti', 'Ti'): 'Ti', ("Si", "Th"): "Ca", ("Th", "Ca"): "Th"}
         changes = 0
         changes_made = True
         while changes_made:
-            changes_made = False
             i = 0
             while i < len(molecule):
+                changes_made = False
                 for tuple_, item in duplicates_dict.items():
                     tuple_len = len(tuple_)
                     tuple_list = list(tuple_)
@@ -133,7 +144,9 @@ class Solution:
                         molecule = molecule[:i] + [item] + molecule[i+tuple_len:]
                         changes_made = True
                         changes += 1
-                i += 1
+                        break
+                if not changes_made:
+                    i += 1
         return changes, molecule
 
     
@@ -147,37 +160,89 @@ class Solution:
         self.reverse_dict(init_molecule)
         # change CaCa to Ca and TiTi to Ti
         copy_molecule = copy(self.molecule)
+        print(len(copy_molecule))
         changes, copy_molecule = self.change_duplicates(copy_molecule)
         print(copy_molecule)
+        print(len(copy_molecule))
+        print(f"changes: {changes}")
         # prepare queue
         queue = [] # (changes, act_molecule)
+        heapq.heapify(queue)
         seen = set() 
-        heapq.heappush(queue, (changes, copy_molecule))
+        heapq.heappush(queue, (-1 * changes, len(copy_molecule), copy_molecule))
         seen.add(tuple(copy_molecule))
         # iterate over heap
         j = 0
-        while heapq:
+        results = []
+        while queue:
             j += 1
-            changes, molecule = heapq.heappop(queue)
+            changes, _, molecule = heapq.heappop(queue)
+            changes *= -1
             if self._is_molecule_changing_to_init_molecule(molecule):
-                return changes + 1
+                print(molecule)
+                results.append(changes + 1)
+                if len(results) > 5:
+                    break
             for tuple_, new_molecule in self.reversed_changes_to.items():
                 tuple_len = len(tuple_)
                 for i in range(len(molecule)):
                     if molecule[i:i+tuple_len] == list(tuple_):
                         molecule_copy = molecule[:i] + [new_molecule] + molecule[i+tuple_len:]
+                        new_changes, molecule_copy = self.change_duplicates(molecule_copy)
                         if tuple(molecule_copy) not in seen:
-                            heapq.heappush(queue, (changes + 1, molecule_copy))
+                            heapq.heappush(queue, (-1 * changes - new_changes - 1, len(molecule_copy), molecule_copy))
                             seen.add(tuple(molecule_copy))
             if j % 2000 == 0:
-                print(len(seen))
-                print(molecule)
-                print(len(molecule))
+                print(f"seen {len(seen)}, molecule: {len(molecule)}, changes so far: {changes}, j: {j}")
+                print([a[0] for a in heapq.nsmallest(10, queue)])
                 print(molecule_copy)
-                print(len(molecule_copy))
-                print(changes)
-                break
-        return -1
+        return min(results) if results else -1
+    
+    def find_next_stop(self, index_start: int = 0) -> int:
+        new_indexes = [self.molecule.index(x, index_start + 1) for x in self.blockings if x in self.molecule[index_start+1:]]
+        return min(new_indexes) if new_indexes else -1
+
+    def shorten_molecule(self, index_start: int, index_end: int) -> int:
+        changes = 0
+        molecule = copy(self.molecule[index_start:index_end])
+        print(molecule)
+        while len(molecule) >= 2:
+          #  print(molecule[:2], self.reversed_changes_to[tuple(molecule[:2])])
+            molecule = [self.reversed_changes_to[tuple(molecule[:2])]] + molecule[2:]
+            changes += 1
+        print(molecule)
+        self.molecule = self.molecule[:index_start] + molecule + self.molecule[index_end:]
+        return changes
+
+    def solution_2_2(self):
+        """
+        After read some articles on Reddit. 
+        Replace "Rn" with "(", Y with "," and Ar with ")"
+        """
+        self.reverse_dict("e")
+        print(self.possible_outcome)
+        print(self.reversed_changes_to)
+        print(self.molecule)
+        index_start = 0
+        index_end = self.find_next_stop(index_start)
+        result = 0
+      #  while index_start >= 0:
+          #  print(index_start)
+      #      index_end = self.find_next_stop(index_start)
+            # result += self.shorten_molecule(index_start + 1, index_end)
+      #      index_start = self.find_next_stop(index_start)
+            #print("".join(self.molecule))
+        molecule = "".join(self.molecule)
+        molecule = molecule.replace("Rn", '(').replace("Y", ',').replace("Ar", ')')
+        print(molecule)
+        return result
+    
+    def solution_2_3(self):
+        """
+        found on reddit:
+        equation: number of molecules - # Rn - # Ar - 2 * # Y - 1
+        """
+        return len(self.molecule) - self.molecule.count("Rn") - self.molecule.count("Ar") - 2 * self.molecule.count("Y") - 1
 
 
 def main():
@@ -193,7 +258,7 @@ def main():
     sol = Solution('2015/Day_19/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
-    print('Solution 2:', sol.solution_2())
+    print('Solution 2:', sol.solution_2_3())
    
 
 
