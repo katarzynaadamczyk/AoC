@@ -3,19 +3,11 @@ Advent of Code
 2015 day 18
 my solution to tasks
 
-task 1 - brute force on lists & tuples (for adding to set and counting the number of distinct tuples)
-task 2 -> reverse engineering:
-            1. create a dict of tuples changing to unique molecule
-            2. loop over molecule to find all possible changes and change them to single molecule until len(molecule) == 1 && molecule == init_molecule (e)
-            3. return value of changes made in such a way
-            good idea in general, but needed to find a pattern in input data -> abandoned this task, went an easy way and opened reddit 
-            solution is in solution_2_3 function -> found a pattern and calculated the result 
+task 1 & 2 - brute force on list of houses, working quite ok with time so I'll leave as it is
+also read on reddit, seems like a quite good solution 
     
 '''
 import time
-from collections import defaultdict
-from copy import copy
-import heapq
 
 def time_it(func):
     def wrapper(*args,**kwargs):
