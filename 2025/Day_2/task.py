@@ -50,7 +50,7 @@ class Solution:
         '''
         get result for task 1
         '''
-        result = 0
+        results = set()
         for x_min, x_max in self.get_data():
             if len(x_min) % 2 == 0:
                 act_half = x_min[:len(x_min) // 2]
@@ -63,10 +63,10 @@ class Solution:
             act_min, act_max = int(x_min), int(x_max)
             while act_value <= act_max:
                 if act_value >= act_min:
-                    result += act_value
+                    results.add(act_value)
                 act_half, act_value = self._get_act_half_and_value(act_half)
 
-        return result
+        return sum(results)
     
     @staticmethod
     def _get_result_for_one_multiplier(multiplier: int, sequence: str, x_min: str, x_max: str) -> int:
