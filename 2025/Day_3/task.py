@@ -3,7 +3,7 @@ Advent of Code
 2025 day 3
 my solution to tasks
 
-task 1 - 
+task 1 - find max char in s[:-1] and then max char s[min_index_for_first_char]
 task 2 - 
 
 
@@ -53,6 +53,17 @@ class Solution:
             result += int(max_value_1 + max_value_2)
 
         return result
+    
+    def _get_min_index_for_rest(self, results: list[int], bank_len: int) -> int:
+        result_len = len(results)
+        results = sorted(results, reverse=True)
+        for i, value in enumerate(results, 1):
+            if bank_len - value - i > 12 - result_len:
+                return value
+            
+        return 0
+
+
 
 
     @time_it
@@ -66,22 +77,20 @@ class Solution:
             bank_dict = defaultdict(list)
             for i, num in enumerate(bank):
                 bank_dict[num].append(i)
-            i_result = []
+            i_result, act_min = [], 0
             for num in nums:
                 if not i_result:
-                    i_result += bank_dict[num][:12]
-                elif bank_len - (act_min := min(i_result)) >= 12:
-                    i_result += sorted(list(x for x in bank_dict[num] if x > act_min), reverse=False)[-(12 - len(i_result)):]
+                    i_result += bank_dict[num][-12:]
+                elif i_result and act_min == 0:
+                    # TODO 
+                    pass
                 else:
-                    i_result += bank_dict[num][-(12 - len(i_result)):]
-                print(num)
-                print(i_result)
+                    i_result += sorted(list(x for x in bank_dict[num] if x >= act_min), reverse=True)[:12-len(i_result)]
                 if len(i_result) == 12:
                     break
-            print("".join(bank[i] for i in sorted(i_result)))
-            print(i_result)
+                act_min = self._get_min_index_for_rest(i_result, bank_len)
             result += int("".join(bank[i] for i in sorted(i_result)))
-            break
+            # przypadek kiedy act_min == 0 -> powinno wziąć pierwszą przed obecnym, potem drugą itd.
 
         return result
 
