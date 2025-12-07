@@ -3,10 +3,12 @@ Advent of Code
 2025 day 7
 my solution to tasks 
 
-task 1 - 
-task 2 - 
+task 1 - working on sets - keep adding to actual points new points until all points are removed from set of points
+task 2 - working on sets - analogical as above but need to keep count of each point divisions 
 
 '''
+from collections import defaultdict
+from functools import reduce
 import time
 
 
@@ -58,16 +60,14 @@ class Solution:
         actual_points = set()
         actual_points.add(self.start)
         while actual_points:
-            new_points = set()
-            for point in actual_points:
-                next_split = self._get_next_split(point)
-                if next_split is not None and next_split not in visited_points:
-                    visited_points.add(next_split)
-                    point_1, point_2 = (next_split[0], next_split[1] + 1), (next_split[0], next_split[1] - 1)
-                    result += 1
-                    new_points.add(point_1)
-                    new_points.add(point_2)
-            actual_points = new_points
+            point = actual_points.pop()
+            next_split = self._get_next_split(point)
+            if next_split is not None and next_split not in visited_points:
+                visited_points.add(next_split)
+                point_1, point_2 = (next_split[0], next_split[1] + 1), (next_split[0], next_split[1] - 1)
+                result += 1
+                actual_points.add(point_1)
+                actual_points.add(point_2)
         
         return result
 
@@ -76,9 +76,25 @@ class Solution:
         '''
         get result for task 2
         '''
-        result = 0
+        points_that_ended = set()
+        results_dict = defaultdict(int)
+        actual_points = set()
+        actual_points.add(self.start)
+        results_dict[self.start] = 1
+        while actual_points:
+            point = min(actual_points)
+            next_split = self._get_next_split(point)
+            if next_split is not None:
+                point_1, point_2 = (next_split[0], next_split[1] + 1), (next_split[0], next_split[1] - 1)
+                actual_points.add(point_1)
+                actual_points.add(point_2)
+                results_dict[point_1] += results_dict[point]
+                results_dict[point_2] += results_dict[point]
+            else:
+                points_that_ended.add(point)
+            actual_points.remove(point)
 
-        return result
+        return reduce(lambda x, y: x + y, (results_dict[point] for point in points_that_ended))
 
 
 def main():
@@ -86,12 +102,12 @@ def main():
     sol = Solution('2025/Day_7/test.txt')
     print('TEST 1')
     print('test 1:', sol.solution_1(), 'should equal 21')
- #   print('test 2:', sol.solution_2(), 'should equal 3263827')
+    print('test 2:', sol.solution_2(), 'should equal 40')
     print('SOLUTION')
     sol = Solution('2025/Day_7/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
-  #  print('Solution 2:', sol.solution_2())
+    print('Solution 2:', sol.solution_2())
    
 
 
