@@ -58,13 +58,20 @@ class Solution:
         result_len = len(results)
         results = sorted(results, reverse=True)
         for i, value in enumerate(results, 1):
-            if bank_len - value - i > 12 - result_len:
+            if bank_len - value - i >= 12 - result_len:
                 return value
             
         return 0
 
 
-
+    def _get_min_index_value(self, results: list[int], bank_len: int, num_indexes: list[int]) -> int:
+        result_len = len(results)
+        num_indexes = sorted(num_indexes, reverse=True)
+        for i, value in enumerate(num_indexes, 1):
+            if bank_len - value - i - len([x for x in results if x >= value]) >= 12 - result_len:
+                return value
+            
+        return 0
 
     @time_it
     def solution_2(self) -> int:
@@ -74,23 +81,14 @@ class Solution:
         result = 0
         for bank in self.get_data():
             bank_len = len(bank)
-            bank_dict = defaultdict(list)
-            for i, num in enumerate(bank):
-                bank_dict[num].append(i)
-            i_result, act_min = [], 0
-            for num in nums:
-                if not i_result:
-                    i_result += bank_dict[num][-12:]
-                elif i_result and act_min == 0:
-                    # TODO 
-                    pass
-                else:
-                    i_result += sorted(list(x for x in bank_dict[num] if x >= act_min), reverse=True)[:12-len(i_result)]
-                if len(i_result) == 12:
-                    break
-                act_min = self._get_min_index_for_rest(i_result, bank_len)
-            result += int("".join(bank[i] for i in sorted(i_result)))
-            # przypadek kiedy act_min == 0 -> powinno wziąć pierwszą przed obecnym, potem drugą itd.
+            act_result = []
+            for i, num in enumerate(bank[:]):
+                while act_result and act_result[-1] < num and bank_len - i > 12 - len(act_result):
+                    act_result.pop()
+                if len(act_result) < 12:
+                    act_result.append(num)
+
+            result += int("".join(act_result))
 
         return result
 
@@ -102,6 +100,10 @@ def main():
     print('test 1:', sol.solution_1(), 'should equal 357')
     print('test 2:', sol.solution_2(), 'should equal 3121910778619')
     print('SOLUTION')
+    sol = Solution('2025/Day_3/test_2.txt')
+    print('SOLUTION')
+    print('Solution 1:', sol.solution_1(), 'should equal 88')
+    print('Solution 2:', sol.solution_2(), 'should equal 888822615742')
     sol = Solution('2025/Day_3/task.txt')
     print('SOLUTION')
     print('Solution 1:', sol.solution_1())
