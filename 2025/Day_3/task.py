@@ -4,12 +4,11 @@ Advent of Code
 my solution to tasks
 
 task 1 - find max char in s[:-1] and then max char s[min_index_for_first_char]
-task 2 - 
-
+task 2 - (watched a video on reddit as I was stuck on this one) iterate through each bank and while current number is higher that previous one(s), delete all that are lower \
+    (but bear in mind the length of the number to get) and then if length of the actual result is less than 12 add current number to actual result
 
 '''
 from typing import Generator
-from collections import defaultdict
 import time
 
 
@@ -22,7 +21,6 @@ def time_it(func):
         return result
     return wrapper
 
-nums = '9876543210'
 
 class Solution:
     def __init__(self, filename: str) -> None:
@@ -53,25 +51,6 @@ class Solution:
             result += int(max_value_1 + max_value_2)
 
         return result
-    
-    def _get_min_index_for_rest(self, results: list[int], bank_len: int) -> int:
-        result_len = len(results)
-        results = sorted(results, reverse=True)
-        for i, value in enumerate(results, 1):
-            if bank_len - value - i >= 12 - result_len:
-                return value
-            
-        return 0
-
-
-    def _get_min_index_value(self, results: list[int], bank_len: int, num_indexes: list[int]) -> int:
-        result_len = len(results)
-        num_indexes = sorted(num_indexes, reverse=True)
-        for i, value in enumerate(num_indexes, 1):
-            if bank_len - value - i - len([x for x in results if x >= value]) >= 12 - result_len:
-                return value
-            
-        return 0
 
     @time_it
     def solution_2(self) -> int:
